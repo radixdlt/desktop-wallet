@@ -1,1 +1,3 @@
-# electron-wallet
+# Radix Desktop Wallet
+
+Built in Electron
