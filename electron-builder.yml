@@ -1,0 +1,48 @@
+appId: com.radixdlt.macos.wallet
+productName: Radix Wallet
+mac:
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: "build/entitlements.mac.plist"
+  entitlementsInherit: "build/entitlements.mac.plist"
+  category: public.app-category.finance
+  target:
+      - target: "dmg"
+        arch: 
+          - "x64"
+win:
+  target:
+    - target: "nsis"
+      arch: 
+        - "ia32"
+        - "x64"
+linux:
+  target:
+    - target: "AppImage"
+      arch: 
+        - "ia32"
+        - "x64"
+
+
+afterSign: "scripts/notarize.js"
+
+
+
+files:
+  - from: "build-prod"
+    to: "build"
+  - "node_modules"
+  - "package.json"
+  - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,powered-test,example,examples,*.d.ts}"
+  - "!**/node_modules/.bin"
+  - "!**/*.{o,hprof,orig,pyc,pyo,rbc}"
+  - "!**/._*"
+  - "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.flowconfig,.yarn-metadata.json,.idea,appveyor.yml,.travis.yml,circle.yml,npm-debug.log,.nyc_output,yarn.lock,.yarn-integrity}"
+  - "!**/node_modules/search-index/si${/*}"  
+  - "build/icon.*"
+  # - "build"
+# asar: false
+
+
+  
+  
