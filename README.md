@@ -17,9 +17,15 @@ To build the app, you need to also add 3 licenced fonts to the `src/app/assets/f
 * Gotham-Light.otf
 * Gotham-Medium.otf
 
+You can find them here [https://www.cufonfonts.com/font/gotham](https://www.cufonfonts.com/font/gotham)
+
 ## Availabe commands
 
 * Run `yarn build` to build code for development
 * After than you can run the application with `yarn start` or use F5 in VS Code
 * Run tests with `yarn test:unit` after building the application
 * Run `yarn build:prod` and `yarn dist:all` to build the application packages for Windows, OS X and Linux
+
+## Contribute
+
+To contribute, fork the latest `release` branch, and make a pull request towards the latest `rc` branch.
