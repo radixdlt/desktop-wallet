@@ -18,8 +18,8 @@
                 // -         option(v-for="wallet in wallets", v-bind:value="wallet") {{wallet.keyPair.toString()}}
                 // - button(v-on:click='addWallet()') Add Wallet
                 span.connection-status 
-                    | Network status: {{connectionStatus}}
-                    br
+                    //- | Network status: {{connectionStatus}}
+                    //- br
                     | Version: {{version}}
             div.left-menu
                 div.logo
@@ -103,9 +103,9 @@
                     }
                     
                     
-                    this.identity.account.connectionStatus.subscribe({
-                        next: (v) => {this.connectionStatus = v}
-                    })
+                    // this.identity.account.connectionStatus.subscribe({
+                    //     next: (v) => {this.connectionStatus = v}
+                    // })
                 })
             
             // Notifications

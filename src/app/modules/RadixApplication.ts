@@ -10,9 +10,9 @@ import {
   RadixIdentity,
   RadixTransactionUpdate,
   RadixMessageUpdate,
-  RadixAtomCacheProvider,
-  RadixNEDBAtomCache,
   RadixLogger,
+  RadixNEDBAtomStore,
+  RadixAtomStore,
 } from 'radixdlt'
 
 import Config from '../shared/Config'
@@ -50,7 +50,7 @@ export class RadixApplication extends events.EventEmitter {
     public transactionUpdateSubject: Subject<RadixTransactionUpdate> = new Subject()
     public messageUpdateSubject: Subject<RadixMessageUpdate> = new Subject()
 
-    private atomCache: RadixAtomCacheProvider
+    private atomStore: RadixAtomStore
 
     constructor() {
         super()
@@ -60,15 +60,19 @@ export class RadixApplication extends events.EventEmitter {
 
         RadixLogger.setLevel('debug')
 
+        if (!(Config.universe in RadixUniverse)) {
+            throw new Error(`Invalid universe config ${Config.universe}`)
+        }
+
         this.dataDir = dataDir
         this.keystoreFileName = dataDir + '/keystore.json'
         this.authDBFileName = dataDir + `/apps.db`
-        this.atomDBFileName = dataDir + `atoms-${Config.dbVersion}.db`
+        this.atomDBFileName = dataDir + `atoms-${Config.universe}-${Config.dbVersion}.db`
+
+        this.atomStore = RadixNEDBAtomStore.createPersistedStore(this.atomDBFileName)
 
         // Initialize universe
-        radixUniverse.bootstrap(RadixUniverse.BETANET_EMULATOR)
-        
-        this.atomCache = new RadixNEDBAtomCache(this.atomDBFileName)
+        radixUniverse.bootstrap(RadixUniverse[Config.universe], this.atomStore)
 
         this.identityManager = new RadixIdentityManager()
 
@@ -133,11 +137,6 @@ export class RadixApplication extends events.EventEmitter {
         // Subscribe to updates
         account.transferSystem.transactionSubject.subscribe(this.transactionUpdateSubject)
         account.messagingSystem.messageSubject.subscribe(this.messageUpdateSubject)
-
-        this.activeIdentity.account.openNodeConnection()
-
-        // Enable account systems
-        account.enableCache(this.atomCache)
     }
 
     public deleteKeystore() {
@@ -145,7 +144,7 @@ export class RadixApplication extends events.EventEmitter {
     }
 
     public deleteAtomsDB() {
-        this.atomCache.reset()
+        this.atomStore.reset()
     }
 
     public onQuit = () => {
