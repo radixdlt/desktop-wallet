@@ -1,7 +1,7 @@
 <template lang="pug">
 // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
 div 
-    div.container
+    div.wrapper
         div.form
             p.main Welcome to Radix
             p.extra Enter your password to unlock your wallet
@@ -12,7 +12,7 @@ div
                 autofocus,
                 @keyup.native.enter="login",
                 @input="validationError=''")
-            button(v-on:click="login") Go
+            button.button(v-on:click="login") Go
         div.debug
             a(@click="deleteWallet") Delete my wallet
             br
@@ -62,16 +62,15 @@ div
 
 <style lang="scss" scoped>
 
-    .container {
-        height: 100vh;
-        width: 100vw;
+    .wrapper {
+        height: 100%;
+        width: 100%;
 
         display: grid;
-        grid-template-columns: 30% auto 30%;
+        grid-template-columns: auto;
         grid-template-rows: 1fr 1fr 1fr;
         
         .form {
-            grid-column: 2;
             grid-row: 2;
             align-self: center;
 
@@ -95,7 +94,6 @@ div
         }
 
         .debug {
-            grid-column: 1;
             grid-row: 3;
             padding: 10px;
             align-self: end;

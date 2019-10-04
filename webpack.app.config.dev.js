@@ -1,5 +1,6 @@
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+var path = require('path');
 
 module.exports = {
     entry: './src/app/renderer.ts',
@@ -28,7 +29,15 @@ module.exports = {
                 use: [
                     'vue-style-loader',
                     'css-loader',
-                    'sass-loader'
+                    { 
+                        loader: 'sass-loader',
+                        options: {
+                            data: '@import "main.scss";',
+                            includePaths: [
+                                path.resolve(__dirname, "./src/app/assets/sass")
+                            ]
+                        }
+                    }
                 ]
             },
             {

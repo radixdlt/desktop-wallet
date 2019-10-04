@@ -1,0 +1,42 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [        
+        {
+            "name": "Electron: Main",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector",
+            "outputCapture": "std",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "windows": {
+              "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+            },
+            "runtimeArgs" : [
+                ".", 
+                //"--remote-debugging-port=9222",
+                //"--enable-logging",
+            ],
+        },
+        // {
+        //     "name": "Electron: Renderer",
+        //     "type": "chrome",
+        //     "request": "attach",
+        //     "port": 9222,
+        //     "webRoot": "${workspaceFolder}",
+        //     "timeout": 30000
+        // }
+    ],
+    // "compounds": [
+    //     {
+    //         "name": "Electron: All",
+    //         "configurations": [
+    //             "Electron: Main",
+    //             "Electron: Renderer"
+    //         ]
+    //     }
+    // ]
+}

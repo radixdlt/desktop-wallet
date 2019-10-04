@@ -1,11 +1,7 @@
 import Vue from 'vue'
 import * as Rx from 'rxjs/Rx'
 import * as VueRx from 'vue-rx'
-
-import App from './App.vue'
-
-import {router} from './shared/router'
-import {store} from './shared/store'
+import './assets/sass/main.scss'
 
 import 'vue-awesome/icons'
 // @ts-ignore
@@ -40,8 +36,12 @@ Vue.config.productionTip = false
 
 Vue.use(VueRx, Rx)
 
-// tslint:disable-next-line:no-unused-expression
-// new Vue(App).$mount('#app')
+
+
+// import App from './App.vue'
+import App from './NewApp.vue'
+import {router} from './shared/router'
+import {store} from './shared/store'
 
 export const vue = new Vue({
     // @ts-ignore
