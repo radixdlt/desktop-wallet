@@ -22,7 +22,7 @@ To build the app, you need to also add 3 licenced fonts to the `src/app/assets/f
 * Gotham-Light.otf
 * Gotham-Medium.otf
 
-You can find them here [https://www.cufonfonts.com/font/gotham](https://www.cufonfonts.com/font/gotham)
+You can find them [here](https://www.cufonfonts.com/font/gotham).
 
 ## How to use
 
@@ -43,17 +43,13 @@ Run `yarn install`
 
 ## Contribute
 
-To contribute, fork the latest `release` branch, and make a pull request towards the latest `rc` branch.
-
-
-
 [Contributions](CONTRIBUTING.md) are welcome, we simply ask to:
 
-* Fork the codebase
-* Make changes
+* Fork the latest `release` branch
+* Make a pull request towards the latest `rc` branch
 * Submit a pull request for review
 
-When contributing to this repository, we recommend discussing with the development team the change you wish to make using a [GitHub issue](https://github.com/radixdlt/radixdlt-js/issues) before making changes.
+When contributing to this repository, we recommend discussing with the development team the change you wish to make using a [GitHub issue](https://github.com/radixdlt/desktop-wallet/issues) before making changes.
 
 Please follow our [Code of Conduct](CODE_OF_CONDUCT.md) in all your interactions with the project.
 
