@@ -1,9 +1,8 @@
 [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-# Radix Wallet
+# Radix Desktop Wallet
 
-Radix Wallet software running on Electron, written in Vue.js and Typescript
-Built with webpack and electron-builder
+The Desktop Wallet runs on Electron, is written in [Vue.js](https://vuejs.org/) and [TypeScript](https://www.typescriptlang.org/), and is built with [webpack](https://webpack.js.org/) and [electron-builder](https://www.electron.build/).
 
 ## Table of contents
 
@@ -27,9 +26,9 @@ You can find them here [https://www.cufonfonts.com/font/gotham](https://www.cufo
 
 ## How to use
 
-Install EditoConfig plugin for your editor, to keep the formating consistent [http://editorconfig.org/](http://editorconfig.org/)
+Install [EditorConfig plugin](http://editorconfig.org/) for your editor, to keep the formating consistent.
 
-Use [yarn](https://yarnpkg.com/en/) instead of [npm](https://www.npmjs.com/) for increased speed
+Use [yarn](https://yarnpkg.com/en/) instead of [npm](https://www.npmjs.com/) for increased speed.
 
 ### First time setup 
 
