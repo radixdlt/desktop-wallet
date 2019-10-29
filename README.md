@@ -39,7 +39,7 @@ Run `yarn install`
 * Run `yarn build` to build code for development
 * After than you can run the application with `yarn start` or use F5 in VS Code
 * Run tests with `yarn test:unit` after building the application
-* Run `yarn build:prod` and `yarn dist:all` to build the application packages for Windows, OS X and Linux
+* Run `yarn build:prod` and `yarn dist:all` to build the application packages for Windows, macOS and Linux
 
 ## Contribute
 
