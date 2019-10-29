@@ -118,17 +118,11 @@ Once the hotfix branch is ready, it should be treated basically as a release can
 ### Code structure
 
 * [Don't use default exports](https://basarat.gitbooks.io/typescript/docs/tips/defaultIsBad.html)
-* Export everything that needs to be public in `src/index.ts`
-* Everything in `src/modules/atommodel`  must be exported through `src/modules/atommodel/index.ts`. 
-  * The `atommodel` classes should have no references to any other parts of the project. 
-  * This is to avoid a circular dependency issues, and potentially split out the `atommodel` into a separate package in the future
 * Here's a [good way to do singletons in JS/TS](https://k94n.com/es6-modules-single-instance-pattern). 
-  * See an example in `RadixUniverse.ts`.
   
 ### Testing
 
-* Unit tests go next to the module being tested
-* Integration tests go into `test/integration` 
+* Unit tests go into `test/unit` 
 
 ### Commit messages
 
