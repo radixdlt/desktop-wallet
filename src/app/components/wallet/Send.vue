@@ -25,16 +25,20 @@ div
         RadixTransactionBuilder, 
         RadixAccount,
         RRI,
+        RadixIdentity,
     } from 'radixdlt'
 
     import { radixApplication } from '../../modules/RadixApplication'
     
     import RadixContactItemTemplate from './RadixContactItemTemplate.vue'
+import BN from 'bn.js'
 
     export default Vue.extend({
-        props: [
-            'identity'
-        ],
+        props: {
+            identity: {
+                type: Object as () => RadixIdentity
+            }
+        },
         data() {
             return {
                 address: '',
@@ -57,16 +61,16 @@ div
             this.update()
         },
         computed: {
-            balance() {
+            balance(): { [tokenId: string]: BN} {
                 // @ts-ignore
                 return this.identity.account.transferSystem.balance
             },
-            tokens() {
+            tokens(): any[] {
                 const tokens = []
                 for (let token_id in this.balance) {
                     const tokenReference = RRI.fromString(token_id)
 
-                    if(this.balance[token_id] > 0) {
+                    if(this.balance[token_id].ltn(0)) {
                         tokens.push({
                             id: token_id,
                             label: tokenReference.name

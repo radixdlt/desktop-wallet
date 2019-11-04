@@ -30,14 +30,17 @@ div
     import { 
         radixTokenManager, 
         RRI,
+        RadixIdentity,
     } from 'radixdlt'
 
     import { radixApplication } from '../../modules/RadixApplication'
 
     export default Vue.extend({
-        props: [
-            'identity'
-        ],
+        props: {
+            identity: {
+                type: Object as () => RadixIdentity
+            }
+        },
         data() {
             return {
                 transactions: [],
@@ -83,14 +86,14 @@ div
             }
         },
         computed: {
-            tokens: function () {
+            tokens(): {[key: string]: RRI} {
                 return Object.keys(this.identity.account.transferSystem.tokenUnitsBalance)
                     .reduce((output, tokenUri) => {
                         output[tokenUri] = RRI.fromString(tokenUri)
                         return output
                     }, {})
             },
-            contacts () {
+            contacts(): any {
                 // @ts-ignore
                 return this.$store.state.contacts[this.identity.account.getAddress()]
             },

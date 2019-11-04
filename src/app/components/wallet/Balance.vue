@@ -19,86 +19,90 @@ div
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    
-    import {
-        radixTokenManager,
-        RadixTransactionBuilder,
-        RadixAccount,
-        RRI,
-    } from 'radixdlt'
+import Vue from 'vue'
 
-    import Config from '../../shared/Config'
+import {
+    radixTokenManager,
+    RadixTransactionBuilder,
+    RadixAccount,
+    RRI,
+    RadixIdentity,
+} from 'radixdlt'
 
-    import { radixApplication }  from '../../modules/RadixApplication'
+import Config from '../../shared/Config'
 
-    export default Vue.extend({
-        props: [
-            'identity',
-        ],
-        data() {
-            return {
-                activeToken: '',
-                tokens: Object.keys(this.identity.account.transferSystem.tokenUnitsBalance)
-                    .reduce((output, tokenUri) => {
-                        output[tokenUri] = RRI.fromString(tokenUri)
-                        return output
-                    }, {}),
-            }
-        },
-        created() {
-            this.activeToken = radixTokenManager.nativeToken.toString()
-            
-            radixApplication.on('atom-received:transaction', this.update)
-        },
-        destroyed() {
-            radixApplication.removeListener('atom-received:transaction', this.update)
-        },
-        computed: {
-            balance: function() {
-                return this.identity.account.transferSystem.tokenUnitsBalance
-            }
-        },
-        mounted() {
-            this.$forceUpdate()
-        },        
-        methods: {
-            openSidebarSend() {
-                // @ts-ignore
-                this.$router.push({name: 'Wallet', params: {sidebar: 'send'}})
-            },
-            openSidebarReceive() {
-                // @ts-ignore
-                this.$router.push({name: 'Wallet', params: {sidebar: 'receive'}})
-            },
-            setActiveToken(token_id) {
-                this.activeToken = token_id
-            },
-            update() {
-                this.$forceUpdate()
+import { radixApplication }  from '../../modules/RadixApplication'
+import Decimal from 'decimal.js'
 
-                this.tokens = Object.keys(this.identity.account.transferSystem.tokenUnitsBalance)
-                    .reduce((output, tokenUri) => {
-                        output[tokenUri] = RRI.fromString(tokenUri)
-                        return output
-                    }, {})
-            },
-            claimFaucet() {
-                const recipient = RadixAccount.fromAddress(Config.faucetAddress, true)
-                RadixTransactionBuilder
-                    .createRadixMessageAtom(this.identity.account, recipient, 'Send me some money, pretty please!')
-                    .signAndSubmit(this.identity)
-
-                // @ts-ignore
-                this.$router.push({ path: `/messaging/chatlist/${Config.faucetAddress}`})
-            }
-        },
-        watch: {
-            identity() {
-                this.activeToken = radixTokenManager.nativeToken.toString()
-            }
+export default Vue.extend({
+    props: {
+        identity: {
+            type: Object as () => RadixIdentity
         }
-    })
+    },
+    data() {
+        return {
+            activeToken: '',
+            tokens: Object.keys(this.identity.account.transferSystem.tokenUnitsBalance)
+                .reduce((output, tokenUri) => {
+                    output[tokenUri] = RRI.fromString(tokenUri)
+                    return output
+                }, {}),
+        }
+    },
+    created() {
+        this.activeToken = radixTokenManager.nativeToken.toString()
+        
+        radixApplication.on('atom-received:transaction', this.update)
+    },
+    destroyed() {
+        radixApplication.removeListener('atom-received:transaction', this.update)
+    },
+    computed: {
+        balance(): {[rri: string]: Decimal} {
+            return this.identity.account.transferSystem.tokenUnitsBalance
+        }
+    },
+    mounted() {
+        this.$forceUpdate()
+    },        
+    methods: {
+        openSidebarSend() {
+            // @ts-ignore
+            this.$router.push({name: 'Wallet', params: {sidebar: 'send'}})
+        },
+        openSidebarReceive() {
+            // @ts-ignore
+            this.$router.push({name: 'Wallet', params: {sidebar: 'receive'}})
+        },
+        setActiveToken(token_id) {
+            this.activeToken = token_id
+        },
+        update() {
+            this.$forceUpdate()
+
+            this.tokens = Object.keys(this.identity.account.transferSystem.tokenUnitsBalance)
+                .reduce((output, tokenUri) => {
+                    output[tokenUri] = RRI.fromString(tokenUri)
+                    return output
+                }, {})
+        },
+        claimFaucet() {
+            const recipient = RadixAccount.fromAddress(Config.faucetAddress, true)
+            RadixTransactionBuilder
+                .createRadixMessageAtom(this.identity.account, recipient, 'Send me some money, pretty please!')
+                .signAndSubmit(this.identity)
+
+            // @ts-ignore
+            this.$router.push({ path: `/messaging/chatlist/${Config.faucetAddress}`})
+        }
+    },
+    watch: {
+        identity() {
+            this.activeToken = radixTokenManager.nativeToken.toString()
+        }
+    }
+})
 </script>
 
 <style lang="scss" scoped>

@@ -53,7 +53,7 @@
     "sinon": "^5.0.7",
     "spectron": "^3.8.0",
     "ts-loader": "^4.3.0",
-    "typescript": "^2.8.3",
+    "typescript": "^3.6.4",
     "url-loader": "^1.0.1",
     "vue-loader": "^15.0.10",
     "vue-property-decorator": "^6.0.0",
