@@ -74,6 +74,7 @@
     "buffer-reader": "^0.1.0",
     "bulma": "^0.7.5",
     "electron-context-menu": "^0.9.1",
+    "electron-store": "^5.0.0",
     "electron-window-state": "^4.1.1",
     "elliptic": "^6.4.0",
     "fs-extra": "^6.0.1",

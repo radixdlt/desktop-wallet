@@ -1,18 +1,35 @@
 <template lang="pug">
 // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
 div 
-    div.wrapper
-        div.form
-            p.main Welcome to Radix
-            p.extra Enter your password to unlock your wallet
-            div.validation-error {{validationError}}
-            vue-password.password(placeholder="Password", 
-                v-model="password", 
-                disableStrength, 
-                autofocus,
-                @keyup.native.enter="login",
-                @input="validationError=''")
-            button.button(v-on:click="login") Go
+    div.wrapper.auth
+        div.field.logo
+            img(src="@assets/svg/logo-dark.svg")
+        h1.title.
+            Welcome back!
+        h1.subtitle.
+            Please unlock your wallet
+
+        div.field
+            div.control.has-icons-left
+                vue-password.password(placeholder="Password", 
+                    classes="input"
+                    v-model="password", 
+                    disableStrength, 
+                    autofocus,
+                    disableToggle=true,
+                    @keyup.native.enter="login",
+                    @input="validationError=''")
+                span.icon.is-small.is-left
+                    img.lock(src="@assets/svg/icons/lock.svg")
+                    //- icon(name="lock")
+            p.help.is-danger.validation-error {{validationError}}
+            
+        
+        div.control
+            button.button.is-primary.is-fullwidth(@click="login()")
+                | Log in
+
+       
         div.debug
             a(@click="deleteWallet") Delete my wallet
             br
@@ -23,7 +40,7 @@ div
     import Vue from 'vue'
     import { remote } from 'electron'
     
-    import { radixApplication } from  '../modules/RadixApplication'
+    import { radixApplication } from  '@/app/modules/RadixApplication'
     
     export default Vue.extend({
         data() {
@@ -39,13 +56,9 @@ div
                         console.error(error)
                         this.validationError = 'Password incorrect'
                     })
+
                 // @ts-ignore
-                this.$store
-                    .dispatch('login')
-                    .then(() => {
-                        // @ts-ignore
-                        this.$router.push('wallet')
-                    })
+                this.$router.push('wallet')
             },
             deleteWallet() {
                 radixApplication.deleteKeystore()
@@ -65,36 +78,23 @@ div
     .wrapper {
         height: 100%;
         width: 100%;
-
-        display: grid;
-        grid-template-columns: auto;
-        grid-template-rows: 1fr 1fr 1fr;
         
-        .form {
-            grid-row: 2;
-            align-self: center;
+        padding: 40px 60px;
 
-            p.main {
-                font-size: 22px;
-                color: #14E1DB;
+        .logo {
+            img {
+                height: 36px;
             }
+        }
 
-            p.extra {
-                font-size: 17px;
-                color: #FFF;
-            }
-
-            .validation-error {
-                height: 20px;
-                padding-bottom: 5px;
-                font-weight: 300;
-                font-size: 12px;
-                color: #FF4E59;
-            } 
+        .lock {
+            width: 14px;
+            height: 16px;
+            object-fit: contain;
+            margin: auto;
         }
 
         .debug {
-            grid-row: 3;
             padding: 10px;
             align-self: end;
 

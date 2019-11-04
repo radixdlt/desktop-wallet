@@ -2,16 +2,16 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 
-import { radixApplication } from '../modules/RadixApplication'
+import { radixApplication } from '@app/modules/RadixApplication'
 
-import Contacts from '../components/messaging/contacts/Contacts'
-import Wallet from '../components/wallet/Wallet'
-import Main from '../components-new/Main'
+import Contacts from '@app/components/messaging/contacts/Contacts'
+import Wallet from '@app/components/wallet/Wallet'
+import Main from '@app/components-new/Main'
 
-import InitialSetup from '../components/InitialSetup'
-import Login from '../components/Login'
+import InitialSetup from '@app/components/InitialSetup'
+import Login from '@app/components-new/authentication/Login'
 
-import Authentication from '../components-new/Authentication.vue'
+import Authentication from '@app/components-new/Authentication.vue'
 
 Vue.use(Router)
 

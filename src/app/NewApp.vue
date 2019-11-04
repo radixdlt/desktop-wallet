@@ -19,37 +19,21 @@
         RRI
     } from 'radixdlt'
 
-    import { radixApplication, RadixApplicationStates } from './modules/RadixApplication'
-    import { radixServer } from './server/RadixServer'
+    import { radixApplication, RadixApplicationStates } from '@app/modules/RadixApplication'
+    import { radixServer } from '@app/server/RadixServer'
 
-    import Config from './shared/Config'
-    
-    import Messaging from './components/messaging/Messaging.vue'
-    import ChatList from './components/messaging/chat/ChatList.vue'
-    import InitialSetup from './components/InitialSetup.vue'
-    import Wallet from './components/wallet/Wallet.vue'
-    import Login from './components/Login.vue'
+    import Config from '@app/shared/Config'
 
     import fs from 'fs-extra'
 
     import {filter} from 'rxjs/operators'
 
     export default Vue.extend({
-        components: {
-            InitialSetup,
-            Login
-        },
         subscriptions: {
             walletManagerState: radixApplication.stateSubject,
-            // connectionStatus: this.$store.state.activeWallet.connectionStatus,
         },
         data() {
             return {
-                activeSection: Wallet,
-                sections: [
-                    { path: '/wallet', name: 'Wallet', component: Wallet },
-                    { path: '/messaging', name: 'Messaging', component: Messaging }
-                ],
                 connectionStatus: 'STARTING',
                 version: Config.version,
                 accessRequestQueue: [],
@@ -244,9 +228,6 @@
             }
         },
         computed: {
-            isLoggedIn: function () {
-                return radixApplication.activeIdentity && true
-            },
             identity: function () {
                 return radixApplication.activeIdentity
             },

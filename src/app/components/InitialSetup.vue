@@ -44,12 +44,7 @@ div
                 radixApplication.setFirstTimePassword(this.password)
 
                 // @ts-ignore
-                this.$store
-                    .dispatch('login')
-                    .then(() => {
-                        // @ts-ignore
-                        this.$router.push('wallet')
-                    })
+                this.$router.push('wallet')
             },
             importWallet() {
                 remote.dialog.showOpenDialog({

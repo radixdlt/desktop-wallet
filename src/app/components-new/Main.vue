@@ -23,9 +23,8 @@
         RRI
     } from 'radixdlt'
 
-    import { radixApplication, RadixApplicationStates } from '../modules/RadixApplication'
-
-    import Config from '../shared/Config'
+    import { radixApplication, RadixApplicationStates } from '@/app/modules/RadixApplication'
+    import Config from '@/app/shared/Config'
 
     import fs from 'fs-extra'
 
@@ -47,10 +46,6 @@
             
         },
         computed: {
-            isLoggedIn: function () {
-                // @ts-ignore
-                return this.$store.getters.isLoggedIn
-            },
             identity: function () {
                 return radixApplication.activeIdentity
             },

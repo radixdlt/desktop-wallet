@@ -272,10 +272,6 @@
             }
         },
         computed: {
-            isLoggedIn: function () {
-                // @ts-ignore
-                return this.$store.getters.isLoggedIn
-            },
             identity: function () {
                 return radixApplication.activeIdentity
             },

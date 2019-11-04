@@ -12,7 +12,12 @@ module.exports = {
         path: __dirname,
     },
     resolve: {
-        extensions: [ '.ts', '.vue', '.js', '.node' ]
+        extensions: [ '.ts', '.vue', '.js', '.node' ],
+        alias: {
+            '@': path.resolve(__dirname, './src'),
+            '@app': path.resolve(__dirname, './src/app'),
+            '@assets': path.resolve(__dirname, './src/app/assets')
+        },
     },
     module: {
         rules: [

@@ -3,9 +3,8 @@
 div
     div.wrapper
         div.content
-            initial-setup(v-if="walletManagerState == 'FIRST_TIME_SETUP_PASSWORD_REQUIRED'")
-            login(v-if="walletManagerState == 'DECRYPT_KEYSTORE_PASSWORD_REQUIRED'")
-            //- router-view.component
+            keep-alive
+                component(v-bind:is="stateComponentMap[authenticationState]")
         div.visual
 </template>
 
@@ -13,28 +12,30 @@ div
     import Vue from 'vue'
     import { remote } from 'electron'
     
-    import { radixApplication, RadixApplicationStates } from  '../modules/RadixApplication'
+    import { radixApplication, RadixApplicationStates } from  '@/app/modules/RadixApplication'
 
     import InitialSetup from '../components/InitialSetup.vue'
-    import Login from '../components/Login.vue'
+    import Login from './authentication/Login.vue'
+    import TermsAndConditions from './authentication/TermsAndConditions.vue'
     
     export default Vue.extend({
         components: {
             InitialSetup,
-            Login
+            Login,
+            TermsAndConditions
         },
         data() {
             return {
+                stateComponentMap: {
+                    [RadixApplicationStates.TERMS_AND_CONDITIONS]: TermsAndConditions,
+                    [RadixApplicationStates.DECRYPT_KEYSTORE_PASSWORD_REQUIRED]: Login,
+                    [RadixApplicationStates.CREATE_OR_RESTORE]: InitialSetup,
+                }
             }
         },     
         subscriptions: {
-            walletManagerState: radixApplication.stateSubject,
+            authenticationState: radixApplication.stateSubject,
         },
-        methods: {
-            
-        },
-        mounted: function() {
-        }
     })
 </script>
 

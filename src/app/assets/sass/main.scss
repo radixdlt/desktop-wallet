@@ -20,6 +20,7 @@ $family-sans-serif: "Roboto", sans-serif;
 $primary: $green;
 $link: $green;
 $text: $blue-dark;
+$text-light: $grey-dark;
 $light: $grey-light;
 $dark: $blue-dark;
 // $widescreen-enabled: false;
@@ -37,10 +38,18 @@ $radius: 4.5px;
     background-color: crimson;
 }
 
-.fill {
-    width: 100%;
-    height: 100%;
+.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+
+
+
+@import "./text.scss";
+@import "./forms.scss";
+@import "./layout.scss";
 
 
 // Import only what you need from Bulma
