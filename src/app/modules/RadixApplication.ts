@@ -13,12 +13,15 @@ import {
   RadixLogger,
   RadixNEDBAtomStore,
   RadixAtomStore,
+  RadixAddress,
 } from 'radixdlt'
 
 import Config from '../shared/Config'
 import fs from 'fs-extra'
 import * as events from 'events'
 import { settingsStore } from './SettingsStore'
+
+import * as bip39 from 'bip39'
 
 export  enum RadixApplicationStates {
     STARTING = 'STARTING',
@@ -28,6 +31,9 @@ export  enum RadixApplicationStates {
 
 
     // create flow
+    MNEMONIC_BACKUP = 'MNEMONIC_BACKUP',
+    MNEMONIC_VERIFY = 'MNEMONIC_VERIFY',
+    PASSWORD_SET = 'PASSWORD_SET',
     // restore flow
 
 
@@ -56,6 +62,8 @@ export class RadixApplication extends events.EventEmitter {
     public messageUpdateSubject: Subject<RadixMessageUpdate> = new Subject()
 
     private atomStore: RadixAtomStore
+
+    private mnemonic: string
 
     constructor() {
         super()
@@ -108,15 +116,53 @@ export class RadixApplication extends events.EventEmitter {
     public async loadKeystore() {
         // Check if keystore file exists
         const exists = await fs.pathExists(this.keystoreFileName)
-        
-        console.log(`keyFilePath: ${this.keystoreFileName}`)
-        console.log(`keyFileExists: ${exists}`)
 
         if (exists) {
             this.setState(RadixApplicationStates.DECRYPT_KEYSTORE_PASSWORD_REQUIRED)
         } else {
             this.setState(RadixApplicationStates.CREATE_OR_RESTORE)
         }
+    }
+
+    public createWallet() {
+        // Generate Mnemonic
+        this.mnemonic = bip39.generateMnemonic()
+
+        this.setState(RadixApplicationStates.MNEMONIC_BACKUP)
+    }
+
+    public getMnemonic() {
+        return this.mnemonic
+    }
+
+    public mnemonicBackedUp() {
+        this.setState(RadixApplicationStates.MNEMONIC_VERIFY)
+    }
+
+    public mnemonicVerified(mnemonic: string) {
+        if (mnemonic !== this.getMnemonic()) {
+            throw new Error('Mnemonic is not correct')
+        }
+
+        this.setState(RadixApplicationStates.PASSWORD_SET)
+    }
+
+    public async setPassword(password: string) {
+        const identity = new RadixSimpleIdentity(
+            RadixAddress.fromPrivate(
+                bip39.mnemonicToSeedSync(this.getMnemonic())
+            ))
+        
+        // Save to disk
+        const encryptedKey = await RadixKeyStore.encryptKey(identity.address, password)
+        await fs.writeJSON(this.keystoreFileName, encryptedKey)
+        
+        this.setActiveIdentity(identity)
+        this.setState(RadixApplicationStates.READY)
+    }
+
+    public restoreWallet() {
+        throw new Error('Not implemented')
     }
 
     private setState(state: RadixApplicationStates) {

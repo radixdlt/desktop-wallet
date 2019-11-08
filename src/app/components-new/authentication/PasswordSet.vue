@@ -5,12 +5,11 @@ div
         div.field.logo
             img(src="@assets/svg/logo-dark.svg")
         h1.title.
-            Welcome back!
+            Set Your Password
         h1.subtitle.
-            Please unlock your wallet
+            To store your wallet securely, you need to set a password
 
         div.field
-            label.label.is-small Password
             div.control.has-icons-left
                 vue-password.password(placeholder="Password", 
                     classes="input"
@@ -18,23 +17,33 @@ div
                     disableStrength, 
                     autofocus,
                     disableToggle=true,
-                    @keyup.native.enter="login",
+                    @keyup.native.enter="setPassword",
                     @input="validationError=''")
                 span.icon.is-small.is-left
                     img.lock(src="@assets/svg/icons/lock.svg")
                     //- icon(name="lock")
+            //- p.help.is-danger.validation-error {{validationError}}
+
+        div.field
+            div.control.has-icons-left
+                vue-password.password(placeholder="Repeat Password", 
+                    classes="input"
+                    v-model="password2", 
+                    disableStrength, 
+                    autofocus,
+                    disableToggle=true,
+                    @keyup.native.enter="setPassword",
+                    @input="validationError=''")
+                span.icon.is-small.is-left
+                    img.lock(src="@assets/svg/icons/lock.svg")
+
             p.help.is-danger.validation-error {{validationError}}
-            
         
         div.control
-            button.button.is-primary.is-fullwidth(@click="login()")
-                | Log in
+            button.button.is-primary.is-fullwidth(@click="setPassword()")
+                | Finish
 
-       
-        div.debug
-            a(@click="deleteWallet") Delete my wallet
-            br
-            a(@click="deleteDB") Reset atom database
+    
 </template>
 
 <script lang="ts">
@@ -47,29 +56,29 @@ div
         data() {
             return {
                 password: '',
+                password2: '',
                 validationError: '',
             }
         },     
         methods: {
-            login() {
-                radixApplication.decryptKeystore(this.password)
-                    .catch((error) => {
-                        console.error(error)
-                        this.validationError = 'Password incorrect'
-                    })
+             async setPassword() {
+                // Validate any rules
+                // TODO: probably want higher requirmenets
+                if (this.password.length < 6) {
+                    this.validationError = 'Password must be at least 6 characters long'
+                    return
+                }
+
+                if (this.password !== this.password2) {
+                    this.validationError = `Passwords don't match`
+                    return
+                }
+
+                await radixApplication.setPassword(this.password)
 
                 // @ts-ignore
                 this.$router.push('wallet')
             },
-            deleteWallet() {
-                radixApplication.deleteKeystore()
-                radixApplication.deleteAtomsDB()
-
-                radixApplication.loadKeystore()
-            },
-            deleteDB() {
-                radixApplication.deleteAtomsDB()
-            }
         }
     })
 </script>

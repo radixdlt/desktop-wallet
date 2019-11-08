@@ -12,6 +12,7 @@ $blue-dark: #32364e;
 $grey-dark: #a3adb7;
 $grey: #dbdde0;
 $grey-light: #f4f7fc;
+$grey-light-darken: #e7eaee;
 $red: #ff5964;
 $green-disabled: #3ecf8e;
 
@@ -28,11 +29,9 @@ $dark: $blue-dark;
 
 // Update some of Bulma's component variables
 $body-background-color: $white;
-$control-border-width: 2px;
-$input-border-color: transparent;
 $input-shadow: none;
 $radius-small: 1.5px;
-$radius: 4.5px;
+$radius: 3px;
 
 .test {
     background-color: crimson;
@@ -62,3 +61,4 @@ $radius: 4.5px;
 @import "~bulma/sass/components/navbar.sass";
 @import "~bulma/sass/layout/hero.sass";
 @import "~bulma/sass/layout/section.sass";
+@import "~bulma/sass/grid/columns.sass";

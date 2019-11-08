@@ -14,22 +14,31 @@ div
     
     import { radixApplication, RadixApplicationStates } from  '@/app/modules/RadixApplication'
 
-    import InitialSetup from '../components/InitialSetup.vue'
+    import CreateOrRestore from './authentication/CreateOrRestore.vue'
     import Login from './authentication/Login.vue'
     import TermsAndConditions from './authentication/TermsAndConditions.vue'
+    import MnemonicBackup from './authentication/MnemonicBackup.vue'
+    import MnemonicVerify from './authentication/MnemonicVerify.vue'
+    import PasswordSet from './authentication/PasswordSet.vue'
     
     export default Vue.extend({
         components: {
-            InitialSetup,
+            CreateOrRestore,
             Login,
-            TermsAndConditions
+            TermsAndConditions,
+            MnemonicBackup,
+            MnemonicVerify,
+            PasswordSet,
         },
         data() {
             return {
                 stateComponentMap: {
                     [RadixApplicationStates.TERMS_AND_CONDITIONS]: TermsAndConditions,
                     [RadixApplicationStates.DECRYPT_KEYSTORE_PASSWORD_REQUIRED]: Login,
-                    [RadixApplicationStates.CREATE_OR_RESTORE]: InitialSetup,
+                    [RadixApplicationStates.CREATE_OR_RESTORE]: CreateOrRestore,
+                    [RadixApplicationStates.MNEMONIC_BACKUP]: MnemonicBackup,
+                    [RadixApplicationStates.MNEMONIC_VERIFY]: MnemonicVerify,
+                    [RadixApplicationStates.PASSWORD_SET]: PasswordSet,
                 }
             }
         },     
