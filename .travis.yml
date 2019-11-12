@@ -1,0 +1,29 @@
+language: node_js
+node_js: node
+
+services:
+  - docker
+
+cache:
+  yarn: true
+  npm: true
+  directories:
+    - "src/app/assets/fonts/"
+    - "$HOME/.cache/electron"
+    - "$HOME/.cache/electron-builder"
+    - "$HOME/.npm/_prebuilds"
+
+before_install:
+  # Get fonts if doesn't exist
+  - if [ ! -f "src/app/assets/fonts/Gotham-Medium.otf" ]; then wget --directory-prefix=src/app/assets/fonts https://gitlab.allegorithmic.com/open-source/algui/blob/44c6c4f7e24bc41dfdfbe1b8915824c075f67088/lib/fonts/Gotham-Book.otf ; fi
+  - if [ ! -f "src/app/assets/fonts/Gotham-Medium.otf" ]; then wget --directory-prefix=src/app/assets/fonts https://gitlab.allegorithmic.com/open-source/algui/blob/44c6c4f7e24bc41dfdfbe1b8915824c075f67088/lib/fonts/Gotham-Light.otf; fi
+  - if [ ! -f "src/app/assets/fonts/Gotham-Medium.otf" ]; then wget --directory-prefix=src/app/assets/fonts https://gitlab.allegorithmic.com/open-source/algui/blob/44c6c4f7e24bc41dfdfbe1b8915824c075f67088/lib/fonts/Gotham-Medium.otf; fi
+
+  # Build the assembly
+  - yarn install --network-concurrency 1
+  - yarn build
+
+script:
+  # Run tests, don't fail if they fail...
+  - yarn test:unit || true
+  - yarn test:e2e || true

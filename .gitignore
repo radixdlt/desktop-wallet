@@ -4,6 +4,7 @@ build-prod/
 dist/
 test/out
 .DS_Store
+.idea/*
 
 yarn-error\.log
 electron-builder.env
