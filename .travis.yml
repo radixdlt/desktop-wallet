@@ -34,5 +34,7 @@ script:
   # Run tests, don't fail if they fail...
   - yarn test:unit || true
   - yarn test:e2e || true
-  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  # Static code analysis
+  - yarn tslint
+  - yarn coverage
   - sonar-scanner

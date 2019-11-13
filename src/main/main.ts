@@ -116,7 +116,7 @@ const checkForUpdates = async () => {
 
         if (semver.gt(publishedVersion, currentVersion)) {
             // Show update window
-            updateNotificationWindow =new BrowserWindow({
+            updateNotificationWindow = new BrowserWindow({
                 darkTheme: true,
                 width: 450,
                 height: 200,
@@ -127,7 +127,7 @@ const checkForUpdates = async () => {
         
             updateNotificationWindow.loadURL(`file://${app.getAppPath()}/build/update.html`)
 
-            updateNotificationWindow.webContents.on('new-window', function(event, url){
+            updateNotificationWindow.webContents.on('new-window', function(event, url) {
                 event.preventDefault()
                 shell.openExternal(url)
             })
@@ -163,7 +163,7 @@ mainMenuTemplate.push({
 })
 
 mainMenuTemplate.push({
-    label: "Edit",
+    label: 'Edit',
     submenu: [
         // { role: 'undo' },
         // { role: 'redo' },
@@ -246,8 +246,7 @@ ipcMain.on('wsEventOut', (event, data) => {
     if (ws && ws.readyState == 1) {
         if (data.event === 'send') {
             ws.send(data.data)
-        } 
-        else if (data.event === 'close') {
+        } else if (data.event === 'close') {
             ws.close(...data.data)
         } 
     }

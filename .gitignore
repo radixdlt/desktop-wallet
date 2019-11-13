@@ -9,6 +9,9 @@ test/out
 yarn-error\.log
 electron-builder.env
 
+coverage
+.nyc_output
+tslint/
 
 src/app/assets/fonts/Gotham-Book.otf
 src/app/assets/fonts/Gotham-Light.otf
