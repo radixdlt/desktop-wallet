@@ -36,6 +36,7 @@ script:
   - yarn test:unit || true
   - yarn test:e2e || true
   # Static code analysis
+  - yarn remove typescript
   - yarn add typescript
   - yarn tslint
   - yarn coverage
