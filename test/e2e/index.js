@@ -28,7 +28,7 @@ describe('application launch', function () {
     })
 
     it('opens a window', function () {
-        return this.app.client.waitUntilWindowLoaded()
+        return this.app.client.waitUntilWindowLoaded(timeout(5000))
             .getWindowCount().should.eventually.equal(2)
             .browserWindow.isMinimized().should.eventually.be.false
             .browserWindow.isDevToolsOpened().should.eventually.be.false
