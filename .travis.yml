@@ -38,4 +38,5 @@ script:
   # Static code analysis
   - yarn tslint
   - yarn coverage
+  - npm install typescript --loglevel verbose
   - sonar-scanner
