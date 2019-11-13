@@ -36,7 +36,7 @@ script:
   - yarn test:unit || true
   - yarn test:e2e || true
   # Static code analysis
+  - yarn add typescript
   - yarn tslint
   - yarn coverage
-  - npm install typescript --loglevel verbose
   - sonar-scanner
