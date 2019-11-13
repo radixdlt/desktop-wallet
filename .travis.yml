@@ -3,6 +3,7 @@ node_js: node
 
 services:
   - docker
+  - xvfb
 
 addons:
   sonarcloud:
