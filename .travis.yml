@@ -29,6 +29,7 @@ before_install:
 
   # Build the assembly
   - yarn remove typescript
+  - yarn add typescript@2.8.3
   - yarn install --network-concurrency 1
   - yarn build
 
