@@ -28,6 +28,7 @@ before_install:
   - if [ ! -f "src/app/assets/fonts/Gotham-Medium.otf" ]; then wget --directory-prefix=src/app/assets/fonts https://gitlab.allegorithmic.com/open-source/algui/blob/44c6c4f7e24bc41dfdfbe1b8915824c075f67088/lib/fonts/Gotham-Medium.otf; fi
 
   # Build the assembly
+  - yarn remove typescript
   - yarn install --network-concurrency 1
   - yarn build
 
