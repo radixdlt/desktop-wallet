@@ -4,6 +4,7 @@
         "eofline": false,
         "align": [true, "parameters"],
         "class-name": true,
+        "extends": ["tslint:recommended", "tslint-sonarts"],
         "indent": [true, "spaces"],
         "max-line-length": [true, 150],
         "no-consecutive-blank-lines": [false],
