@@ -41,5 +41,5 @@ script:
   - yarn tslint
   - yarn coverage
   - yarn remove typescript
-  - yarn add typescript
+  - yarn add typescript@3.2.1
   - sonar-scanner
