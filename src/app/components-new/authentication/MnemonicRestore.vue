@@ -5,10 +5,10 @@ div.fill
         div.field.logo
             img(src="@assets/svg/logo-dark.svg")
         h1.title.
-            Verify your backup
+            Restore your account
         h1.subtitle.
-            Please enter your seed again to make sure it's backep up correctly
-
+            Please enter the 12 word backup seed
+        
         div.form
             mnemonic-input.fill(:wordlist="wordlist", v-model="mnemonic", :size="mnemonicSize", @input="clearError()")
         
@@ -46,9 +46,9 @@ div.fill
         methods: {
             next() {
                 try {
-                    radixApplication.verifyCheckMnemonic(this.mnemonic)
+                    radixApplication.resotreCheckMnemonic(this.mnemonic)
                 } catch {
-                    this.error = 'Mnemonic is not correct'
+                    this.error = 'Mnemonic is not valid'
                 }
             },
             clearError() {
@@ -82,5 +82,4 @@ div.fill
         height: 24px;
     }
 }
-
 </style>

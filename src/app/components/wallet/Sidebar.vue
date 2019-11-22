@@ -40,11 +40,11 @@ div
         methods: {
             goToSend() {
                 // @ts-ignore
-                this.$router.push({name: 'Wallet', params: {sidebar: 'send'}})
+                this.$router.push({name: 'main.dashboard', params: {sidebar: 'send'}})
             },
             goToReceive() {
                 // @ts-ignore
-                this.$router.push({name: 'Wallet', params: {sidebar: 'receive'}})
+                this.$router.push({name: 'main.dashboard', params: {sidebar: 'receive'}})
             },
         }
     })

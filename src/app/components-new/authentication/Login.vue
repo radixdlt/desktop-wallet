@@ -8,22 +8,23 @@ div
             Welcome back!
         h1.subtitle.
             Please unlock your wallet
-
-        div.field
-            label.label.is-small Password
-            div.control.has-icons-left
-                vue-password.password(placeholder="Password", 
-                    classes="input"
-                    v-model="password", 
-                    disableStrength, 
-                    autofocus,
-                    disableToggle=true,
-                    @keyup.native.enter="login",
-                    @input="validationError=''")
-                span.icon.is-small.is-left
-                    img.lock(src="@assets/svg/icons/lock.svg")
-                    //- icon(name="lock")
-            p.help.is-danger.validation-error {{validationError}}
+            
+        div.form
+            div.field
+                label.label.is-small Password
+                div.control.has-icons-left
+                    vue-password.password(
+                        classes="input"
+                        v-model="password", 
+                        disableStrength, 
+                        autofocus,
+                        disableToggle=true,
+                        @keyup.native.enter="login",
+                        @input="validationError=''")
+                    span.icon.is-small.is-left
+                        img.lock(src="@assets/svg/icons/lock.svg")
+                        //- icon(name="lock")
+                p.help.is-danger.validation-error {{validationError}}
             
         
         div.control
@@ -76,39 +77,26 @@ div
 
 <style lang="scss" scoped>
 
-    .wrapper {
-        height: 100%;
-        width: 100%;
-        
-        padding: 40px 60px;
+.lock {
+    width: 14px;
+    height: 16px;
+    object-fit: contain;
+    margin: auto;
+}
 
-        .logo {
-            img {
-                height: 36px;
-            }
-        }
+.debug {
+    padding: 10px;
+    align-self: end;
 
-        .lock {
-            width: 14px;
-            height: 16px;
-            object-fit: contain;
-            margin: auto;
-        }
+    color: #D7EFFA;
+    font-size: 10px;
+    
+    line-height: 20px;
 
-        .debug {
-            padding: 10px;
-            align-self: end;
-
-            color: #D7EFFA;
-            font-size: 10px;
-            
-            line-height: 20px;
-
-            a:hover {
-                text-decoration: underline;
-                cursor: pointer;
-            }
-        }
+    a:hover {
+        text-decoration: underline;
+        cursor: pointer;
     }
+}
 
 </style>

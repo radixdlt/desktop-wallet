@@ -9,18 +9,19 @@ div
         h1.subtitle.
             Lorem ipsum dolar sit amet, consectatur 
 
-        div.field.is-horizontal
-            label.checkbox
-                input(type="checkbox",v-model="termsAccepted")
-                | I agree to the 
-                |
-                a(href="#") Terms and Conditions
-        div.field.is-horizontal
-            label.checkbox 
-                input(type="checkbox",v-model="privacyPolicyAccepted")
-                | I agree to the 
-                |
-                a(href="#") Privacy Policy
+        div.form
+            div.field.is-horizontal
+                label.checkbox
+                    input(type="checkbox",v-model="termsAccepted")
+                    | I agree to the 
+                    |
+                    a(href="#") Terms and Conditions
+            div.field.is-horizontal
+                label.checkbox 
+                    input(type="checkbox",v-model="privacyPolicyAccepted")
+                    | I agree to the 
+                    |
+                    a(href="#") Privacy Policy
         div.control
             button.button.is-primary.is-fullwidth(:disabled="!termsAccepted || !privacyPolicyAccepted",@click="acceptTerms()")
                 | Get Started
@@ -44,20 +45,3 @@ div
         },
     })
 </script>
-
-<style lang="scss" scoped>
-
-    .wrapper {
-        height: 100%;
-        width: 100%;
-
-        padding: 40px 60px;
-
-        .logo {
-            img {
-                height: 36px;
-            }
-        }
-    }
-
-</style>

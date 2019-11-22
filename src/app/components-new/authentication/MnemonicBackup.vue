@@ -14,13 +14,16 @@ div
             be able to recover your account, but remember not to
             store them digitally.
 
-        div.mnemonic.columns.is-multiline.is-gapless
+        div.form.mnemonic.columns.is-multiline.is-gapless
             div.column.is-4(v-for="(word, index) in mnemonicWords")
                 div.mnemonic-word {{index + 1}} - {{word}}
         
         div.control
             button.button.is-primary.is-fullwidth(@click="next()")
                 | Next
+        
+        div.control
+            a(@click="back()").back Back
 </template>
 
 <script lang="ts">
@@ -44,35 +47,25 @@ div
         methods: {
             next() {
                 radixApplication.mnemonicBackedUp()
-            }
+            },
+            back() {
+                radixApplication.goBack()
+            },
         },
     })
 </script>
 
 <style lang="scss" scoped>
 
-    .wrapper {
-        height: 100%;
-        width: 100%;
-
-        padding: 40px 60px;
-
-        .logo {
-            img {
-                height: 36px;
-            }
-        }
-
-        .mnemonic-word {
-            background-color: $purple;
-            color: $grey-light;
-            font-size: 12px;
-            text-align: center;
-            border-radius: 3px;
-            margin: 4px;
-            height: 34px;
-            line-height: 34px;
-        }
-    }
+.mnemonic-word {
+    background-color: $purple;
+    color: $grey-light;
+    font-size: 12px;
+    text-align: center;
+    border-radius: 3px;
+    margin: 4px;
+    height: 34px;
+    line-height: 34px;
+}
 
 </style>

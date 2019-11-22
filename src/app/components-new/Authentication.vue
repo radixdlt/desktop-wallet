@@ -20,6 +20,7 @@ div
     import MnemonicBackup from './authentication/MnemonicBackup.vue'
     import MnemonicVerify from './authentication/MnemonicVerify.vue'
     import PasswordSet from './authentication/PasswordSet.vue'
+    import MnemonicRestore from './authentication/MnemonicRestore.vue'
     
     export default Vue.extend({
         components: {
@@ -29,6 +30,7 @@ div
             MnemonicBackup,
             MnemonicVerify,
             PasswordSet,
+            MnemonicRestore,
         },
         data() {
             return {
@@ -39,6 +41,7 @@ div
                     [RadixApplicationStates.MNEMONIC_BACKUP]: MnemonicBackup,
                     [RadixApplicationStates.MNEMONIC_VERIFY]: MnemonicVerify,
                     [RadixApplicationStates.PASSWORD_SET]: PasswordSet,
+                    [RadixApplicationStates.MNEMONIC_RESTORE]: MnemonicRestore,
                 }
             }
         },     

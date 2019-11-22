@@ -19,7 +19,7 @@ div
                 div.buttons
                     span.chat-button-container(v-on:click="$router.push({ path: '/messaging/chatlist/' + transaction.address })")
                         icon.button.chat-button(name="regular/comment-alt")
-                    span.transaction-button-container(v-on:click="$router.push({ name: 'Wallet', params: { sidebar: 'send', address: transaction.address }})") 
+                    span.transaction-button-container(v-on:click="$router.push({ name: 'main.dashboard', params: { sidebar: 'send', address: transaction.address }})") 
                         icon.button.transaction-icon(name="exchange-alt")
 </template>
 

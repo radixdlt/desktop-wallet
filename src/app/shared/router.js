@@ -7,8 +7,6 @@ import { radixApplication } from '@app/modules/RadixApplication'
 import Contacts from '@app/components/messaging/contacts/Contacts'
 import Wallet from '@app/components/wallet/Wallet'
 import Main from '@app/components-new/Main'
-
-import InitialSetup from '@app/components/InitialSetup'
 import Login from '@app/components-new/authentication/Login'
 
 import Authentication from '@app/components-new/Authentication.vue'
@@ -20,18 +18,6 @@ export const router = new Router({
     {
       path: '/auth',
       component: Authentication,
-      children: [
-        {
-            path: 'login',
-            name: 'auth.login',
-            component: Login,
-        },
-        {
-            path: 'initial-setup',
-            name: 'auth.initial-setup',
-            component: InitialSetup
-        },
-      ],
     },
 
     {
@@ -47,7 +33,7 @@ export const router = new Router({
                 redirect: { name: 'main.dashboard' }
             },
             {
-                path: 'dashboard',
+                path: 'dashboard/:sidebar?/:address?',
                 name: 'main.dashboard',
                 component: Wallet,
             },

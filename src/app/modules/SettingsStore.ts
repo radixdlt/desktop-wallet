@@ -11,5 +11,5 @@ export const settingsStore = new Store<TypedStore>({
     }
 })
 
-// // Debug
+// Debug
 // settingsStore.set('termsAccepted', false)

@@ -34,8 +34,9 @@ export  enum RadixApplicationStates {
     MNEMONIC_BACKUP = 'MNEMONIC_BACKUP',
     MNEMONIC_VERIFY = 'MNEMONIC_VERIFY',
     PASSWORD_SET = 'PASSWORD_SET',
+    
     // restore flow
-
+    MNEMONIC_RESTORE = 'MNEMONIC_RESTORE',
 
     READY = 'READY'
 }
@@ -49,6 +50,7 @@ export declare interface RadixApplication {
 export class RadixApplication extends events.EventEmitter {
 
     public stateSubject: BehaviorSubject<RadixApplicationStates> = new BehaviorSubject(RadixApplicationStates.STARTING)
+    private stateHistory: RadixApplicationStates[] = []
 
     public identityManager: RadixIdentityManager
     public activeIdentity: RadixIdentity
@@ -61,6 +63,8 @@ export class RadixApplication extends events.EventEmitter {
     public transactionUpdateSubject: Subject<RadixTransactionUpdate> = new Subject()
     public messageUpdateSubject: Subject<RadixMessageUpdate> = new Subject()
 
+    readonly wordlist = bip39.wordlists.english
+
     private atomStore: RadixAtomStore
 
     private mnemonic: string
@@ -70,7 +74,6 @@ export class RadixApplication extends events.EventEmitter {
     }
 
     initialize(dataDir: string) {
-
         RadixLogger.setLevel('debug')
 
         if (!(Config.universe in RadixUniverse)) {
@@ -100,6 +103,11 @@ export class RadixApplication extends events.EventEmitter {
         this.checkTerms()
     }
 
+    
+    /**
+     * Check whether terms and conditions have been accepted
+     * Go to TERMS_AND_CONDITIONS or start authentication flow
+     */
     public checkTerms() {
         if (!settingsStore.get('termsAccepted')) {
             this.setState(RadixApplicationStates.TERMS_AND_CONDITIONS)
@@ -108,11 +116,19 @@ export class RadixApplication extends events.EventEmitter {
         }
     }
 
+    /**
+     * Store in settings that terms and conditions have been accepted
+     * Start authentication flow
+     */
     public acceptTerms() {
         settingsStore.set('termsAccepted', true)
         this.loadKeystore()
     }
-
+    
+    /**
+     * Check if the keystore file exists on disk
+     * Go to either DECRYPT_KEYSTORE_PASSWORD_REQUIRED or CREATE_OR_RESTORE
+     */
     public async loadKeystore() {
         // Check if keystore file exists
         const exists = await fs.pathExists(this.keystoreFileName)
@@ -124,22 +140,35 @@ export class RadixApplication extends events.EventEmitter {
         }
     }
 
+    /**
+     * Generate a new mnemonic, go to MNEMONIC_BACKUP
+     */
     public createWallet() {
-        // Generate Mnemonic
         this.mnemonic = bip39.generateMnemonic()
 
         this.setState(RadixApplicationStates.MNEMONIC_BACKUP)
     }
-
+    
+    /**
+     * Get the generated mnemonic
+     */
     public getMnemonic() {
         return this.mnemonic
     }
-
+    
+    /**
+     * Go to MNEMONIC_VERIFY
+     */
     public mnemonicBackedUp() {
         this.setState(RadixApplicationStates.MNEMONIC_VERIFY)
     }
 
-    public mnemonicVerified(mnemonic: string) {
+    /**
+     * Compare mnemonic to generated one, go to PASSWORD_SET
+     * 
+     * @param  {string} mnemonic
+     */
+    public verifyCheckMnemonic(mnemonic: string) {
         if (mnemonic !== this.getMnemonic()) {
             throw new Error('Mnemonic is not correct')
         }
@@ -147,7 +176,19 @@ export class RadixApplication extends events.EventEmitter {
         this.setState(RadixApplicationStates.PASSWORD_SET)
     }
 
+    
+    /**
+     * Write private key from mnemonic to disk, encrypted by password
+     * Go to READY
+     * 
+     * @param  {string} password
+     */
     public async setPassword(password: string) {
+        // Check any requirements
+        if (password.length < 6) {
+            throw new Error('Password should be at least 6 symbols long')
+        }
+
         const identity = new RadixSimpleIdentity(
             RadixAddress.fromPrivate(
                 bip39.mnemonicToSeedSync(this.getMnemonic())
@@ -161,32 +202,54 @@ export class RadixApplication extends events.EventEmitter {
         this.setState(RadixApplicationStates.READY)
     }
 
+    
+    /**
+     * Go to MNEMONIC_RESOTRE
+     */
     public restoreWallet() {
-        throw new Error('Not implemented')
+        this.setState(RadixApplicationStates.MNEMONIC_RESTORE)
+    }
+
+    /**
+     * Check if the mnemonic is valid, store it and go to PASSWORD_SET
+     * 
+     * @param  {string} mnemonic
+     */
+    public resotreCheckMnemonic(mnemonic: string) {
+        console.log(mnemonic)
+        if (!bip39.validateMnemonic(mnemonic, this.wordlist)) {
+            throw new Error('Mnemonic is not valid')
+        }
+
+        this.mnemonic = mnemonic
+
+        this.setState(RadixApplicationStates.PASSWORD_SET)
     }
 
     private setState(state: RadixApplicationStates) {
+        this.stateHistory.push(this.getState())
         this.stateSubject.next(state)
     }
-
+    
+    /**
+     * Go to the previous state
+     */
+    public goBack() {
+        this.stateSubject.next(this.stateHistory.pop())
+    }
+    
+    /**
+     * Get the current state of the application
+     */
     public getState() {
         return this.stateSubject.getValue()
     }
-
-    public async setFirstTimePassword(password: string) {
-        // Check any requirements
-        if (password.length < 6) {
-            throw new Error('Password should be at least 6 symbols long')
-        }
-
-        const identity = this.identityManager.generateSimpleIdentity()
-        this.setActiveIdentity(identity)
-        const encryptedKey = await RadixKeyStore.encryptKey(identity.address, password)
-        await fs.writeJSON(this.keystoreFileName, encryptedKey)
-
-        this.setState(RadixApplicationStates.READY)
-    }
-
+    /**
+     * Decrypt the keystore file on disk and load the private key
+     * Go to READY
+     * 
+     * @param  {string} password
+     */
     public async decryptKeystore(password: string) {
         const encryptedKey = await fs.readJSON(this.keystoreFileName)
         const keyPair = await RadixKeyStore.decryptKey(encryptedKey, password)

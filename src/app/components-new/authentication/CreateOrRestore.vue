@@ -43,54 +43,41 @@ div
 </script>
 
 <style lang="scss" scoped>
+    
+.large-button {
+    margin-top: 16px;
+    cursor: pointer;
 
-    .wrapper {
-        height: 100%;
-        width: 100%;
+    height: 100px;
+    border-radius: 3px;
+    font-size: 14px;
+    
+    background-color: $grey-light;
 
-        padding: 40px 60px;
+    padding: 32px 20px;
 
-        .logo {
-            img {
-                height: 36px;
-            }
-        }
-
-        .large-button {
-            margin-top: 16px;
-            cursor: pointer;
-
-            height: 100px;
-            border-radius: 3px;
-            font-size: 14px;
-            
-            background-color: $grey-light;
-
-            padding: 32px 20px;
-
-            &:hover {
-                background-color: $grey-light-darken;
-                box-shadow: 0 2px 4px 0 rgba(163, 173, 183, 0.04), 0 12px 30px 0 rgba(82, 95, 127, 0.12);
-            }
-
-
-            .icon {
-                float: left;
-                width: 36px;
-                height: 36px;
-                object-fit: contain;
-                border-radius: 9px;
-                background-color: rgba( #dbdde0, .3 );
-                color: $green;
-
-            }
-
-            .text {
-                display: inline-block;
-                margin-left: 10px;
-                line-height: 36px;
-            }
-        }
+    &:hover {
+        background-color: $grey-light-darken;
+        box-shadow: 0 2px 4px 0 rgba(163, 173, 183, 0.04), 0 12px 30px 0 rgba(82, 95, 127, 0.12);
     }
+
+
+    .icon {
+        float: left;
+        width: 36px;
+        height: 36px;
+        object-fit: contain;
+        border-radius: 9px;
+        background-color: rgba( #dbdde0, .3 );
+        color: $green;
+
+    }
+
+    .text {
+        display: inline-block;
+        margin-left: 10px;
+        line-height: 36px;
+    }
+}
 
 </style>

@@ -69,11 +69,11 @@ export default Vue.extend({
     methods: {
         openSidebarSend() {
             // @ts-ignore
-            this.$router.push({name: 'Wallet', params: {sidebar: 'send'}})
+            this.$router.push({name: 'main.dashboard', params: {sidebar: 'send'}})
         },
         openSidebarReceive() {
             // @ts-ignore
-            this.$router.push({name: 'Wallet', params: {sidebar: 'receive'}})
+            this.$router.push({name: 'main.dashboard', params: {sidebar: 'receive'}})
         },
         setActiveToken(token_id) {
             this.activeToken = token_id
@@ -92,9 +92,6 @@ export default Vue.extend({
             RadixTransactionBuilder
                 .createRadixMessageAtom(this.identity.account, recipient, 'Send me some money, pretty please!')
                 .signAndSubmit(this.identity)
-
-            // @ts-ignore
-            this.$router.push({ path: `/messaging/chatlist/${Config.faucetAddress}`})
         }
     },
     watch: {

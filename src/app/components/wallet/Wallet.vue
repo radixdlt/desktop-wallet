@@ -35,7 +35,7 @@ div
         methods: {
             closeSidebar() {
                 // @ts-ignore
-                this.$router.push({name: 'Wallet'})
+                this.$router.push({name: 'main.dashboard'})
             },
         },
         computed: {

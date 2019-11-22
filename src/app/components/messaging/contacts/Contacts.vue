@@ -53,7 +53,7 @@ div
             },
             sendXRD(address) {
                 // @ts-ignore
-                this.$router.push({ name: 'Wallet', params: { sidebar: 'send', address: address }})
+                this.$router.push({ name: 'main.dashboard', params: { sidebar: 'send', address: address }})
             },
             async saveContacts() {
                 const serializedContacts = []
