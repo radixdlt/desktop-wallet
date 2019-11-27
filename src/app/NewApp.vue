@@ -245,6 +245,7 @@
 
     .wrapper {
         height: 100vh;
+        min-height: 500px;
         width: 100vw;
 
         display: grid;

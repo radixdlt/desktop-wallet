@@ -71,9 +71,9 @@ div
         .visual {
             grid-column: 2;
             background-image: url("../assets/png/auth-main.png");
-            background-position: top right;
+            background-position: right;
             background-repeat: no-repeat;
-            background-size: auto 100%;
+            background-size: cover;
 
             .send-money-tokens {
                 position: absolute;
