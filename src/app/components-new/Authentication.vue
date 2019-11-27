@@ -6,6 +6,9 @@ div
             keep-alive
                 component(v-bind:is="stateComponentMap[authenticationState]")
         div.visual
+            div.fill.relative
+                p.send-money-tokens.
+                    Send #[span.highlight Money] #[br] & #[span.highlight Tokens] instantly
 </template>
 
 <script lang="ts">
@@ -58,7 +61,7 @@ div
         width: 100%;
 
         display: grid;
-        grid-template-columns: 33% auto;
+        grid-template-columns: 37% auto;
         
         .content {
             grid-column: 1;
@@ -67,7 +70,25 @@ div
 
         .visual {
             grid-column: 2;
-            background-color: aqua;
+            background-image: url("../assets/png/auth-main.png");
+            background-position: top right;
+            background-repeat: no-repeat;
+            background-size: auto 100%;
+
+            .send-money-tokens {
+                position: absolute;
+                bottom: 60px;
+                left: 60px;
+                width: 300px;
+                font-size: 56px;
+                color: $white;
+                text-transform: uppercase;
+                line-height: 1.07;
+
+                .highlight {
+                    color: $primary;
+                }
+            }
         }
     }
 

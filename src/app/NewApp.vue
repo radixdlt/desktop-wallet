@@ -249,7 +249,7 @@
 
         display: grid;
         grid-template-columns: auto;
-        grid-template-rows: max-content auto;
+        grid-template-rows: max-content minmax(0, 1fr);
 
         .header {
             grid-row: 1;
