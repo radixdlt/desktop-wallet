@@ -61,6 +61,7 @@ div
                 const value = this.mnemonicFields
                     .map(field => field.value.trim().toLocaleLowerCase())
                     .join(' ')
+                    .trim()
 
                 // Allows use of v-model
                 this.$emit('input', value)

@@ -216,11 +216,21 @@ export class RadixApplication extends events.EventEmitter {
      * @param  {string} mnemonic
      */
     public resotreCheckMnemonic(mnemonic: string) {
-        console.log(mnemonic)
         if (!bip39.validateMnemonic(mnemonic, this.wordlist)) {
             throw new Error('Mnemonic is not valid')
         }
 
+        this.mnemonic = mnemonic
+
+        this.setState(RadixApplicationStates.PASSWORD_SET)
+    }
+    /**
+     * Proceed with an unvalidated mnemonic
+     * This option is for advanced users
+     * 
+     * @param  {string} mnemonic
+     */
+    public restoreProceedUnsafe(mnemonic: string) {
         this.mnemonic = mnemonic
 
         this.setState(RadixApplicationStates.PASSWORD_SET)
