@@ -215,7 +215,7 @@ export class RadixApplication extends events.EventEmitter {
      * 
      * @param  {string} mnemonic
      */
-    public resotreCheckMnemonic(mnemonic: string) {
+    public restoreCheckMnemonic(mnemonic: string) {
         if (!bip39.validateMnemonic(mnemonic, this.wordlist)) {
             throw new Error('Mnemonic is not valid')
         }

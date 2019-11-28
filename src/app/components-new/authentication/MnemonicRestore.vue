@@ -58,7 +58,7 @@ div.fill
         methods: {
             next() {
                 try {
-                    radixApplication.resotreCheckMnemonic(this.mnemonic)
+                    radixApplication.restoreCheckMnemonic(this.mnemonic)
                 } catch {
                     this.warningModalIsActive = true
                 }
