@@ -13,38 +13,20 @@
 
 <script lang="ts">
     import Vue from 'vue'
-    import { remote } from 'electron'
 
-    import {
-        radixTokenManager, 
-        RadixMessageUpdate, 
-        RadixTransactionUpdate, 
-        RadixAddress,
-        RRI
-    } from 'radixdlt'
-
-    import { radixApplication, RadixApplicationStates } from '@/app/modules/RadixApplication'
-    import Config from '@/app/shared/Config'
-
-    import fs from 'fs-extra'
-
-    import {filter} from 'rxjs/operators'
+    import { radixApplication } from '@/app/modules/RadixApplication'
 
     export default Vue.extend({
         data() {
             return {
                 sections: [
-                    { path: '/main/dashboard', name: 'Dashboard'},
-                    { path: '/main/contacts', name: 'Contacts'}
+                    { path: '/main/dashboard', name: 'Dashboard' },
+                    { path: '/main/contacts', name: 'Contacts' }
                 ],
             }
         },
-        created() {
-            
-        },   
-        methods: {
-            
-        },
+        created() {},
+        methods: {},
         computed: {
             identity: function () {
                 return radixApplication.activeIdentity
@@ -57,18 +39,12 @@
     })
 </script>
 
-<style lang="scss">
-
-    
-
-</style>
-
 <style lang="scss" scoped>
-
     .wrapper {
         height: 100vh;
         width: 100vw;
     }
+
     .main {
         display: grid;
         grid-template-columns: 220px auto;
@@ -82,6 +58,7 @@
         grid-row: 2 / 2;
         background-color: #e1eaef;
         overflow: hidden;
+
         .section {
             width: 100%;
             height: 100%;
@@ -92,11 +69,12 @@
         grid-column: 1 / 1;
         grid-row: 2 / 2;
         background-color: #00111a;
-        
+
         .left-menu-list {
             margin: 0;
             padding: 0;
         }
+
         .link {
             font-family: GothamMedium, sans-serif;
             display: block;
@@ -106,6 +84,7 @@
             color: #cde9ff;
             font-size: 14px;
             letter-spacing: 1px;
+
             &.router-link-active {
                 padding-left: 36px;
                 opacity: 1;
@@ -118,6 +97,7 @@
                 opacity: 1;
             }
         }
+
         .logo {
             margin: 10px 0 52px 40px;
         }
@@ -140,11 +120,11 @@
                     opacity: 1;
                 }
             }
-            
+
         }
     }
+
     .test {
         color: rebeccapurple;
     }
-
 </style>

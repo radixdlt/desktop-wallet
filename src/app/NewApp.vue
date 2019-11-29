@@ -11,13 +11,7 @@
     import Vue from 'vue'
     import { remote } from 'electron'
 
-    import {
-        radixTokenManager, 
-        RadixMessageUpdate, 
-        RadixTransactionUpdate, 
-        RadixAddress,
-        RRI
-    } from 'radixdlt'
+    import { RadixAddress, RadixMessageUpdate, RadixTransactionUpdate, RRI } from 'radixdlt'
 
     import { radixApplication, RadixApplicationStates } from '@app/modules/RadixApplication'
     import { radixServer } from '@app/server/RadixServer'
@@ -26,7 +20,7 @@
 
     import fs from 'fs-extra'
 
-    import {filter} from 'rxjs/operators'
+    import { filter } from 'rxjs/operators'
 
     export default Vue.extend({
         subscriptions: {
@@ -46,9 +40,9 @@
 
             // @ts-ignore
             this.$store.state.contactsFileName = `${radixApplication.dataDir}/contacts.json`
-            
+
             this.$observables.walletManagerState
-                .pipe(filter(state => state == RadixApplicationStates.READY))
+                .pipe(filter((state: RadixApplicationStates) => state == RadixApplicationStates.READY))
                 .subscribe(state => {
                     // @ts-ignore
                     this.$store.state.contacts[radixApplication.activeIdentity.account.getAddress()] = []
@@ -63,11 +57,11 @@
                     // @ts-ignore
                     this.$router.push('main')
                 })
-            
+
             // Notifications
             radixApplication.on('atom-received:message', (messageUpdate: RadixMessageUpdate) => {
                 const message = messageUpdate.message
-                const address =  message.from
+                const address = message.from
 
                 // Add sender to contacts
                 this.addContact(address)
@@ -76,7 +70,7 @@
                 const timeDifference = Date.now() - message.timestamp
                 if (timeDifference > 10000) return
 
-                if(message.is_mine) return // Only incoming messages
+                if (message.is_mine) return // Only incoming messages
 
                 let displayName = address.toString()
                 if (address.toString() in this.contacts) {
@@ -95,11 +89,11 @@
 
             radixApplication.on('atom-received:transaction', (transactionUpdate: RadixTransactionUpdate) => {
                 const transaction = transactionUpdate.transaction
-                const address =  Object.keys(transaction.participants)[0]
-                
+                const address = Object.keys(transaction.participants)[0]
+
                 // Add sender to contacts
                 this.addContact(address)
-                
+
                 // Don't notify about old messages
                 const timeDifference = Date.now() - transaction.timestamp
                 if (timeDifference > 10000) return
@@ -114,18 +108,18 @@
                     displayName = this.contacts[address].alias
                 }
 
-                if(balance.gt(0)) { // Only incoming transactions
+                if (balance.gt(0)) { // Only incoming transactions
                     let transactionNotification = new Notification(
-                        `Received ${balance} ${tokenReference.name}`, 
+                        `Received ${balance} ${tokenReference.name}`,
                         { body: `From ${displayName}` }
                     )
                     transactionNotification.onclick = () => {
                         // @ts-ignore
-                        this.$router.push({ name: 'main.dashboard'})
+                        this.$router.push({ name: 'main.dashboard' })
                     }
                 }
             })
-        },   
+        },
         methods: {
             addWallet: () => {
                 // radixApplication.walletManager.generateWallet()
@@ -139,7 +133,7 @@
                         return
                     }
                     fs.copyFile(radixApplication.keystoreFileName, filePath, (error) => {
-                        if(error) throw error
+                        if (error) throw error
                     })
                 })
             },
@@ -214,7 +208,7 @@
                 remote.getCurrentWindow().focus()
             },
             dismissAccessRequest(accessRequest, approve: boolean) {
-                if(this.accessRequestQueue.length > 0) {
+                if (this.accessRequestQueue.length > 0) {
                     this.showAccessRequest(this.accessRequestQueue.shift())
                 } else {
                     this.currentAccessRequest = null
@@ -242,7 +236,6 @@
 <style lang="scss" scoped>
 
     // @import "./assets/sass/main.scss";
-
     .wrapper {
         height: 100vh;
         min-height: 500px;
@@ -279,7 +272,7 @@
         // opacity: 0.7;
         background-color: rgba(229, 237, 241, 0.7); // #E5EDF1
 
-        display: none; 
+        display: none;
 
         &.visible {
             display: grid;
@@ -301,7 +294,7 @@
             }
 
             .name {
-                font-size: 20px;	
+                font-size: 20px;
             }
 
             .description {
@@ -310,7 +303,7 @@
 
             .permissions {
                 .permission {
-                    font-size: 12px;	
+                    font-size: 12px;
                 }
             }
 
@@ -322,7 +315,4 @@
             }
         }
     }
-
-    
-
 </style>

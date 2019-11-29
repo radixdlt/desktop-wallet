@@ -66,6 +66,7 @@ const createWindow = async () => {
     checkForUpdates()
 }
 
+
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {

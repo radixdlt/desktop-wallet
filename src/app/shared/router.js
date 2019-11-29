@@ -1,54 +1,52 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-
 import { radixApplication } from '@app/modules/RadixApplication'
 
 import Contacts from '@app/components/messaging/contacts/Contacts'
 import Wallet from '@app/components/wallet/Wallet'
 import Main from '@app/components-new/Main'
-import Login from '@app/components-new/authentication/Login'
 
 import Authentication from '@app/components-new/Authentication.vue'
 
 Vue.use(Router)
 
 export const router = new Router({
-  routes: [
-    {
-      path: '/auth',
-      component: Authentication,
-    },
-
-    {
-        path: '/main',
-        component: Main,
-        meta: {
-            requiresAuth: true
+    routes: [
+        {
+            path: '/auth',
+            component: Authentication,
         },
-        children: [
-            {
-                path: '',
-                name: 'main',
-                redirect: { name: 'main.dashboard' }
+
+        {
+            path: '/main',
+            component: Main,
+            meta: {
+                requiresAuth: true
             },
-            {
-                path: 'dashboard/:sidebar?/:address?',
-                name: 'main.dashboard',
-                component: Wallet,
-            },
-            {
-                path: 'contacts',
-                name: 'main.contacts',
-                component: Contacts
-            },
-        ],
-    },
-    {
-      path: '*',
-      redirect: 'main'
-    }
-  ]
+            children: [
+                {
+                    path: '',
+                    name: 'main',
+                    redirect: {name: 'main.dashboard'}
+                },
+                {
+                    path: 'dashboard/:sidebar?/:address?',
+                    name: 'main.dashboard',
+                    component: Wallet,
+                },
+                {
+                    path: 'contacts',
+                    name: 'main.contacts',
+                    component: Contacts
+                },
+            ],
+        },
+        {
+            path: '*',
+            redirect: 'main'
+        }
+    ]
 })
 // export const router = new Router({
 //   routes: [
@@ -102,7 +100,7 @@ export const router = new Router({
 // })
 
 router.beforeEach((to, from, next) => {
-    if(to.matched.some(record => record.meta.requiresAuth)) {
+    if (to.matched.some(record => record.meta.requiresAuth)) {
         if (!radixApplication.activeIdentity) {
             next('auth')
         } else {

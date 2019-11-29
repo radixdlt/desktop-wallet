@@ -1,31 +1,31 @@
 <template lang="pug">
-// Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
-div
-    div.mnemonic.columns.is-multiline.is-gapless
-        div.column.is-4.field(v-for="(field, index) in mnemonicFields")
-            div.mnemonic-word
-                label.label.is-small {{`Word #${index + 1}`}}
-                div.control
-                    input.input(
-                        type='text', 
-                        :placeholder="'#' + (index + 1)", 
-                        v-model="field.value",
-                        @blur="validateWord(index)",
-                        @focus="clearError(index)",
-                        @input="updateValue()"
-                        v-bind:class="{'is-danger': field.state === 'invalid', 'is-success': field.state === 'correct'}",
-                    )
+    // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
+    div
+        div.mnemonic.columns.is-multiline.is-gapless
+            div.column.is-4.field(v-for="(field, index) in mnemonicFields")
+                div.mnemonic-word
+                    label.label.is-small {{`Word #${index + 1}`}}
+                    div.control
+                        input.input(
+                            type='text',
+                            :placeholder="'#' + (index + 1)",
+                            v-model="field.value",
+                            @blur="validateWord(index)",
+                            @focus="clearError(index)",
+                            @input="updateValue()"
+                            v-bind:class="{'is-danger': field.state === 'invalid', 'is-success': field.state === 'correct'}",
+                        )
 </template>
 
 <script lang="ts">
     import Vue from 'vue'
-    
+
     export default Vue.extend({
         name: 'mnemonic-input',
         props: {
-            size: { 
+            size: {
                 type: Number,
-                default: 12, 
+                default: 12,
             },
             wordlist: {
                 type: Array,
@@ -72,7 +72,7 @@ div
 
             const fieldValues = this.value.split(' ')
 
-            for (let i=0; i<this.size; i++) {
+            for (let i = 0; i < this.size; i++) {
                 this.mnemonicFields.push({
                     // TODO: make this update whenever value is changed on the outside
                     value: i < fieldValues.length ? fieldValues[i] : '',
@@ -92,5 +92,5 @@ div
             height: 34px;
             font-size: 12px;
         }
-    } 
+    }
 </style>

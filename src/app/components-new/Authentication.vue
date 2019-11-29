@@ -1,21 +1,20 @@
 <template lang="pug">
-// Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
-div
-    div.wrapper
-        div.content
-            keep-alive
-                component(v-bind:is="stateComponentMap[authenticationState]")
-        div.visual
-            div.fill.relative
-                p.send-money-tokens.
-                    Send #[span.highlight Money] #[br] & #[span.highlight Tokens] instantly
+    // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
+    div
+        div.wrapper
+            div.content
+                keep-alive
+                    component(v-bind:is="stateComponentMap[authenticationState]")
+            div.visual
+                div.fill.relative
+                    p.send-money-tokens.
+                        Send #[span.highlight Money] #[br] & #[span.highlight Tokens] instantly
 </template>
 
 <script lang="ts">
     import Vue from 'vue'
-    import { remote } from 'electron'
-    
-    import { radixApplication, RadixApplicationStates } from  '@/app/modules/RadixApplication'
+
+    import { radixApplication, RadixApplicationStates } from '@/app/modules/RadixApplication'
 
     import CreateOrRestore from './authentication/CreateOrRestore.vue'
     import Login from './authentication/Login.vue'
@@ -24,7 +23,7 @@ div
     import MnemonicVerify from './authentication/MnemonicVerify.vue'
     import PasswordSet from './authentication/PasswordSet.vue'
     import MnemonicRestore from './authentication/MnemonicRestore.vue'
-    
+
     export default Vue.extend({
         components: {
             CreateOrRestore,
@@ -47,7 +46,7 @@ div
                     [RadixApplicationStates.MNEMONIC_RESTORE]: MnemonicRestore,
                 }
             }
-        },     
+        },
         subscriptions: {
             authenticationState: radixApplication.stateSubject,
         },
@@ -55,14 +54,13 @@ div
 </script>
 
 <style lang="scss" scoped>
-
     .wrapper {
         height: 100%;
         width: 100%;
 
         display: grid;
         grid-template-columns: 37% auto;
-        
+
         .content {
             grid-column: 1;
             background-color: $white;
@@ -91,5 +89,4 @@ div
             }
         }
     }
-
 </style>

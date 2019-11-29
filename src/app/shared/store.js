@@ -4,20 +4,18 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-  state: {
-    contacts: {},
-    contactsFileName: ''
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  getters: {
-    contacts: state => {
-      return state.contacts
+    state: {
+        contacts: {},
+        contactsFileName: ''
     },
-    contactsFileName: state => {
-      return state.contactsFileName
+    mutations: {},
+    actions: {},
+    getters: {
+        contacts: state => {
+            return state.contacts
+        },
+        contactsFileName: state => {
+            return state.contactsFileName
+        }
     }
-  }
 })
