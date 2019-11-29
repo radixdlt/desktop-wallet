@@ -19,9 +19,20 @@ div.fill
         div.control
             a(@click="back()").back Back
 
-        div.error(v-if="error")
-            icon.inline-icon(name="exclamation-circle")
-            span.message {{error}}
+        div.modal(:class="{'is-active': warningModalIsActive}")
+            div.modal-background
+            div.modal-content.box
+                div.title Warning
+                div.subtitle.content
+                    p Checksum validation for the mnemonic has failed. 
+                    blockquote {{mnemonic}} 
+                    p You can still create an account from it. This option is for advanced users.
+
+                div.field.is-grouped
+                    div.control
+                        button.button.is-light(@click="proceedUnsafe()") Proceed
+                    div.control
+                        button.button.is-primary(@click="closeModal()") Go back
 </template>
 
 <script lang="ts">
@@ -39,47 +50,28 @@ div.fill
                 mnemonicSize: 12,
                 mnemonic: '',
 
-                error: '',
-                wordlist: radixApplication.wordlist
+                wordlist: radixApplication.wordlist,
+
+                warningModalIsActive: false,
             }
         },
         methods: {
             next() {
                 try {
-                    radixApplication.resotreCheckMnemonic(this.mnemonic)
+                    radixApplication.restoreCheckMnemonic(this.mnemonic)
                 } catch {
-                    this.error = 'Mnemonic is not valid'
+                    this.warningModalIsActive = true
                 }
-            },
-            clearError() {
-                this.error = ''
             },
             back() {
                 radixApplication.goBack()
             },
+            closeModal() {
+               this.warningModalIsActive = false
+            },
+            proceedUnsafe() {
+                radixApplication.restoreProceedUnsafe(this.mnemonic)
+            },
         },
     })
 </script>
-
-<style lang="scss" scoped>
-
-.error {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 60px;
-    width: 100%;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background-color: $red;
-    color: $white;
-
-    .inline-icon {
-        margin-right: 10px;
-        height: 24px;
-    }
-}
-</style>
