@@ -145,7 +145,6 @@ export class RadixApplication extends events.EventEmitter {
      */
     public createWallet() {
         this.mnemonic = bip39.generateMnemonic()
-
         this.setState(RadixApplicationStates.MNEMONIC_BACKUP)
     }
     
@@ -232,7 +231,6 @@ export class RadixApplication extends events.EventEmitter {
      */
     public restoreProceedUnsafe(mnemonic: string) {
         this.mnemonic = mnemonic
-
         this.setState(RadixApplicationStates.PASSWORD_SET)
     }
 
