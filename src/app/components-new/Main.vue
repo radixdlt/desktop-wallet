@@ -2,41 +2,47 @@
     div.wrapper
         div.main
             div.left-menu
+                div.logo
+                    img(src="@assets/png/logo-white.png")
                 div.left-menu-list
                     router-link.link(v-for="section in sections", :key="section.name" :to="section.path", tag="span") {{section.name}}
                 //- div.extras
                 //-     a(@click="exportWallet") Export wallet
+            div.header
+                top-menu
             div.content(v-if="identity")
                 keep-alive
-                    router-view.section
+                    router-view.fill
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
+import Vue from 'vue'
 
-    import { radixApplication } from '@/app/modules/RadixApplication'
+import { radixApplication } from '@/app/modules/RadixApplication'
+import TopMenu from './TopMenu.vue'
 
-    export default Vue.extend({
-        data() {
-            return {
-                sections: [
-                    { path: '/main/dashboard', name: 'Dashboard' },
-                    { path: '/main/contacts', name: 'Contacts' }
-                ],
-            }
-        },
-        created() {},
-        methods: {},
-        computed: {
-            identity: function () {
-                return radixApplication.activeIdentity
-            },
-            contacts: function () {
-                // @ts-ignore
-                return this.$store.state.contacts[this.identity.account.getAddress()]
-            }
+export default Vue.extend({
+    components: {
+        TopMenu,
+    },
+    data() {
+        return {
+            sections: [
+                { path: '/main/dashboard', name: 'Dashboard' },
+                { path: '/main/contacts', name: 'Contacts' }
+            ],
         }
-    })
+    },
+    computed: {
+        identity: function () {
+            return this.$store.state.activeAccount.identity
+        },
+        contacts: function () {
+            // @ts-ignore
+            return this.$store.state.contacts[this.identity.account.getAddress()]
+        }
+    }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -48,83 +54,89 @@
     .main {
         display: grid;
         grid-template-columns: 220px auto;
-        grid-template-rows: 50px auto;
+        grid-template-rows: max-content minmax(0, 1fr);
+        grid-gap: 30px 0;
         height: 100%;
         width: 100%;
-    }
 
-    .content {
-        grid-column: 2 / 2;
-        grid-row: 2 / 2;
-        background-color: #e1eaef;
-        overflow: hidden;
-
-        .section {
-            width: 100%;
-            height: 100%;
-        }
-    }
-
-    .left-menu {
-        grid-column: 1 / 1;
-        grid-row: 2 / 2;
-        background-color: #00111a;
-
-        .left-menu-list {
-            margin: 0;
-            padding: 0;
+        .header {
+            grid-column: 2;
+            grid-row: 1;
+            background-color: $grey-light;
         }
 
-        .link {
-            font-family: GothamMedium, sans-serif;
-            display: block;
-            padding-left: 40px;
-            margin-bottom: 26px;
-            opacity: 0.6;
-            color: #cde9ff;
-            font-size: 14px;
-            letter-spacing: 1px;
+        .content {
+            grid-column: 2;
+            grid-row: 2;
+            background-color: $grey-light;
+            overflow: hidden;
 
-            &.router-link-active {
-                padding-left: 36px;
-                opacity: 1;
-                color: #14E1DB !important;
-                border-left: 4px solid;
-                text-shadow: 0 10px 30px 0 rgba(109, 66, 252, 0.2);
-            }
-
-            &:hover {
-                opacity: 1;
+            .section {
+                width: 100%;
+                height: 100%;
             }
         }
 
-        .logo {
-            margin: 10px 0 52px 40px;
-        }
+        .left-menu {
+            grid-column: 1;
+            grid-row: 1 / 3;
+            background-image: linear-gradient($blue, $blue-dark);
 
-        .extras {
-            position: absolute;
-            bottom: 0;
-            padding-bottom: 26px;
+            .left-menu-list {
+                margin: 0;
+                padding: 0;
+            }
 
-            a {
-                font-family: GothamLight, sans-serif;
+            .link {
+                display: block;
                 padding-left: 40px;
-                margin-bottom: 26px;
-                opacity: 0.6;
-                color: #cde9ff;
+                line-height: 44px;
+                color: $grey-light;
                 font-size: 14px;
                 letter-spacing: 1px;
+                user-select: none; 
+                cursor: pointer;
+
+                &.router-link-active {
+                    color: $grey-lighter !important;
+                    background-color: $blue-dark;
+                    border-right: 4px solid;
+                    border-color: $green;
+                    text-shadow: 0 10px 30px 0 rgba(109, 66, 252, 0.2);
+                }
 
                 &:hover {
-                    opacity: 1;
+                    $color: $grey-lighter;
                 }
             }
 
+            .logo {
+                margin: 30px 80px 30px 40px;
+            }
+
+            .extras {
+                position: absolute;
+                bottom: 0;
+                padding-bottom: 26px;
+
+                a {
+                    padding-left: 40px;
+                    margin-bottom: 26px;
+                    opacity: 0.6;
+                    color: #cde9ff;
+                    font-size: 14px;
+                    letter-spacing: 1px;
+
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+
+            }
         }
     }
 
-    .test {
-        color: rebeccapurple;
-    }
+
+
+    
 </style>

@@ -28,7 +28,8 @@ div
 
     import { 
         RadixMessagingAccountSystem, 
-        RadixAddress 
+        RadixAddress, 
+        RadixIdentity
     } from 'radixdlt'
 
     import NavMenu from '../NavMenu.vue'
@@ -153,15 +154,15 @@ div
             }
         },
         computed: {
-            identity () {
-                return radixApplication.activeIdentity
+            identity(): RadixIdentity {
+                this.$store.state.activeAccount
             },
-            messagingSystem () {
-                return radixApplication.activeIdentity.account.messagingSystem
+            messagingSystem(): RadixMessagingAccountSystem {
+                return this.identity.account.messagingSystem
             },
-            contacts () {
+            contacts() {
                 // @ts-ignore
-                return this.$store.state.contacts[this.identity.account.getAddress()]
+                return this.$store.state.contacts
             }
         }
     })

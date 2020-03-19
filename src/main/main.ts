@@ -46,7 +46,7 @@ const createWindow = async () => {
         height: mainWindowState.height,
         minWidth: 1024, // Not ideal, not everything scales properly
         minHeight: 500,
-        backgroundColor: '#0d1c28',
+        backgroundColor: '#fff',
     })
     mainWindowState.manage(window)
 
@@ -203,7 +203,10 @@ if (process.platform == 'darwin') {
 }
 
 // Localhost server
-const wss = new WebSocket.Server({ port: 54345 })
+const wss = new WebSocket.Server({ 
+    host: 'localhost',
+    port: 54345,
+})
 
 let channel = 0
 let sockets = {}

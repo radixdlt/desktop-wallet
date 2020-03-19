@@ -74,9 +74,6 @@
                 }
 
                 await radixApplication.setPassword(this.password)
-
-                // @ts-ignore
-                this.$router.push('wallet')
             },
         }
     })

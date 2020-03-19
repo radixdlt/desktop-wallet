@@ -55,7 +55,7 @@
         padding: 32px 20px;
 
         &:hover {
-            background-color: $grey-light-darken;
+            background-color: $grey-light;
             box-shadow: 0 2px 4px 0 rgba(163, 173, 183, 0.04), 0 12px 30px 0 rgba(82, 95, 127, 0.12);
         }
 

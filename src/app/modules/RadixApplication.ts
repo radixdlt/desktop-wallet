@@ -1,5 +1,5 @@
 
-import { BehaviorSubject, Subject } from 'rxjs'
+import { BehaviorSubject, Subject, Subscription } from 'rxjs'
 
 import {
   radixUniverse,
@@ -22,6 +22,10 @@ import * as events from 'events'
 import { settingsStore } from './SettingsStore'
 
 import * as bip39 from 'bip39'
+import AccountManager from './account/AccountManager'
+import { WalletAccount } from './account/WalletAccount'
+import Vue from 'vue'
+import { store } from '../shared/store'
 
 export  enum RadixApplicationStates {
     STARTING = 'STARTING',
@@ -52,22 +56,21 @@ export class RadixApplication extends events.EventEmitter {
     public stateSubject: BehaviorSubject<RadixApplicationStates> = new BehaviorSubject(RadixApplicationStates.STARTING)
     private stateHistory: RadixApplicationStates[] = []
 
-    public identityManager: RadixIdentityManager
-    public activeIdentity: RadixIdentity
+    public accountManager: AccountManager
 
     public dataDir: string
     public keystoreFileName: string
     public authDBFileName: string
     public atomDBFileName: string
+    public keystorePassword: string
 
+    private transferSubscription: Subscription
     public transactionUpdateSubject: Subject<RadixTransactionUpdate> = new Subject()
     public messageUpdateSubject: Subject<RadixMessageUpdate> = new Subject()
 
     readonly wordlist = bip39.wordlists.english
 
     private atomStore: RadixAtomStore
-
-    private mnemonic: string
 
     constructor() {
         super()
@@ -90,14 +93,10 @@ export class RadixApplication extends events.EventEmitter {
         // Initialize universe
         radixUniverse.bootstrap(RadixUniverse[Config.universe], this.atomStore)
 
-        this.identityManager = new RadixIdentityManager()
+        this.accountManager = new AccountManager(this.keystoreFileName)
 
         this.transactionUpdateSubject.subscribe((transactionUpdate) => {
             this.emit('atom-received:transaction', transactionUpdate)
-        })
-
-        this.messageUpdateSubject.subscribe((messageUpdate) => {
-            this.emit('atom-received:message', messageUpdate)
         })
 
         this.checkTerms()
@@ -144,7 +143,7 @@ export class RadixApplication extends events.EventEmitter {
      * Generate a new mnemonic, go to MNEMONIC_BACKUP
      */
     public createWallet() {
-        this.mnemonic = bip39.generateMnemonic()
+        this.accountManager.generateMnemonic()
         this.setState(RadixApplicationStates.MNEMONIC_BACKUP)
     }
     
@@ -152,7 +151,7 @@ export class RadixApplication extends events.EventEmitter {
      * Get the generated mnemonic
      */
     public getMnemonic() {
-        return this.mnemonic
+        return this.accountManager.mnemonic
     }
     
     /**
@@ -188,16 +187,11 @@ export class RadixApplication extends events.EventEmitter {
             throw new Error('Password should be at least 6 symbols long')
         }
 
-        const identity = new RadixSimpleIdentity(
-            RadixAddress.fromPrivate(
-                bip39.mnemonicToSeedSync(this.getMnemonic())
-            ))
+        this.keystorePassword = password
+
+        await this.accountManager.store(this.keystorePassword)
         
-        // Save to disk
-        const encryptedKey = await RadixKeyStore.encryptKey(identity.address, password)
-        await fs.writeJSON(this.keystoreFileName, encryptedKey)
-        
-        this.setActiveIdentity(identity)
+        this.setActiveAccount(this.accountManager.accounts[0])
         this.setState(RadixApplicationStates.READY)
     }
 
@@ -219,7 +213,7 @@ export class RadixApplication extends events.EventEmitter {
             throw new Error('Mnemonic is not valid')
         }
 
-        this.mnemonic = mnemonic
+        this.accountManager.setMnemonic(mnemonic)
 
         this.setState(RadixApplicationStates.PASSWORD_SET)
     }
@@ -230,7 +224,7 @@ export class RadixApplication extends events.EventEmitter {
      * @param  {string} mnemonic
      */
     public restoreProceedUnsafe(mnemonic: string) {
-        this.mnemonic = mnemonic
+        this.accountManager.setMnemonic(mnemonic)
         this.setState(RadixApplicationStates.PASSWORD_SET)
     }
 
@@ -259,22 +253,26 @@ export class RadixApplication extends events.EventEmitter {
      * @param  {string} password
      */
     public async decryptKeystore(password: string) {
-        const encryptedKey = await fs.readJSON(this.keystoreFileName)
-        const keyPair = await RadixKeyStore.decryptKey(encryptedKey, password)
-        const identity = new RadixSimpleIdentity(keyPair)
+        await this.accountManager.load(password)
+        this.keystorePassword = password
 
-        this.setActiveIdentity(identity)
+        this.setActiveAccount(this.accountManager.accounts[0])
 
         this.setState(RadixApplicationStates.READY)
     }
 
-    public setActiveIdentity(identity: RadixIdentity) {
-        this.activeIdentity = identity
-        const account = identity.account
+    public setActiveAccount(account: WalletAccount) {
+        // Unsubscribe old updates
+        if (this.transferSubscription) {
+            this.transferSubscription.unsubscribe()
+        }
+
+        store.commit('setActiveAccount', account)
 
         // Subscribe to updates
-        account.transferSystem.transactionSubject.subscribe(this.transactionUpdateSubject)
-        account.messagingSystem.messageSubject.subscribe(this.messageUpdateSubject)
+        this.transferSubscription = account.identity.account.transferSystem.transactionSubject
+            .subscribe(this.transactionUpdateSubject)
+        
     }
 
     public deleteKeystore() {
@@ -287,6 +285,14 @@ export class RadixApplication extends events.EventEmitter {
 
     public onQuit = () => {
         radixUniverse.closeAllConnections()
+    }
+
+    public logout() {
+        this.keystorePassword = ''
+        this.accountManager.reset()
+        this.transferSubscription.unsubscribe()
+        store.commit('logout')
+        this.loadKeystore()
     }
 }
 

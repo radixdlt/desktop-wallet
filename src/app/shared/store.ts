@@ -1,0 +1,69 @@
+import Vue from 'vue'
+import Vuex from 'vuex'
+import { RadixAddress } from 'radixdlt'
+import fs from 'fs-extra'
+import Contact from './contacts/Contact'
+import { WalletAccount } from '@app/modules/account/WalletAccount'
+
+Vue.use(Vuex)
+
+export const store = new Vuex.Store({
+    state: {
+        contacts: <{[address: string]: Contact}>{},
+        contactsFileName: '',
+
+        activeAccount: <WalletAccount>null,
+    },
+    mutations: {
+        addOrUpdateContact({contacts}, contact: Contact) {
+            // Validate address
+            RadixAddress.fromAddress(contact.address)
+
+            if (!contact.alias) {
+                contact.alias = contact.address
+            }
+
+            Vue.set(contacts, contact.address, contact)
+        },
+        deleteContact({contacts}, address: string) {
+            Vue.delete(contacts, address)
+        },
+        setActiveAccount(state, account: WalletAccount) {
+            state.activeAccount = account 
+        },
+        logout(state) {
+            state.activeAccount = null
+        },
+    },
+    actions: {
+        async loadContacts({state, commit}) {
+            try {
+                const serializedContacts = await fs.readJson(state.contactsFileName)
+
+                // Merge with contacts list
+                for (let contact of serializedContacts) {
+                    commit('addOrUpdateContact', contact)
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        },
+        async saveContacts({state}) {
+            const serializedContacts = Object.values(state.contacts)
+            
+            // TODO: encrypt
+            await fs.writeJson(state.contactsFileName, serializedContacts)
+        },
+    },
+    getters: {
+        contacts: state => {
+            return state.contacts
+        },
+        contactsFileName: state => {
+            return state.contactsFileName
+        },
+        activeAccount: state => {
+            return state.activeAccount
+        },
+    }
+})

@@ -92,9 +92,6 @@
             this.$observables.walletManagerState
                 .pipe(filter(state => state == RadixApplicationStates.READY))
                 .subscribe(state => {
-                    // @ts-ignore
-                    this.$store.state.contacts[radixApplication.activeIdentity.account.getAddress()] = []
-
                     try {
                         this.addContact(Config.faucetAddress, 'Faucet')
                         this.loadContacts()
@@ -273,7 +270,7 @@
         },
         computed: {
             identity: function () {
-                return radixApplication.activeIdentity
+                this.$store.state.activeAccount
             },
             contacts: function () {
                 // @ts-ignore

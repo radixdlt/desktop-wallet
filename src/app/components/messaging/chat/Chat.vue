@@ -105,7 +105,7 @@ div
         },
         computed: {
             identity () {
-                return radixApplication.activeIdentity
+                this.$store.state.activeAccount
             },
             orderedMessages () {
                 // @ts-ignore

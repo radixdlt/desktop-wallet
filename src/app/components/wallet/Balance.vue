@@ -1,21 +1,23 @@
 <template lang="pug">
 // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
 div 
-    div.container
-        div.token-menu
-            div.token-menu-item(
-                v-for="(balance, token_id) in balance", 
-                v-bind:class="{active: token_id === activeToken}",
-                v-on:click="setActiveToken(token_id)") {{ tokens[token_id].name }}
-        div.token-info(v-if="activeToken")
-            div.balance
-                div.header Balance
-                div.funds.selectable {{ balance[activeToken].toString()  }}
-                //- img(v-bind:src="'data:image/png;base64,'+tokens[activeToken].icon.data.toString('base64')")
-            div.buttons
-                button(v-on:click="claimFaucet") Get Test Tokens
-                button(v-on:click="openSidebarSend") Send
-                button(v-on:click="openSidebarReceive") Receive
+    div.container.panel
+        div.header Assets
+        div.body
+            div.tabs.token-menu
+                div.tab(
+                    v-for="(balance, token_id) in balance", 
+                    v-bind:class="{'is-active': token_id === activeToken}",
+                    v-on:click="setActiveToken(token_id)") {{ tokens[token_id].name }}
+            div.token-info(v-if="activeToken")
+                div.balance
+                    div.header Balance
+                    div.funds.selectable {{ balance[activeToken].toString()  }}
+                    //- img(v-bind:src="'data:image/png;base64,'+tokens[activeToken].icon.data.toString('base64')")
+                div.buttons
+                    button.button.is-primary(v-on:click="claimFaucet") Get Test Tokens
+                    button.button.is-primary(v-on:click="send") Send
+                    button.button.is-primary(v-on:click="receive") Receive
 </template>
 
 <script lang="ts">
@@ -29,29 +31,21 @@ import {
     RadixIdentity,
 } from 'radixdlt'
 
-import Config from '../../shared/Config'
+import Config from '@app/shared/Config'
 
-import { radixApplication }  from '../../modules/RadixApplication'
+import { radixApplication }  from '@app/modules/RadixApplication'
 import Decimal from 'decimal.js'
 
 export default Vue.extend({
-    props: {
-        identity: {
-            type: Object as () => RadixIdentity
-        }
-    },
     data() {
         return {
             activeToken: '',
-            tokens: Object.keys(this.identity.account.transferSystem.tokenUnitsBalance)
-                .reduce((output, tokenUri) => {
-                    output[tokenUri] = RRI.fromString(tokenUri)
-                    return output
-                }, {}),
+            tokens: {},
         }
     },
     created() {
-        this.activeToken = radixTokenManager.nativeToken.toString()
+        this.update()
+        this.setActiveToken(radixTokenManager.nativeToken.toString())
         
         radixApplication.on('atom-received:transaction', this.update)
     },
@@ -61,31 +55,33 @@ export default Vue.extend({
     computed: {
         balance(): {[rri: string]: Decimal} {
             return this.identity.account.transferSystem.tokenUnitsBalance
-        }
+        },
+        identity(): RadixIdentity {
+            return this.$store.state.activeAccount.identity
+        },
     },
     mounted() {
-        this.$forceUpdate()
+        this.update()
     },        
     methods: {
-        openSidebarSend() {
-            // @ts-ignore
-            this.$router.push({name: 'main.dashboard', params: {sidebar: 'send'}})
+        send() {
+            this.$router.push({name: 'send'})
         },
-        openSidebarReceive() {
-            // @ts-ignore
-            this.$router.push({name: 'main.dashboard', params: {sidebar: 'receive'}})
+        receive() {
+            this.$router.push({name: 'receive'})
         },
         setActiveToken(token_id) {
             this.activeToken = token_id
         },
         update() {
-            this.$forceUpdate()
-
             this.tokens = Object.keys(this.identity.account.transferSystem.tokenUnitsBalance)
                 .reduce((output, tokenUri) => {
                     output[tokenUri] = RRI.fromString(tokenUri)
                     return output
                 }, {})
+
+            
+            this.$forceUpdate()
         },
         claimFaucet() {
             const recipient = RadixAccount.fromAddress(Config.faucetAddress, true)
@@ -96,7 +92,8 @@ export default Vue.extend({
     },
     watch: {
         identity() {
-            this.activeToken = radixTokenManager.nativeToken.toString()
+            this.update()
+            this.setActiveToken(radixTokenManager.nativeToken.toString())
         }
     }
 })
@@ -105,70 +102,55 @@ export default Vue.extend({
 <style lang="scss" scoped>
 
     .container {
-        display: grid;
-        grid-template-columns: auto;
-        grid-template-rows: auto;
-        height: 100%;
-        width: 100%;
+        .body {
+            display: grid;
+            grid-template-columns: auto;
+            grid-template-rows: auto;
+            height: 100%;
+            width: 100%;
 
-        .token-menu {
-            padding-bottom: 5px;
-            border-bottom: 1px solid  lightgray;
+            .token-menu {
+                margin: 6px $panel-padding 0;                
+            }
 
-            .token-menu-item {
-                display: inline;
-                padding-bottom: 8px;
-                margin-right: 30px;
-                font-size: 12px;
-                color: #00101c;
-                opacity: 0.5;
+            .token-info {
+                padding: 35px $panel-padding 70px;
 
+                .balance {
+                    float: left;
 
-                &.active {
-                    color: #693cf5;
-                    border-bottom: 1px solid #693cf5;
-                    opacity: 1;
+                    .header {
+                        opacity: 0.3;	
+                        color: $text;		
+                        font-size: 9px;	
+                        font-weight: 500;	
+                        letter-spacing: 1px;	
+                        line-height: 11px;
+
+                        text-transform: uppercase;
+                    }
+
+                    .funds {
+                        color: $text;	
+                        font-size: 32px;	
+                        font-weight: 500;	
+                        letter-spacing: 0.5px;	
+                        line-height: 38px;
+                    }
+                }
+
+                .buttons {
+                    float: right;
+
+                    button {
+                        display: inline;
+                        margin-left: 10px;
+                    }
                 }
             }
         }
 
-        .token-info {
-            padding: 35px 0 70px 0;
-
-            .balance {
-                float: left;
-
-                .header {
-                    opacity: 0.3;	
-                    color: #00101C;		
-                    font-size: 9px;	
-                    font-weight: 500;	
-                    letter-spacing: 1px;	
-                    line-height: 11px;
-
-                    text-transform: uppercase;
-                }
-
-                .funds {
-                    color: #00101C;	
-                    font-size: 32px;	
-                    font-weight: 500;	
-                    letter-spacing: 0.5px;	
-                    line-height: 38px;
-                }
-            }
-
-            .buttons {
-                float: right;
-
-                button {
-                    display: inline;
-                    width: auto;
-                    padding: 0 16px 0 16px;
-                    margin-left: 10px;
-                }
-            }
-        }
+        
     }
 
 </style>

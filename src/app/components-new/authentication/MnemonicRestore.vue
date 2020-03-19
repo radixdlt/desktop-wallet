@@ -10,7 +10,7 @@
                 Please enter the 12 word backup seed
 
             div.form
-                mnemonic-input.fill(:wordlist="wordlist", v-model="mnemonic", :size="mnemonicSize", @input="clearError()")
+                mnemonic-input.fill(:wordlist="wordlist", v-model="mnemonic", :size="mnemonicSize")
 
             div.control
                 button.button.is-primary.is-fullwidth(@click="next()")

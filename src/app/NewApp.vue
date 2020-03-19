@@ -1,10 +1,7 @@
 <template lang="pug">
     div.wrapper
-        div.header
-            div.navbar
         div.content
-            keep-alive
-                router-view.fill
+            router-view.fill
 </template>
 
 <script lang="ts">
@@ -44,9 +41,6 @@
             this.$observables.walletManagerState
                 .pipe(filter((state: RadixApplicationStates) => state == RadixApplicationStates.READY))
                 .subscribe(state => {
-                    // @ts-ignore
-                    this.$store.state.contacts[radixApplication.activeIdentity.account.getAddress()] = []
-
                     try {
                         this.addContact(Config.faucetAddress, 'Faucet')
                         this.loadContacts()
@@ -62,9 +56,6 @@
             radixApplication.on('atom-received:message', (messageUpdate: RadixMessageUpdate) => {
                 const message = messageUpdate.message
                 const address = message.from
-
-                // Add sender to contacts
-                this.addContact(address)
 
                 // Don't notify about old messages
                 const timeDifference = Date.now() - message.timestamp
@@ -90,9 +81,6 @@
             radixApplication.on('atom-received:transaction', (transactionUpdate: RadixTransactionUpdate) => {
                 const transaction = transactionUpdate.transaction
                 const address = Object.keys(transaction.participants)[0]
-
-                // Add sender to contacts
-                this.addContact(address)
 
                 // Don't notify about old messages
                 const timeDifference = Date.now() - transaction.timestamp
@@ -121,9 +109,6 @@
             })
         },
         methods: {
-            addWallet: () => {
-                // radixApplication.walletManager.generateWallet()
-            },
             exportWallet() {
                 remote.dialog.showSaveDialog({
                     title: 'Export wallet',
@@ -137,46 +122,11 @@
                     })
                 })
             },
-            addContact(address: string | RadixAddress, alias = null) {
-                if (typeof address == 'string') {
-                    address = RadixAddress.fromAddress(address)
-                } else if (!(address instanceof RadixAddress)) {
-                    console.log(address)
-                    throw new Error('Invalid address type')
-                }
-
-                if (address.getAddress() in this.contacts) {
-                    return
-                }
-                if (alias === null) {
-                    alias = address.getAddress()
-                }
-
-                const contact = {
-                    keyPair: address,
-                    address: address.getAddress(),
-                    alias: alias
-                }
-
-                this.contacts[address.getAddress()] = contact
+            addContact(address: string, alias = null) {
+                this.$store.commit('addOrUpdateContact', {address, alias})
             },
             async loadContacts() {
-                try {
-                    // @ts-ignore
-                    const serializedContacts = await fs.readJson(this.$store.state.contactsFileName)
-
-                    // Merge with contacts list
-                    for (let contact of serializedContacts) {
-                        if (contact.address in this.contacts) {
-                            this.contacts[contact.address].alias = contact.alias
-                            radixApplication.emit('contact-added')
-                        } else {
-                            this.addContact(contact.address, contact.alias)
-                        }
-                    }
-                } catch (error) {
-                    console.log(error)
-                }
+                this.$store.dispatch('loadContacts')
             },
             requestApplicationAccess(appInfo) {
                 console.log(`${appInfo.name} Requesting access`)
@@ -223,11 +173,10 @@
         },
         computed: {
             identity: function () {
-                return radixApplication.activeIdentity
+                this.$store.state.activeAccount
             },
             contacts: function () {
-                // @ts-ignore
-                return this.$store.state.contacts[this.identity.account.getAddress()]
+                return this.$store.state.contacts
             }
         }
     })
@@ -243,15 +192,9 @@
 
         display: grid;
         grid-template-columns: auto;
-        grid-template-rows: max-content minmax(0, 1fr);
-
-        .header {
-            grid-row: 1;
-            background-color: $white;
-        }
 
         .content {
-            grid-row: 2;
+            grid-row: 1;
             background-color: $grey-light;
 
             .section {

@@ -1,9 +1,9 @@
 <template lang="pug">
 // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
 div 
-    div.container
-        div.title Recent transactions         
-        div.transaction-list
+    div.container.panel
+        div.header Recent transactions
+        div.transaction-list.body
             div.transaction(v-for="transaction in transactions") 
                 div.time {{transaction.time}}
                 div.icon
@@ -17,10 +17,8 @@ div
                     span.value {{ transaction.balance }} 
                     span.token {{ transaction.token.name }}
                 div.buttons
-                    span.chat-button-container(v-on:click="$router.push({ path: '/messaging/chatlist/' + transaction.address })")
-                        icon.button.chat-button(name="regular/comment-alt")
-                    span.transaction-button-container(v-on:click="$router.push({ name: 'main.dashboard', params: { sidebar: 'send', address: transaction.address }})") 
-                        icon.button.transaction-icon(name="exchange-alt")
+                    span.transaction-button-container(@click="$router.push({ name: 'dashboard', params: { sidebar: 'send', address: transaction.address }})") 
+                        icon.action.transaction-icon(name="external-link-square-alt")
 </template>
 
 <script lang="ts">
@@ -34,13 +32,9 @@ div
     } from 'radixdlt'
 
     import { radixApplication } from '../../modules/RadixApplication'
+    import moment from 'moment'
 
     export default Vue.extend({
-        props: {
-            identity: {
-                type: Object as () => RadixIdentity
-            }
-        },
         data() {
             return {
                 transactions: [],
@@ -48,13 +42,11 @@ div
         },
         created() {
             radixApplication.on('atom-received:transaction', this.updateTransactionList)
-            radixApplication.on('contact-added', this.updateTransactionList)
         },
         destroyed() {
             radixApplication.removeListener('atom-received:transaction', this.updateTransactionList)
-            radixApplication.removeListener('contact-added', this.updateTransactionList)
         },
-        mounted() {
+        activated() {
             this.updateTransactionList()
         },        
         methods: {
@@ -65,7 +57,7 @@ div
                     .map((transaction) => {
                         const token_id = Object.keys(transaction.balance)[0] // Assume single token transactions
                         const token = this.tokens[token_id]
-                        const timeString = new Date(transaction.timestamp).toLocaleTimeString()
+                        const timeString = moment(transaction.timestamp).format('DD/MM/Y \n HH:mm')
                         const address = Object.keys(transaction.participants)[0] // Assume single participant transactions
                         
                         let displayName = address
@@ -94,10 +86,17 @@ div
                     }, {})
             },
             contacts(): any {
-                // @ts-ignore
-                return this.$store.state.contacts[this.identity.account.getAddress()]
+                return this.$store.state.contacts
             },
-        }
+            identity(): RadixIdentity {
+                return this.$store.state.activeAccount.identity
+            },
+        },
+        watch: {
+            contacts() {
+                this.updateTransactionList()
+            }
+        },
     })
 </script>
 
@@ -115,12 +114,6 @@ div
             grid-column: 1;
             grid-row: 1;
             margin-bottom: 20px;
-
-            color: #00101C;	
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 0.25px;	
-            line-height: 13px;
         }
 
         .transaction-list {
@@ -128,26 +121,22 @@ div
             grid-row: 2;
 
             overflow: auto;
-            border-top: 1px solid lightgray;
-
-            padding: 0 5px 25px 5px;
 
             .transaction {
                 width: 100%;
                 height: 60px;
-                border-bottom: 1px solid lightgray;
+                border-bottom: 1px solid $grey-light;
 
                 display: grid;
                 grid-template-columns: 70px 50px auto 140px 70px;
 
                 align-items: center;
-                padding: 0 10px 0 10px;
+                padding: 0 $panel-padding;
 
                 .time {
                     grid-column: 1;
 
-                    opacity: 0.5;	
-                    color: #00101C;		
+                    opacity: 0.5;		
                     font-size: 12px;	
                     font-weight: 500;	
                     letter-spacing: 0.5px;	
@@ -163,11 +152,11 @@ div
                         height: 31px;
 
                         &.sent {
-                            color: #14E1DB;
+                            color: $red;
                         }
 
                         &.received {
-                            color: #693CF5;
+                            color: $green;
                         }
                     }
                 }
@@ -176,14 +165,13 @@ div
                     grid-column: 3;
 
                     .explaination {
-                        color: #00101C;	
                         font-size: 13px;
                         font-weight: 500;	
                         line-height: 16px;
                     }
 
                     .address {
-                        color: #5A666E;
+                        color: $grey;
                         font-size: 10px;
                         font-weight: 300;
                         line-height: 13px;
@@ -194,7 +182,6 @@ div
                     grid-column: 4;
 
                     text-align: right;
-                    color: #00101C;	
                     font-size: 14px;	
                     font-weight: 500;	
                     line-height: 17px;
@@ -204,15 +191,15 @@ div
                     grid-column: 5;
 
                     span {
-                        margin-left: 10px;
+                        margin-left: 20px;
 
-                        .button {
-                            color: #693cf5;
-                        }
+                        .action {
+                            color: $grey;
 
-                        .transaction-icon {
-                            color: #35b0e5;
-                        }         
+                            &:hover {
+                                color: $grey-dark;
+                            }
+                        }        
                     }
                 }
             }

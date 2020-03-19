@@ -6,46 +6,45 @@
 
 // Set your brand colors
 $white: #ffffff;
-$purple: #676dcc;
-$green: #3ecf8e;
-$blue-dark: #32364e;
-$grey-dark: #a3adb7;
-$grey: #dbdde0;
-$grey-light: #f4f7fc;
-$grey-light-darken: #e7eaee;
-$red: #ff5964;
-$green-disabled: #3ecf8e;
+$blue: #052CC0;
+$blue-dark: #060F8F;
+
+$green: #00C389;
+$green-dark: #00ab84;
+
+$blue-grey: #003057;
+
+$grey-darker: #425563;
+$grey-dark: #4f758b;
+$grey: #7a99ac;
+$grey-light: #F2F2FC;
+$grey-lighter: #dde5ed;
+$red: #ef4136;
+$cyan: #00aeef;
+$yellow: #fff200;
 
 // Update Bulma's global variables
 $family-sans-serif: "Roboto", sans-serif;
 $primary: $green;
 $link: $green;
-$text: $blue-dark;
-$text-light: $grey-dark;
+$text: $blue-grey;
+$text-light: $white;
 $light: $grey-light;
-$dark: $blue-dark;
+$dark: $blue-grey;
 // $widescreen-enabled: false;
 // $fullhd-enabled: false;
 
 // Update some of Bulma's component variables
-$body-background-color: $white;
+$body-background-color: $grey-light;
 $input-shadow: none;
 $radius-small: 1.5px;
-$radius: 3px;
+$radius: 16px;
 
-.test {
-    background-color: crimson;
-}
+$title-weight: 300;
 
-.icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+$label-color: $grey;
+$label-weight: 400;
 
-
-@import "./forms.scss";
-@import "./layout.scss";
 @import "./auth.scss";
 
 
@@ -63,3 +62,101 @@ $radius: 3px;
 @import "~bulma/sass/layout/hero.sass";
 @import "~bulma/sass/layout/section.sass";
 @import "~bulma/sass/grid/columns.sass";
+
+
+.test {
+    background-color: crimson;
+}
+
+.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fill {
+    width: 100%;
+    height: 100%;
+}
+
+.relative {
+    position: relative;
+}
+
+input {
+    &[type="checkbox"],
+    &[type="radio"] {
+      margin-right: .5em
+    }
+  }
+
+
+
+$panel-padding: 18px;
+.panel {
+    .header {
+        display: inline-block;
+        font-size: 22px;
+        font-weight: 300;
+        line-height: 1.45;
+        color: $text;
+        margin-bottom: 10px;
+    }
+    .controls {
+        float: right;
+        height: 30px;
+        font-size: 22px;
+        font-weight: 300;
+        line-height: 1.45;
+        color: $text;
+        margin-bottom: 10px;
+
+        .icon-container {
+            height: 30px;
+            justify-self: end;
+
+            .icon {
+                height: 100%;
+                color: $grey;
+
+                &:hover {
+                    color: $grey-dark;
+                }
+            }
+        }
+    }
+    .body {
+        background: $white;
+        border-radius: $radius;
+    }
+}
+
+.button { 
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+    height: 36px;
+}
+
+.tabs {
+    .tab {
+        display: inline;
+        padding-bottom: 2px;
+        margin-right: 1em;
+        font-size: 14px;
+        color: $grey;
+        user-select: none; 
+        cursor: pointer;
+
+
+        &.is-active {
+            color: $green;
+            border-bottom: 3px solid $green;
+        }
+
+        &:not(.is-active):hover {
+            color: $grey-dark;
+            border-bottom: 3px solid $grey-dark;
+        }
+    }
+}

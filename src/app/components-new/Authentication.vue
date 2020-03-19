@@ -2,6 +2,7 @@
     // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
     div
         div.wrapper
+            div.header
             div.content
                 keep-alive
                     component(v-bind:is="stateComponentMap[authenticationState]")
@@ -60,13 +61,25 @@
 
         display: grid;
         grid-template-columns: 37% auto;
+        grid-template-rows: 30px minmax(0, 1fr);
+
+        
+
+        .header {
+            grid-row: 1;
+            grid-column: 1 / 3;
+            background-color: $white;
+        }
+
 
         .content {
+            grid-row: 2;
             grid-column: 1;
             background-color: $white;
         }
 
         .visual {
+            grid-row: 2;
             grid-column: 2;
             background-image: url("../assets/png/auth-main.png");
             background-position: right;

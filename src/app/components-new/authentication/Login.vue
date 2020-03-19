@@ -56,9 +56,6 @@
                         console.error(error)
                         this.validationError = 'Password incorrect'
                     })
-
-                // @ts-ignore
-                this.$router.push('wallet')
             },
             deleteWallet() {
                 radixApplication.deleteKeystore()
