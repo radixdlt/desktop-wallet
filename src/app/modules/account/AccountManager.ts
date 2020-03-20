@@ -14,6 +14,14 @@ export default class AccountManager {
     constructor(readonly keystorePath: string) {
     }
 
+    
+    /**
+     * Provide an existing mnemonic for the root account
+     * This will initiate an account discovery process, 
+     * by checking which derrived accounts have a transaction history
+     * 
+     * @param  {string} mnemonic A mnemonic following the bip39 standard
+     */
     public setMnemonic(mnemonic: string) {
         if (this.mnemonic) {
             throw new Error('Can only set mnemonic once')
@@ -25,7 +33,9 @@ export default class AccountManager {
         this.addAccount(this.generateNewAccount('Main'))
         this.discoverAccounts()
     }
-
+    /**
+     * Generate a new BIP39 mnemonic and create the first account for it
+     */
     public generateMnemonic() {
         if (this.mnemonic) {
             throw new Error('Can only set mnemonic once')
@@ -36,7 +46,13 @@ export default class AccountManager {
 
         this.addAccount(this.generateNewAccount('Main'))
     }
-
+    /**
+     * Derrive the next HD account
+     * This does not automacially add the account to the accounts list
+     * 
+     * @param  {string} alias? Default alias will be 'Account #[account number]'
+     * @returns WalletAccount
+     */
     generateNewAccount(alias?: string): WalletAccount {
         const accountIndex = this.accounts.length;
         const node = this.masterNode.derivePath(`m/44'/${this.coinType}'/${accountIndex}`)
@@ -52,11 +68,22 @@ export default class AccountManager {
 
         return account
     }
-
+    /**
+     * Add an account to the accounts list
+     * 
+     * @param  {WalletAccount} account
+     * @returns WalletAccoun
+     */
     public addAccount(account: WalletAccount) {
         this.accounts.push(account)
     }
 
+    /**
+     * Initiate an account discovery process, according to the BIP44 standard
+     * This will generate new accounts and check their transaction history,
+     * until the first account without any history
+     * 
+     */
     public discoverAccounts() {
         const account = this.generateNewAccount()
         account.identity.account.isSynced().subscribe(isSynced => {
@@ -67,6 +94,9 @@ export default class AccountManager {
         })
     }
 
+    /**
+     * Serialize the account manager to a json string
+     */
     public toString() {
         const accounts = this.accounts.map(account => {
             return {
@@ -81,6 +111,13 @@ export default class AccountManager {
         })
     }
 
+    
+    /**
+     * Deserialize AccountManager state from a json string
+     * 
+     * @param  {string} data
+     * @returns st
+     */
     public fromString(data: string) {
         const deserializedData = JSON.parse(data) as {
             accounts: Array<{
@@ -101,7 +138,11 @@ export default class AccountManager {
         })
     }
     
-
+    /**
+     * Store the AccountManager state at the provided path, encrypted with the password provided
+     * 
+     * @param  {string} password
+     */
     public async store(password: string) {
         const data = this.toString()
         // Encrypt
@@ -109,7 +150,12 @@ export default class AccountManager {
         // Write to disk
         await fs.writeJSON(this.keystorePath, keystoreData)
     }
-
+    /**
+     * Load the AccountManager state from the path provided in the constructor, 
+     * decrypting it with the password provided
+     * 
+     * @param  {string} password
+     */
     public async load(password: string) {
         const keystoreData = await fs.readJSON(this.keystorePath)
         const serilaizedData = await RadixKeyStore.decryptKeystore(keystoreData, password)
@@ -117,6 +163,10 @@ export default class AccountManager {
         this.fromString(serilaizedData)
     }
 
+    /**
+     * Clear mnemonic and account information
+     * Useful for logging out
+     */
     public reset() {
         this.accounts = []
         this.masterNode = null
