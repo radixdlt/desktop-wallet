@@ -2,6 +2,8 @@ export default {
     mainTokenISO: 'XRD',
     version: '1.4.0-beta.2',
     dbVersion: '5',
+    keystoreFilename: 'keystore_v2.json',
+
     universe: 'LOCALHOST_SINGLENODE',
     // universe: 'BETANET_EMULATOR',
 

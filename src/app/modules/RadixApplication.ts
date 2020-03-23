@@ -84,7 +84,7 @@ export class RadixApplication extends events.EventEmitter {
         }
 
         this.dataDir = dataDir
-        this.keystoreFileName = dataDir + '/keystore.json'
+        this.keystoreFileName = `${dataDir}/${Config.keystoreFilename}`
         this.authDBFileName = dataDir + `/apps.db`
         this.atomDBFileName = dataDir + `atoms-${Config.universe}-${Config.dbVersion}.db`
 
