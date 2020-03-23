@@ -4,21 +4,32 @@ div
     div.container.panel
         div.header Recent transactions
         div.transaction-list.body
-            div.transaction(v-for="transaction in transactions") 
-                div.time {{transaction.time}}
-                div.icon
-                    icon.direction-icon.sent(name="regular/arrow-alt-circle-up", v-if="transaction.balance < 0")
-                    icon.direction-icon.received(name="regular/arrow-alt-circle-down", v-else)       
-                div.info
-                    span.explaination {{transaction.balance < 0 ? 'Sent' : 'Received' }} {{ transaction.token.label }}
-                    br
-                    span.selectable.address {{transaction.balance < 0 ? 'To' : 'From' }} {{ transaction.displayName }}
-                div.balance
-                    span.value {{ transaction.balance }} 
-                    span.token {{ transaction.token.name }}
-                div.buttons
-                    span.transaction-button-container(@click="$router.push({ name: 'dashboard', params: { sidebar: 'send', address: transaction.address }})") 
-                        icon.action.transaction-icon(name="external-link-square-alt")
+            div.no-transactions(v-if="transactions.length === 0") 
+                p You don't have any transaction history yet
+
+            div.transactons-table(v-if="transactions.length > 0")
+                div.transaction.header-row
+                    div.time Timestamp
+                    div.info Participants
+                    div.balance Balance
+                    div.buttons Actions
+
+                div.transaction(v-for="transaction in transactions") 
+                    div.time {{transaction.time}}
+                    div.icon
+                        icon.direction-icon.sent(name="regular/arrow-alt-circle-up", v-if="transaction.balance < 0")
+                        icon.direction-icon.received(name="regular/arrow-alt-circle-down", v-else)       
+                    div.info
+                        span.explaination {{transaction.balance < 0 ? 'Sent' : 'Received' }} {{ transaction.token.label }}
+                        br
+                        span.selectable.address {{transaction.balance < 0 ? 'To' : 'From' }} {{ transaction.displayName }}
+                    div.balance
+                        span.value {{ transaction.balance }} 
+                        span.token {{ transaction.token.name }}
+                    div.buttons
+                        span.transaction-button-container(@click="$router.push({ name: 'dashboard', params: { sidebar: 'send', address: transaction.address }})") 
+                            icon.action.transaction-icon(name="external-link-square-alt")
+            
 </template>
 
 <script lang="ts">
@@ -95,6 +106,9 @@ div
         watch: {
             contacts() {
                 this.updateTransactionList()
+            },
+            identity() {
+                this.updateTransactionList()
             }
         },
     })
@@ -110,17 +124,21 @@ div
         height: 100%;
         min-height: 0;
 
-        .title {
-            grid-column: 1;
-            grid-row: 1;
-            margin-bottom: 20px;
-        }
-
         .transaction-list {
+            overflow: auto;
             grid-column: 1;
             grid-row: 2;
 
-            overflow: auto;
+            .no-transactions {
+                display: flex; 
+                width: 100%;
+                height: 100%;
+
+                p {
+                    margin: auto; 
+                    text-align: center; 
+                }
+            }
 
             .transaction {
                 width: 100%;
@@ -133,10 +151,21 @@ div
                 align-items: center;
                 padding: 0 $panel-padding;
 
+                &.header-row {
+                    height: 40px;
+
+                    div {
+                        font-size: 12px !important; 
+                        color: $grey !important;
+                        line-height: 40px !important;
+                        font-weight: 500 !important;
+                        margin: 0 !important;
+                    }
+                }
+
                 .time {
                     grid-column: 1;
-
-                    opacity: 0.5;		
+	
                     font-size: 12px;	
                     font-weight: 500;	
                     letter-spacing: 0.5px;	
@@ -189,6 +218,7 @@ div
 
                 .buttons {
                     grid-column: 5;
+                    justify-content: flex-end;
 
                     span {
                         margin-left: 20px;
