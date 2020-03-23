@@ -82,7 +82,7 @@ div
     import Contact from '@app/shared/contacts/Contact'
     import { RadixIdentity } from 'radixdlt'
 
-    import Modal from '@app/components-new/shared/Modal'
+    import Modal from '@app/components/shared/Modal'
 
     export default Vue.extend({
         components: {

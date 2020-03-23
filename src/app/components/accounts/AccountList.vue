@@ -72,7 +72,7 @@ div
     import { radixApplication } from '@app/modules/RadixApplication'
     import Contact from '@app/shared/contacts/Contact'
     import { RadixIdentity } from 'radixdlt'
-    import Modal from '@app/components-new/shared/Modal.vue'
+    import Modal from '@app/components/shared/Modal.vue'
     import { WalletAccount } from '@app/modules/account/WalletAccount'
 
     export default Vue.extend({

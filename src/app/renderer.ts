@@ -14,8 +14,7 @@ import Autocomplete from 'v-autocomplete'
 import 'v-autocomplete/dist/v-autocomplete.css'
 //Sentry
 import * as Sentry from '@sentry/electron'
-// import App from './App.vue'
-import App from './NewApp.vue'
+import App from './App.vue'
 import { router } from './shared/router'
 import { store } from './shared/store'
 

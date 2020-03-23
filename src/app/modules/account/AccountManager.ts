@@ -89,6 +89,9 @@ export default class AccountManager {
     public discoverAccounts() {
         const account = this.generateNewAccount()
         account.identity.account.isSynced().subscribe(isSynced => {
+            console.log(account.identity.address.toString(), isSynced)
+            console.log(account.identity.account.transferSystem)
+
             if (isSynced && account.identity.account.transferSystem.transactions.length > 0) {
                 console.log('synced', account.identity.address.toString())
                 this.addAccount(account)
