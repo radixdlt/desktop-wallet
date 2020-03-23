@@ -41,6 +41,7 @@
 <script lang="ts">
     import Vue from 'vue'
     import { radixApplication } from '@/app/modules/RadixApplication'
+import { remote } from 'electron'
 
     export default Vue.extend({
         data() {
@@ -61,10 +62,11 @@
                 radixApplication.deleteKeystore()
                 radixApplication.deleteAtomsDB()
 
-                radixApplication.loadKeystore()
+                remote.getCurrentWindow().reload()
             },
             deleteDB() {
                 radixApplication.deleteAtomsDB()
+                remote.getCurrentWindow().reload()
             }
         }
     })
