@@ -190,17 +190,10 @@
         min-height: 500px;
         width: 100vw;
 
-        display: grid;
-        grid-template-columns: auto;
-
         .content {
-            grid-row: 1;
             background-color: $grey-light;
-
-            .section {
-                width: 100%;
-                height: 100%;
-            }
+            width: 100%;
+            height: 100%;
         }
     }
 

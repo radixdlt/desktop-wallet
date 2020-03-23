@@ -1,9 +1,6 @@
 $size-small: 10px;
 
 .auth.wrapper {
-    height: 100%;
-    width: 100%;
-
     position: relative;
 
     padding: 40px 60px;
@@ -27,7 +24,7 @@ $size-small: 10px;
     }
     
     .subtitle {
-        color: $text-light;
+        color: $grey;
         font-size: 12px;
         font-weight: normal;
         line-height: 1.5;

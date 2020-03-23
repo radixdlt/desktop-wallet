@@ -3,7 +3,7 @@
     div
         div.wrapper
             div.header
-            div.content
+            div.interface
                 keep-alive
                     component(v-bind:is="stateComponentMap[authenticationState]")
             div.visual
@@ -61,9 +61,7 @@
 
         display: grid;
         grid-template-columns: 37% auto;
-        grid-template-rows: 30px minmax(0, 1fr);
-
-        
+        grid-template-rows: 30px 1fr;
 
         .header {
             grid-row: 1;
@@ -71,8 +69,7 @@
             background-color: $white;
         }
 
-
-        .content {
+        .interface {
             grid-row: 2;
             grid-column: 1;
             background-color: $white;
