@@ -2,24 +2,37 @@
     div.wrapper
         div.content
             router-view.fill
+
+        modal(v-if="currentAccessRequest", @close="dismissAccessRequest(currentAccessRequest)")
+            div.panel
+                div.access-request.body.form
+                    p.title An application is requesting access
+                    p.name {{currentAccessRequest.appInfo.name}}
+                    p.description {{currentAccessRequest.appInfo.description}}
+                    p.permissions Permissions: 
+                        span.permission(v-for="(permission, index) in currentAccessRequest.appInfo.permissions") 
+                            | {{index === currentAccessRequest.appInfo.permissions.length - 1 ? permission : permission + ', ' }}
+                    div.field
+                        button.button.is-primary.is-fullwidth.approve(@click="dismissAccessRequest(currentAccessRequest, true)") Approve
+                    div.field
+                        button.button.is-fullwidth.reject(@click="dismissAccessRequest(currentAccessRequest, false)") Reject
 </template>
 
 <script lang="ts">
     import Vue from 'vue'
     import { remote } from 'electron'
-
     import { RadixAddress, RadixMessageUpdate, RadixTransactionUpdate, RRI } from 'radixdlt'
-
     import { radixApplication, RadixApplicationStates } from '@app/modules/RadixApplication'
     import { radixServer } from '@app/server/RadixServer'
-
+    import Modal from '@app/components-new/shared/Modal.vue'
     import Config from '@app/shared/Config'
-
     import fs from 'fs-extra'
-
     import { filter } from 'rxjs/operators'
 
     export default Vue.extend({
+        components: {
+            Modal,
+        },
         subscriptions: {
             walletManagerState: radixApplication.stateSubject,
         },
@@ -197,58 +210,26 @@
         }
     }
 
-    .access-request-container {
-        grid-column: 1 / 3;
-        grid-row: 1 / 3;
+    .access-request {
+        grid-column: 2;
+        grid-row: 2;
+        background-color: white;
 
-        height: 100%;
-        width: 100%;
+        padding: 30px;
 
-        z-index: 100;
-        // opacity: 0.7;
-        background-color: rgba(229, 237, 241, 0.7); // #E5EDF1
+        .title {
 
-        display: none;
-
-        &.visible {
-            display: grid;
-
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: 25% 1fr 25%;
         }
 
-        .access-request {
-            grid-column: 2;
-            grid-row: 2;
-            // opacity: 100%;
-            background-color: white;
+        .name {
+            font-size: 20px;
+        }
 
-            padding: 30px;
-
-            .title {
-
-            }
-
-            .name {
-                font-size: 20px;
-            }
-
-            .description {
-
-            }
-
-            .permissions {
-                .permission {
-                    font-size: 12px;
-                }
-            }
-
-            .approve .reject {
-                display: inline;
-                width: auto;
-                padding: 0 16px 0 16px;
-                margin-right: 10px;
+        .permissions {
+            .permission {
+                font-size: 12px;
             }
         }
+        
     }
 </style>
