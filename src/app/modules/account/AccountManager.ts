@@ -172,4 +172,20 @@ export default class AccountManager {
         this.masterNode = null
         this.mnemonic = null
     }
+    /**
+     * Check if the current keystore is encrypted with the password provided
+     * 
+     * @param  {string} password
+     * @returns Promise<boolean>
+     */
+    public async checkPassword(password: string): Promise<boolean> {
+        try {
+            const keystoreData = await fs.readJSON(this.keystorePath)
+            const serilaizedData = await RadixKeyStore.decryptKeystore(keystoreData, password)
+        } catch (e) {
+            return false
+        }
+
+        return true
+    }
 }

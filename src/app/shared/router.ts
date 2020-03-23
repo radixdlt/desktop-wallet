@@ -8,6 +8,8 @@ import Send from '@app/components-new/transactions/Send.vue'
 import Receive from '@app/components-new/transactions/Receive.vue'
 import AccountList from '@app/components-new/accounts/AccountList.vue'
 import Authentication from '@app/components-new/Authentication.vue'
+import Settings from '@app/components-new/settings/Settings.vue'
+import ChangePassword from '@app/components-new/settings/ChangePassword.vue'
 import { store } from './store'
 
 Vue.use(Router)
@@ -64,6 +66,19 @@ export const router = new Router({
                     path: 'accounts',
                     name: 'accounts',
                     component: AccountList
+                },
+                {
+                    path: 'settings',
+                    name: 'settings',
+                    component: Settings,
+                    redirect: {name: 'changePassword'},
+                    children: [
+                        {
+                            path: 'changePassword',
+                            name: 'changePassword',
+                            component: ChangePassword,
+                        },
+                    ],
                 },
             ],
         },

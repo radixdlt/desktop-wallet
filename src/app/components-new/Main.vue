@@ -6,8 +6,10 @@
                     img(src="@assets/png/logo-white.png")
                 div.left-menu-list
                     router-link.link(v-for="section in sections", :key="section.name" :to="section.path", tag="span") {{section.name}}
-                //- div.extras
-                //-     a(@click="exportWallet") Export wallet
+                
+                div.left-menu-list.extras
+                    router-link.link(v-for="section in extraSections", :key="section.name" :to="section.path", tag="span") {{section.name}}
+                
             div.header
                 top-menu
             div.content(v-if="identity")
@@ -30,6 +32,9 @@ export default Vue.extend({
             sections: [
                 { path: '/main/dashboard', name: 'Dashboard' },
                 { path: '/main/contacts', name: 'Contacts' }
+            ],
+            extraSections: [
+                { path: '/main/settings', name: 'Settings' },
             ],
         }
     },
@@ -81,10 +86,18 @@ export default Vue.extend({
             grid-column: 1;
             grid-row: 1 / 3;
             background-image: linear-gradient($blue, $blue-dark);
+            position: relative;
 
             .left-menu-list {
                 margin: 0;
                 padding: 0;
+
+                &.extras {
+                    position: absolute;
+                    bottom: 0;
+                    margin-bottom: 18px;
+                    width: 100%;
+                }
             }
 
             .link {
@@ -114,25 +127,7 @@ export default Vue.extend({
                 margin: 30px 80px 30px 40px;
             }
 
-            .extras {
-                position: absolute;
-                bottom: 0;
-                padding-bottom: 26px;
-
-                a {
-                    padding-left: 40px;
-                    margin-bottom: 26px;
-                    opacity: 0.6;
-                    color: #cde9ff;
-                    font-size: 14px;
-                    letter-spacing: 1px;
-
-                    &:hover {
-                        opacity: 1;
-                    }
-                }
-
-            }
+            
         }
     }
 
