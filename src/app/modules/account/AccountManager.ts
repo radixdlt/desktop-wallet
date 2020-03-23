@@ -75,7 +75,9 @@ export default class AccountManager {
      * @returns WalletAccoun
      */
     public addAccount(account: WalletAccount) {
-        this.accounts.push(account)
+        if (this.accounts.indexOf(account) < 0) {
+            this.accounts.push(account)
+        }
     }
 
     /**
@@ -88,6 +90,7 @@ export default class AccountManager {
         const account = this.generateNewAccount()
         account.identity.account.isSynced().subscribe(isSynced => {
             if (isSynced && account.identity.account.transferSystem.transactions.length > 0) {
+                console.log('synced', account.identity.address.toString())
                 this.addAccount(account)
                 this.discoverAccounts()
             }
