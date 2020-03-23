@@ -20,14 +20,14 @@ div
                         icon.direction-icon.sent(name="regular/arrow-alt-circle-up", v-if="transaction.balance < 0")
                         icon.direction-icon.received(name="regular/arrow-alt-circle-down", v-else)       
                     div.info
-                        span.explaination {{transaction.balance < 0 ? 'Sent' : 'Received' }} {{ transaction.token.label }}
-                        br
-                        span.selectable.address {{transaction.balance < 0 ? 'To' : 'From' }} {{ transaction.displayName }}
+                        div.explaination {{transaction.balance < 0 ? 'Sent' : 'Received' }} {{ transaction.token.label }}
+                        div.selectable.address {{transaction.balance < 0 ? 'To' : 'From' }} {{ transaction.displayName }}
+                        div.message Note: {{transaction.message}}
                     div.balance
                         span.value {{ transaction.balance }} 
                         span.token {{ transaction.token.name }}
                     div.buttons
-                        span.transaction-button-container(@click="$router.push({ name: 'dashboard', params: { sidebar: 'send', address: transaction.address }})") 
+                        span.transaction-button-container(@click="$router.push({ name: 'send', params: { address: transaction.address }})") 
                             icon.action.transaction-icon(name="external-link-square-alt")
             
 </template>
@@ -40,6 +40,7 @@ div
         radixTokenManager, 
         RRI,
         RadixIdentity,
+        RadixTransaction,
     } from 'radixdlt'
 
     import { radixApplication } from '../../modules/RadixApplication'
@@ -65,12 +66,13 @@ div
                 const rawTransactions = this.identity.account.transferSystem.transactions.values()
 
                 this.transactions = _.orderBy(rawTransactions, ['timestamp'], ['desc'])
-                    .map((transaction) => {
+                    .map((transaction: RadixTransaction) => {
                         const token_id = Object.keys(transaction.balance)[0] // Assume single token transactions
                         const token = this.tokens[token_id]
                         const timeString = moment(transaction.timestamp).format('DD/MM/Y \n HH:mm')
                         const address = Object.keys(transaction.participants)[0] // Assume single participant transactions
-                        
+                        const message = transaction.message
+
                         let displayName = address
                         if (address in this.contacts) {
                             displayName = this.contacts[address].alias       
@@ -82,6 +84,7 @@ div
                             address: address, 
                             displayName: displayName,
                             time: timeString,
+                            message,
                         }
                     })
 
@@ -142,7 +145,7 @@ div
 
             .transaction {
                 width: 100%;
-                height: 60px;
+                min-height: 60px;
                 border-bottom: 1px solid $grey-light;
 
                 display: grid;
@@ -200,6 +203,15 @@ div
                     }
 
                     .address {
+                        margin-top: 4px;
+                        color: $grey;
+                        font-size: 10px;
+                        font-weight: 300;
+                        line-height: 13px;
+                    }
+
+                    .message {
+                        margin-top: 8px;
                         color: $grey;
                         font-size: 10px;
                         font-weight: 300;
