@@ -93,6 +93,10 @@ import { radixApplication } from '../../modules/RadixApplication'
                 // Overwrite data store
                 radixApplication.accountManager.store(this.newPassword1)
                 radixApplication.keystorePassword = this.newPassword1
+                
+                this.oldPassword = ''
+                this.newPassword1 = ''
+                this.newPassword2 = ''
                 this.successMessage = 'Password changed'
             },
             clearErrors() {
