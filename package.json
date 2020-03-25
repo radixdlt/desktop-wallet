@@ -43,7 +43,6 @@
     "electron-mocha": "^6.0.2",
     "electron-notarize": "^0.1.1",
     "file-loader": "^1.1.11",
-    "fsevents": "^2.1.2",
     "json-loader": "^0.5.7",
     "mocha": "^5.1.1",
     "node-sass": "^4.9.0",
@@ -109,5 +108,8 @@
     "vue-select": "^2.4.0",
     "vuex": "^3.0.1",
     "ws": "^5.2.1"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.1.2"
   }
 }
