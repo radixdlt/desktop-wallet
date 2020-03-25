@@ -92,7 +92,6 @@ div
         methods: {
             activateAccount(account) {
                 radixApplication.setActiveAccount(account)
-                this.$router.push({ name: 'dashboard'})
             },
             editAccount(index) {
                 this.editIndex = index

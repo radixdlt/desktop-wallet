@@ -60,11 +60,16 @@ div
                 button.button.is-primary(@click="addContact()") Add Contact
             div.component.body
                 div.toolbar
-                    input.input.search-contact(placeholder="Search contacts...", v-model="searchPhrase")
+                    div
+                        input.input.is-fullwidth.search-contact(placeholder="Search contacts...", v-model="searchPhrase")
                     p.connections
                         b {{Object.keys(contacts).length}}
-                        span &nbsp;Connections
-                div.contacts
+                        span &nbsp;Contacts
+
+                div.no-contacts(v-if="filteredContacts.length === 0") 
+                    p No contacts
+
+                div.contacts(v-if="filteredContacts.length > 0") 
                     div.contact(v-for="(contact, index) in filteredContacts")
                         div.details
                             div.alias.selectable {{contact.alias}}                        
@@ -209,12 +214,14 @@ div
         }
 
         .component {
-            min-height: 0;
+            min-height: 80px;
+            display: grid;
+            grid-template-rows: max-content 1fr;
             
             .toolbar {
                 display: grid;
                 grid-template-rows: auto;
-                grid-template-columns: auto 180px;
+                grid-template-columns: 1fr 180px;
                 align-items: center;
                 padding: 0 $panel-padding;
 
@@ -236,6 +243,19 @@ div
                     justify-self: end;
                 }
             }
+
+            .no-contacts {
+                display: flex; 
+                width: 100%;
+                height: 100%;
+
+                p {
+                    margin: auto; 
+                    text-align: center; 
+                }
+            }
+
+
             .contacts {
                 height: 100%;
 
