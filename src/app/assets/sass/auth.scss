@@ -1,0 +1,49 @@
+$size-small: 10px;
+
+.auth.wrapper {
+    position: relative;
+
+    padding: 40px 60px;
+
+    line-height: 1.45;
+    font-size: 12px;
+
+    .logo {
+        img {
+            height: 36px;
+        }
+
+        margin-bottom: 30px;
+    }
+
+    .title {
+        font-size: 22px;
+        font-weight: 300;
+        color: $text;
+        margin-bottom: 30px;
+    }
+    
+    .subtitle {
+        color: $grey;
+        font-size: 12px;
+        font-weight: normal;
+        line-height: 1.5;
+        margin-bottom: 30px;
+        margin-top: 0;
+    }
+
+    .field {
+        margin-bottom: 16px;
+    }
+
+    .form {
+        margin-bottom: 30px;
+    }
+
+    .back {
+        color: $text-light;
+        font-size: 12px;
+        margin-top: 16px;
+    }
+}
+

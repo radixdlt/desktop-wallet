@@ -2,14 +2,9 @@
 // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
 div 
     div.container
-        div.main-grayout(v-bind:class="{visible: isSidebarOpen}", v-on:click="closeSidebar()")
         div.main
-            div.title
-                h1 Wallet 
-                //- span.selectable My address: {{ wallet.keyPair.toString() }}
-            balance.balance(:identity="identity")
-            transactions.transactions(:identity="identity")
-        sidebar.sidebar(:identity="identity", v-bind:class="{open: isSidebarOpen}")
+            balance.balance
+            history.history
 </template>
 
 <script lang="ts">
@@ -18,34 +13,16 @@ div
     import { radixApplication } from '../../modules/RadixApplication'
 
     import Balance from './Balance.vue'
-    import Transactions from './Transactions.vue'
-    import Sidebar from './Sidebar.vue'
+    import History from './History.vue'
 
     export default Vue.extend({
         components: {
             Balance,
-            Transactions,
-            Sidebar
-        },
-        data() {
-            return {
-                // isSidebarOpen: false
-            }
-        },    
-        methods: {
-            closeSidebar() {
-                // @ts-ignore
-                this.$router.push({name: 'Wallet'})
-            },
-        },
+            History,
+        }, 
         computed: {
             identity() {
-                // @ts-ignore
-                return radixApplication.activeIdentity
-            },
-            isSidebarOpen() {
-                // @ts-ignore
-                return this.$route.params.sidebar ? true : false
+                this.$store.state.activeAccount
             },
         }
     })
@@ -60,23 +37,6 @@ div
         height: 100%;
         width: 100%;
 
-        .main-grayout {
-            grid-column: 1;
-            grid-row: 1;
-
-            height: 100%;
-            width: 100%;
-
-            opacity: 0.7;
-            background-color: #E5EDF1;
-
-            display: none; 
-
-            &.visible {
-                display: block;
-            }
-        }
-
         .main {
             grid-column: 1 / 3;
             grid-row: 1;
@@ -84,44 +44,25 @@ div
 
             display: grid;
             grid-template-columns: auto;
-            grid-template-rows: max-content max-content 1fr;
+            grid-template-rows: max-content 1fr;
             overflow: hidden;
+            grid-gap: 30px 20px;
 
             min-height: 0;
 
-            padding: 90px 90px 0px 90px;
+            padding: 0 20px 20px 20px;
 
-            .title {
+            .balance {
                 grid-column: 1;
                 grid-row: 1;
                 width: 100%;
             }
-
-            .balance {
+            
+            .history {
                 grid-column: 1;
                 grid-row: 2;
                 width: 100%;
-            }
-            
-            .transactions {
-                grid-column: 1;
-                grid-row: 3;
-                width: 100%;
                 overflow: hidden;
-            }
-        }
-
-        .sidebar {
-            grid-column: 2;
-            grid-row: 1;
-            height: 100%;
-            width: 0px;
-            transition: all 0.2s;
-            overflow: hidden;
-            z-index: 100;
-
-            &.open {
-                width: 380px;
             }
         }
     }

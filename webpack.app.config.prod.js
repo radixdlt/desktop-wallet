@@ -1,6 +1,7 @@
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+var path = require('path');
 
 module.exports = {
     entry: './src/app/renderer.ts',
@@ -11,7 +12,12 @@ module.exports = {
         path: __dirname,
     },
     resolve: {
-        extensions: [ '.ts', '.vue', '.js', '.node' ]
+        extensions: [ '.ts', '.vue', '.js', '.node' ],
+        alias: {
+            '@': path.resolve(__dirname, './src'),
+            '@app': path.resolve(__dirname, './src/app'),
+            '@assets': path.resolve(__dirname, './src/app/assets')
+        },
     },
     module: {
         rules: [
@@ -29,14 +35,22 @@ module.exports = {
                 use: [
                     'vue-style-loader',
                     'css-loader',
-                    'sass-loader'
+                    { 
+                        loader: 'sass-loader',
+                        options: {
+                            data: '@import "main.scss";',
+                            includePaths: [
+                                path.resolve(__dirname, "./src/app/assets/sass")
+                            ]
+                        }
+                    }
                 ]
             },
             {
                 test: /\.pug$/,
                 loader: 'pug-plain-loader'
             },
-            { test: /\.(png|woff|woff2|eot|ttf|otf|svg)$/, loader: 'url-loader?limit=200000&publicPath=../&name=build-prod/[name].[ext]' },
+            { test: /\.(png|woff|woff2|eot|ttf|otf|svg)$/, loader: 'url-loader?limit=200000&publicPath=.&name=[name].[ext]' },
         ]
     },
     plugins: [
@@ -46,7 +60,7 @@ module.exports = {
             { from: './src/app/index.html', to: 'build-prod/index.html' },
             { from: './src/update.html', to: 'build-prod/update.html' },
             { from: './src/app/assets/png/icon.png', to: 'build-prod/icon.png' },
-            { from: 'entitlements.mac.plist', to: 'build/entitlements.mac.plist' },
+            { from: 'entitlements.mac.plist', to: 'build-prod/entitlements.mac.plist' },
         ])
     ],
     // devtool: '#source-map',

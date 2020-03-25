@@ -22,7 +22,7 @@ import * as jsonrpc from 'jsonrpc-lite'
 export class RadixServer {
 
     identity() {
-        return radixApplication.activeIdentity
+        return store.state.activeAccount.identity
     }
 
     start() {

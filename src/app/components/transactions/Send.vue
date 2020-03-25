@@ -2,18 +2,43 @@
 // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
 div 
     div.container
-        // div.title
-            // h4 Send 
         div.form
-            router-link(to="/messaging/contacts") View my contacts
-            input(type="text", placeholder="Recipient", v-model="address", @keyup.enter="send()")  
-            // v-autocomplete(:items="contacts", v-model="address", :get-label="getContactLabel", :component-item='template')
-            label Token
-            select(v-model="token_id")
-                option(v-for="token in tokens", v-bind:value="token.id") {{token.label}}
-                option(v-if="tokens.length === 0", disabled, value="") No tokens
-            input(type="text", placeholder="Amount", v-model="amount", @keyup.enter="send()")    
-            button.send(v-on:click="send()") Send
+            div.field
+                router-link(:to="{name: 'contacts'}") View my contacts
+            
+            div.field
+                label.label.is-small To
+                div.control
+                    input.input(type="text", placeholder="Recipient", v-model="address", @keyup.enter="send()")  
+                // v-autocomplete(:items="contacts", v-model="address", :get-label="getContactLabel", :component-item='template')
+            div.field
+                div.columns
+                    div.field.column.is-half
+                        div.columns
+                            div.column.is-half
+                                label.label.is-small Amount
+                            div.column.is-half
+                                a.is-small.is-pulled-right.send-all(@click="sendAll()") Send all
+                        div.control
+                            input.input(type="text", placeholder="Enter amount", v-model="amount", @keyup.enter="send()")    
+
+                    div.field.column.is-half
+                        label.label.is-small Token
+                        div.control
+                            div.select.is-fullwidth
+                                select(v-model="token_id")
+                                    option(v-for="token in tokens", v-bind:value="token.id") {{token.label}}
+                                    option(v-if="tokens.length === 0", disabled, value="") No tokens
+
+            div.field
+                label.label.is-small Message
+                div.control
+                    input.input(type="text", placeholder="Your message", v-model="message", @keyup.enter="send()") 
+            
+            div.field.columns
+                div.control.column.is-half.is-offset-one-quarter
+                    button.button.is-primary.is-fullwidth.send(@click="send()") Send
+            
             span.status {{transactionStatus}}
 </template>
 
@@ -25,21 +50,21 @@ div
         RadixTransactionBuilder, 
         RadixAccount,
         RRI,
+        RadixIdentity,
     } from 'radixdlt'
 
-    import { radixApplication } from '../../modules/RadixApplication'
+    import { radixApplication } from '@app/modules/RadixApplication'
     
     import RadixContactItemTemplate from './RadixContactItemTemplate.vue'
+    import Decimal from 'decimal.js'
 
     export default Vue.extend({
-        props: [
-            'identity'
-        ],
         data() {
             return {
                 address: '',
                 amount: '',
                 token_id: '',
+                message: '',
                 transactionStatus: '',
                 contacts: [],
                 template: RadixContactItemTemplate,
@@ -55,18 +80,21 @@ div
         },
         mounted() {
             this.update()
+            this.getRouteAddress()
         },
         computed: {
-            balance() {
-                // @ts-ignore
-                return this.identity.account.transferSystem.balance
+            identity(): RadixIdentity {
+                return this.$store.state.activeAccount.identity
             },
-            tokens() {
+            balance(): { [tokenId: string]: Decimal} {
+                return this.identity.account.transferSystem.tokenUnitsBalance
+            },
+            tokens(): any[] {
                 const tokens = []
                 for (let token_id in this.balance) {
                     const tokenReference = RRI.fromString(token_id)
 
-                    if(this.balance[token_id] > 0) {
+                    if(this.balance[token_id].gt(0)) {
                         tokens.push({
                             id: token_id,
                             label: tokenReference.name
@@ -81,11 +109,7 @@ div
         },
         watch: {
             $route(to, from) {
-                // @ts-ignore
-                if (this.$route.params.address) {
-                    // @ts-ignore
-                    this.address = this.$route.params.address
-                }
+                this.getRouteAddress();
             }
         },      
         methods: {
@@ -96,7 +120,7 @@ div
                     const to = RadixAccount.fromAddress(this.address, true)
 
                     const transactionStatusSubject = RadixTransactionBuilder
-                        .createTransferAtom(this.identity.account, to, this.token_id, this.amount)
+                        .createTransferAtom(this.identity.account, to, this.token_id, this.amount, this.message)
                         .signAndSubmit(this.identity)
 
                     transactionStatusSubject.subscribe({
@@ -129,7 +153,17 @@ div
                     return contact.alias + ' ' + contact.address
                 }
                 return contact.address
-            }
+            },
+            sendAll() {
+                this.amount = this.balance[this.token_id].toString()
+            },
+            getRouteAddress() {
+                // @ts-ignore
+                if (this.$route.params.address) {
+                    // @ts-ignore
+                    this.address = this.$route.params.address
+                }
+            },
         }
     })
 </script>
@@ -137,20 +171,19 @@ div
 <style lang="scss" scoped>
 
     .container {
-        display: grid;
-        grid-template-columns: auto;
-        grid-template-rows: max-content auto;
         height: 100%;
         width: 100%;
 
-        .title {
-            grid-column: 1;
-            grid-row: 1;
+        .columns, .column {
+            margin-bottom: 0;
+            margin-top: 0;
+            padding-bottom: 0;
+            padding-top: 0;
         }
 
-        .balance {
-            grid-column: 1;
-            grid-row: 2;
+        .send-all {
+            font-size: 10px;
+            margin-bottom: 0.5em;
         }
     }
 

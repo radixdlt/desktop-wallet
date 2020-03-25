@@ -1,26 +1,35 @@
 <template lang="pug">
 // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
 div 
-    div.container
-        div.title Recent transactions         
-        div.transaction-list
-            div.transaction(v-for="transaction in transactions") 
-                div.time {{transaction.time}}
-                div.icon
-                    icon.direction-icon.sent(name="regular/arrow-alt-circle-up", v-if="transaction.balance < 0")
-                    icon.direction-icon.received(name="regular/arrow-alt-circle-down", v-else)       
-                div.info
-                    span.explaination {{transaction.balance < 0 ? 'Sent' : 'Received' }} {{ transaction.token.label }}
-                    br
-                    span.selectable.address {{transaction.balance < 0 ? 'To' : 'From' }} {{ transaction.displayName }}
-                div.balance
-                    span.value {{ transaction.balance }} 
-                    span.token {{ transaction.token.name }}
-                div.buttons
-                    span.chat-button-container(v-on:click="$router.push({ path: '/messaging/chatlist/' + transaction.address })")
-                        icon.button.chat-button(name="regular/comment-alt")
-                    span.transaction-button-container(v-on:click="$router.push({ name: 'Wallet', params: { sidebar: 'send', address: transaction.address }})") 
-                        icon.button.transaction-icon(name="exchange-alt")
+    div.container.panel
+        div.header Recent transactions
+        div.transaction-list.body
+            div.no-transactions(v-if="transactions.length === 0") 
+                p You don't have any transaction history yet
+
+            div.transactons-table(v-if="transactions.length > 0")
+                div.transaction.header-row
+                    div.time Timestamp
+                    div.info Participants
+                    div.balance Balance
+                    div.buttons Actions
+
+                div.transaction(v-for="transaction in transactions") 
+                    div.time {{transaction.time}}
+                    div.icon
+                        icon.direction-icon.sent(name="regular/arrow-alt-circle-up", v-if="transaction.balance < 0")
+                        icon.direction-icon.received(name="regular/arrow-alt-circle-down", v-else)       
+                    div.info
+                        div.explaination {{transaction.balance < 0 ? 'Sent' : 'Received' }} {{ transaction.token.label }}
+                        div.selectable.address {{transaction.balance < 0 ? 'To' : 'From' }} {{ transaction.displayName }}
+                        div.message Note: {{transaction.message}}
+                    div.balance
+                        span.value {{ transaction.balance }} 
+                        span.token {{ transaction.token.name }}
+                    div.buttons
+                        span.transaction-button-container(@click="$router.push({ name: 'send', params: { address: transaction.address }})") 
+                            icon.action.transaction-icon(name="external-link-square-alt")
+            
 </template>
 
 <script lang="ts">
@@ -30,14 +39,14 @@ div
     import { 
         radixTokenManager, 
         RRI,
+        RadixIdentity,
+        RadixTransaction,
     } from 'radixdlt'
 
     import { radixApplication } from '../../modules/RadixApplication'
+    import moment from 'moment'
 
     export default Vue.extend({
-        props: [
-            'identity'
-        ],
         data() {
             return {
                 transactions: [],
@@ -45,13 +54,11 @@ div
         },
         created() {
             radixApplication.on('atom-received:transaction', this.updateTransactionList)
-            radixApplication.on('contact-added', this.updateTransactionList)
         },
         destroyed() {
             radixApplication.removeListener('atom-received:transaction', this.updateTransactionList)
-            radixApplication.removeListener('contact-added', this.updateTransactionList)
         },
-        mounted() {
+        activated() {
             this.updateTransactionList()
         },        
         methods: {
@@ -59,12 +66,13 @@ div
                 const rawTransactions = this.identity.account.transferSystem.transactions.values()
 
                 this.transactions = _.orderBy(rawTransactions, ['timestamp'], ['desc'])
-                    .map((transaction) => {
+                    .map((transaction: RadixTransaction) => {
                         const token_id = Object.keys(transaction.balance)[0] // Assume single token transactions
                         const token = this.tokens[token_id]
-                        const timeString = new Date(transaction.timestamp).toLocaleTimeString()
+                        const timeString = moment(transaction.timestamp).format('DD/MM/Y \n HH:mm')
                         const address = Object.keys(transaction.participants)[0] // Assume single participant transactions
-                        
+                        const message = transaction.message
+
                         let displayName = address
                         if (address in this.contacts) {
                             displayName = this.contacts[address].alias       
@@ -76,6 +84,7 @@ div
                             address: address, 
                             displayName: displayName,
                             time: timeString,
+                            message,
                         }
                     })
 
@@ -83,18 +92,28 @@ div
             }
         },
         computed: {
-            tokens: function () {
+            tokens(): {[key: string]: RRI} {
                 return Object.keys(this.identity.account.transferSystem.tokenUnitsBalance)
                     .reduce((output, tokenUri) => {
                         output[tokenUri] = RRI.fromString(tokenUri)
                         return output
                     }, {})
             },
-            contacts () {
-                // @ts-ignore
-                return this.$store.state.contacts[this.identity.account.getAddress()]
+            contacts(): any {
+                return this.$store.state.contacts
             },
-        }
+            identity(): RadixIdentity {
+                return this.$store.state.activeAccount.identity
+            },
+        },
+        watch: {
+            contacts() {
+                this.updateTransactionList()
+            },
+            identity() {
+                this.updateTransactionList()
+            }
+        },
     })
 </script>
 
@@ -108,43 +127,48 @@ div
         height: 100%;
         min-height: 0;
 
-        .title {
-            grid-column: 1;
-            grid-row: 1;
-            margin-bottom: 20px;
-
-            color: #00101C;	
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 0.25px;	
-            line-height: 13px;
-        }
-
         .transaction-list {
+            overflow: auto;
             grid-column: 1;
             grid-row: 2;
 
-            overflow: auto;
-            border-top: 1px solid lightgray;
+            .no-transactions {
+                display: flex; 
+                width: 100%;
+                height: 100%;
 
-            padding: 0 5px 25px 5px;
+                p {
+                    margin: auto; 
+                    text-align: center; 
+                }
+            }
 
             .transaction {
                 width: 100%;
-                height: 60px;
-                border-bottom: 1px solid lightgray;
+                min-height: 60px;
+                border-bottom: 1px solid $grey-light;
 
                 display: grid;
                 grid-template-columns: 70px 50px auto 140px 70px;
 
                 align-items: center;
-                padding: 0 10px 0 10px;
+                padding: 0 $panel-padding;
+
+                &.header-row {
+                    height: 40px;
+
+                    div {
+                        font-size: 12px !important; 
+                        color: $grey !important;
+                        line-height: 40px !important;
+                        font-weight: 500 !important;
+                        margin: 0 !important;
+                    }
+                }
 
                 .time {
                     grid-column: 1;
-
-                    opacity: 0.5;	
-                    color: #00101C;		
+	
                     font-size: 12px;	
                     font-weight: 500;	
                     letter-spacing: 0.5px;	
@@ -160,11 +184,11 @@ div
                         height: 31px;
 
                         &.sent {
-                            color: #14E1DB;
+                            color: $red;
                         }
 
                         &.received {
-                            color: #693CF5;
+                            color: $green;
                         }
                     }
                 }
@@ -173,14 +197,22 @@ div
                     grid-column: 3;
 
                     .explaination {
-                        color: #00101C;	
                         font-size: 13px;
                         font-weight: 500;	
                         line-height: 16px;
                     }
 
                     .address {
-                        color: #5A666E;
+                        margin-top: 4px;
+                        color: $grey;
+                        font-size: 10px;
+                        font-weight: 300;
+                        line-height: 13px;
+                    }
+
+                    .message {
+                        margin-top: 8px;
+                        color: $grey;
                         font-size: 10px;
                         font-weight: 300;
                         line-height: 13px;
@@ -191,7 +223,6 @@ div
                     grid-column: 4;
 
                     text-align: right;
-                    color: #00101C;	
                     font-size: 14px;	
                     font-weight: 500;	
                     line-height: 17px;
@@ -199,17 +230,18 @@ div
 
                 .buttons {
                     grid-column: 5;
+                    justify-content: flex-end;
 
                     span {
-                        margin-left: 10px;
+                        margin-left: 20px;
 
-                        .button {
-                            color: #693cf5;
-                        }
+                        .action {
+                            color: $grey;
 
-                        .transaction-icon {
-                            color: #35b0e5;
-                        }         
+                            &:hover {
+                                color: $grey-dark;
+                            }
+                        }        
                     }
                 }
             }

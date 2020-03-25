@@ -1,5 +1,6 @@
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+var path = require('path');
 
 module.exports = {
     entry: './src/app/renderer.ts',
@@ -10,7 +11,12 @@ module.exports = {
         path: __dirname,
     },
     resolve: {
-        extensions: [ '.ts', '.vue', '.js', '.node' ]
+        extensions: [ '.ts', '.vue', '.js', '.node' ],
+        alias: {
+            '@': path.resolve(__dirname, './src'),
+            '@app': path.resolve(__dirname, './src/app'),
+            '@assets': path.resolve(__dirname, './src/app/assets')
+        },
     },
     module: {
         rules: [
@@ -28,7 +34,15 @@ module.exports = {
                 use: [
                     'vue-style-loader',
                     'css-loader',
-                    'sass-loader'
+                    { 
+                        loader: 'sass-loader',
+                        options: {
+                            data: '@import "main.scss";',
+                            includePaths: [
+                                path.resolve(__dirname, "./src/app/assets/sass")
+                            ]
+                        }
+                    }
                 ]
             },
             {
@@ -50,5 +64,5 @@ module.exports = {
     devtool: '#source-map',
     externals: {
 		'@sentry/electron': 'require("@sentry/electron")'
-	},
+    },
 }

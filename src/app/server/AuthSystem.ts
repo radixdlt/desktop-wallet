@@ -27,6 +27,7 @@ export class AuthSystem {
 
     async register(appInfo: { name: string; description: string; permissions: string[]; }) {
         // Show popup
+        // @ts-ignore
         await vue.$children[0].requestApplicationAccess(appInfo)
 
         const token = crypto.randomBytes(128).toString('hex')

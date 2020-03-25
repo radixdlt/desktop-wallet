@@ -17,8 +17,21 @@
         "module": "es2015",
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+
+        "baseUrl": "src",
+        "paths": {
+            "@/*": [
+              "./*"
+            ],
+            "@app/*": [
+                "./app/*"
+            ],
+        },
     },
+    "include": [
+        "./src/**/*"
+    ],
     "formatCodeOptions": {
         "indentSize": 4,
         "tabSize": 4
