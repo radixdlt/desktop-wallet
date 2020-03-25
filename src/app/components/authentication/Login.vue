@@ -35,7 +35,7 @@
             div.debug
                 a(@click="deleteWallet") Delete my wallet
                 br
-                a(@click="deleteDB") Reset atom database
+                //- a(@click="deleteDB") Reset atom database
 </template>
 
 <script lang="ts">

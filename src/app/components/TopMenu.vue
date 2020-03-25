@@ -37,9 +37,6 @@ export default Vue.extend({
         account(): WalletAccount {
             return this.$store.state.activeAccount
         },
-        favouriteAccounts() {
-            return radixApplication.accountManager.accounts.slice(0, 3)
-        }
     },
     methods: {
         logout() {
@@ -49,7 +46,13 @@ export default Vue.extend({
         activateAccount(account) {
             radixApplication.setActiveAccount(account)
         },
-},
+    },
+    subscriptions() {
+        return {
+            favouriteAccounts: radixApplication.accountManager.getAccountsUpdatesObservable()
+                .map((accounts) => accounts.slice(0, 3))
+        }
+    }
 })
 </script>
 

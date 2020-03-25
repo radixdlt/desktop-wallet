@@ -1,6 +1,6 @@
 export default {
     mainTokenISO: 'XRD',
-    version: '1.4.0-beta.2',
+    version: '2.0.0-beta.1',
     dbVersion: '5',
     keystoreFilename: 'keystore_v2.json',
 

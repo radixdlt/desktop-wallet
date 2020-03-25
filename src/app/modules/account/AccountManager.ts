@@ -3,10 +3,12 @@ import { RadixKeyStore, RadixSimpleIdentity, RadixAddress } from 'radixdlt';
 import fs from 'fs-extra'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export default class AccountManager {
     public accounts: WalletAccount[] = []
     public mnemonic: string = ''
+    private accountsUpdatesSubject: BehaviorSubject<WalletAccount[]>= new BehaviorSubject(this.accounts)
 
     private masterNode: bip32.BIP32Interface
     private coinType = 1 // Testnet
@@ -72,12 +74,23 @@ export default class AccountManager {
      * Add an account to the accounts list
      * 
      * @param  {WalletAccount} account
-     * @returns WalletAccoun
      */
     public addAccount(account: WalletAccount) {
         if (this.accounts.indexOf(account) < 0) {
             this.accounts.push(account)
         }
+
+        this.accountsUpdatesSubject.next(this.accounts)
+    }
+
+    /**
+     * Set the accounts list
+     * 
+     * @param  {WalletAccount[]} accounts
+     */
+    public setAccounts(accounts: WalletAccount[]) {
+        this.accounts = accounts
+        this.accountsUpdatesSubject.next(this.accounts)
     }
 
     /**
@@ -133,12 +146,13 @@ export default class AccountManager {
         this.mnemonic = deserializedData.mnemonic
         this.masterNode = bip32.fromSeed(bip39.mnemonicToSeedSync(this.mnemonic))
 
-        this.accounts = deserializedData.accounts.map(account => {
+        const accounts =  deserializedData.accounts.map(account => {
             return {
                 alias: account.alias,
                 identity: RadixSimpleIdentity.fromPrivate(account.privateKey)
             }
         })
+        this.setAccounts(accounts)
     }
     
     /**
@@ -190,5 +204,11 @@ export default class AccountManager {
         }
 
         return true
+    }
+    /**
+     * Get an RxJs observable for accounts updates
+     */
+    public getAccountsUpdatesObservable(): Observable<WalletAccount[]> {
+        return this.accountsUpdatesSubject.share()
     }
 }

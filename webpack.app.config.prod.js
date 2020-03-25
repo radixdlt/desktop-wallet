@@ -38,7 +38,7 @@ module.exports = {
                     { 
                         loader: 'sass-loader',
                         options: {
-                            data: '@import "main";',
+                            data: '@import "main.scss";',
                             includePaths: [
                                 path.resolve(__dirname, "./src/app/assets/sass")
                             ]
@@ -50,7 +50,7 @@ module.exports = {
                 test: /\.pug$/,
                 loader: 'pug-plain-loader'
             },
-            { test: /\.(png|woff|woff2|eot|ttf|otf|svg)$/, loader: 'url-loader?limit=200000&publicPath=../&name=build-prod/[name].[ext]' },
+            { test: /\.(png|woff|woff2|eot|ttf|otf|svg)$/, loader: 'url-loader?limit=200000&publicPath=.&name=[name].[ext]' },
         ]
     },
     plugins: [
@@ -60,7 +60,7 @@ module.exports = {
             { from: './src/app/index.html', to: 'build-prod/index.html' },
             { from: './src/update.html', to: 'build-prod/update.html' },
             { from: './src/app/assets/png/icon.png', to: 'build-prod/icon.png' },
-            { from: 'entitlements.mac.plist', to: 'build/entitlements.mac.plist' },
+            { from: 'entitlements.mac.plist', to: 'build-prod/entitlements.mac.plist' },
         ])
     ],
     // devtool: '#source-map',
