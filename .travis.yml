@@ -34,4 +34,4 @@ script:
   # Static code analysis
   - yarn tslint
   - yarn coverage
-  - sonar-scanner
+  # - sonar-scanner
