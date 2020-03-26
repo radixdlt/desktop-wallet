@@ -36,6 +36,6 @@ export const vue = new Vue({
     // @ts-ignore
     router,
     store,
-    el: "#app",
+    el: '#app',
     render: h => h(App)
 })

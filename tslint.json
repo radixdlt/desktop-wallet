@@ -4,6 +4,7 @@
         "eofline": false,
         "align": [true, "parameters"],
         "class-name": true,
+        "extends": ["tslint:recommended", "tslint-sonarts"],
         "indent": [true, "spaces"],
         "max-line-length": [true, 150],
         "no-consecutive-blank-lines": [false],
@@ -11,8 +12,7 @@
         "no-duplicate-variable": true,
         "no-var-keyword": true,
         "no-empty": true,
-        //"no-unused-expression": true,
-        "no-unused-expression-chai": true,
+        "no-unused-expression": true,
         "no-use-before-declare": true,
         "no-var-requires": true,
         "no-require-imports": true,
@@ -36,8 +36,5 @@
             "check-separator",
             "check-type"
         ]
-    },
-    "rulesDirectory": [
-        "tslint-no-unused-expression-chai"
-    ]
+    }
 }

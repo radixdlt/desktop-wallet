@@ -33,7 +33,7 @@ export default class JsonRpcServer {
         } else {
             const response = await this.handleRequest(parsedRequest, ws)
             
-            if(response) {
+            if (response) {
                 ws.send(JSON.stringify(response))
             }
         }
@@ -58,7 +58,7 @@ export default class JsonRpcServer {
 
                 // Send response
                 return jsonrpc.success(requestObj.payload.id, result)
-            } catch(err) {
+            } catch (err) {
                 return jsonrpc.error(requestObj.payload.id, new jsonrpc.JsonRpcError.internalError(err.message))
             }
         }
