@@ -103,7 +103,6 @@
     "tslint-immutable": "^4.9.1",
     "tslint-sonarts": "^1.9.0",
     "types-bn": "^0.0.1",
-    "typescript": "2.8.3",
     "typescript-map": "^0.0.6",
     "uglifyjs-webpack-plugin": "^1.2.5",
     "v-autocomplete": "^1.8.2",

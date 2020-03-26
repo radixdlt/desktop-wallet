@@ -14,6 +14,7 @@ addons:
 
 cache:
   yarn: true
+
   npm: true
   directories:
     - "src/app/assets/fonts/"
@@ -22,14 +23,7 @@ cache:
     - "$HOME/.npm/_prebuilds"
 
 before_install:
-  # Get fonts if doesn't exist
-  - if [ ! -f "src/app/assets/fonts/Gotham-Medium.otf" ]; then wget --directory-prefix=src/app/assets/fonts https://gitlab.allegorithmic.com/open-source/algui/blob/44c6c4f7e24bc41dfdfbe1b8915824c075f67088/lib/fonts/Gotham-Book.otf ; fi
-  - if [ ! -f "src/app/assets/fonts/Gotham-Medium.otf" ]; then wget --directory-prefix=src/app/assets/fonts https://gitlab.allegorithmic.com/open-source/algui/blob/44c6c4f7e24bc41dfdfbe1b8915824c075f67088/lib/fonts/Gotham-Light.otf; fi
-  - if [ ! -f "src/app/assets/fonts/Gotham-Medium.otf" ]; then wget --directory-prefix=src/app/assets/fonts https://gitlab.allegorithmic.com/open-source/algui/blob/44c6c4f7e24bc41dfdfbe1b8915824c075f67088/lib/fonts/Gotham-Medium.otf; fi
-
   # Build the assembly
-  - yarn remove typescript
-  - yarn add typescript@2.8.3
   - yarn install --network-concurrency 1
   - yarn build
 
@@ -38,9 +32,6 @@ script:
   - yarn test:unit || true
   - yarn test:e2e || true
   # Static code analysis
-  - yarn add tslint-sonarts --dev
   - yarn tslint
   - yarn coverage
-  - yarn remove typescript
-  - yarn add typescript@3.2.1
   - sonar-scanner
