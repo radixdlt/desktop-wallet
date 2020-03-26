@@ -38,7 +38,7 @@ script:
   - yarn test:unit || true
   - yarn test:e2e || true
   # Static code analysis
-  - npm install tslint-sonarts --save-dev
+  - yarn add tslint-sonarts --dev
   - yarn tslint
   - yarn coverage
   - yarn remove typescript
