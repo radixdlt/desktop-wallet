@@ -14,6 +14,7 @@ import {
   RadixNEDBAtomStore,
   RadixAtomStore,
   RadixAddress,
+  RadixLedgerIdentity,
 } from 'radixdlt'
 
 import Config from '../shared/Config'
@@ -24,25 +25,27 @@ import { settingsStore } from './SettingsStore'
 import * as bip39 from 'bip39'
 import AccountManager from './account/AccountManager'
 import { WalletAccount } from './account/WalletAccount'
-import Vue from 'vue'
 import { store } from '../shared/store'
 
-export  enum RadixApplicationStates {
-    STARTING = 'STARTING',
-    TERMS_AND_CONDITIONS = 'TERMS_AND_CONDITIONS',
-    DECRYPT_KEYSTORE_PASSWORD_REQUIRED = 'DECRYPT_KEYSTORE_PASSWORD_REQUIRED',
-    CREATE_OR_RESTORE = 'CREATE_OR_RESTORE',
+export enum RadixApplicationStates {
+    STARTING,
+    TERMS_AND_CONDITIONS,
+    DECRYPT_KEYSTORE_PASSWORD_REQUIRED,
+    CREATE_OR_RESTORE,
 
 
     // create flow
-    MNEMONIC_BACKUP = 'MNEMONIC_BACKUP',
-    MNEMONIC_VERIFY = 'MNEMONIC_VERIFY',
-    PASSWORD_SET = 'PASSWORD_SET',
+    MNEMONIC_BACKUP,
+    MNEMONIC_VERIFY,
+    PASSWORD_SET,
     
     // restore flow
-    MNEMONIC_RESTORE = 'MNEMONIC_RESTORE',
+    MNEMONIC_RESTORE,
 
-    READY = 'READY'
+    // hardware wallet flow
+    HW_WALLET_IMPORT,
+
+    READY
 }
 
 export declare interface RadixApplication {
@@ -52,7 +55,6 @@ export declare interface RadixApplication {
 }
 
 export class RadixApplication extends events.EventEmitter {
-
     public stateSubject: BehaviorSubject<RadixApplicationStates> = new BehaviorSubject(RadixApplicationStates.STARTING)
     private stateHistory: RadixApplicationStates[] = []
 
@@ -92,7 +94,7 @@ export class RadixApplication extends events.EventEmitter {
 
         // Initialize universe
         radixUniverse.bootstrap(RadixUniverse[Config.universe], this.atomStore)
-
+        
         this.accountManager = new AccountManager(this.keystoreFileName)
 
         this.transactionUpdateSubject.subscribe((transactionUpdate) => {
@@ -195,9 +197,9 @@ export class RadixApplication extends events.EventEmitter {
         this.setState(RadixApplicationStates.READY)
     }
 
-    
+
     /**
-     * Go to MNEMONIC_RESOTRE
+     * Go to MNEMONIC_RESTORE
      */
     public restoreWallet() {
         this.setState(RadixApplicationStates.MNEMONIC_RESTORE)

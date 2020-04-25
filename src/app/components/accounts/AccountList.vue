@@ -1,69 +1,70 @@
 <template lang="pug">
 // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
 div 
-    div.container
-        modal(:visible="editIndex > -1", @close="dismissEdit()")
+    div.account-list
+        div.container
+            modal(:visible="editIndex > -1", @close="dismissEdit()")
+                div.panel
+                    div.form.body.modal-panel
+                        div.title Edit Account
+                        div.field
+                            label.label.is-small Name
+                            div.control
+                                input.input(v-model="editName", placeholder="Account name")
+
+                        div.field
+                            label.label.is-small Address
+                            div.control
+                                input.input.is-static(v-model="editAddress", readonly)
+                        
+                        div.field
+                            div.control
+                                button.button.is-primary.is-fullwidth(@click="saveEdit") Save
+
+                        //- div.field
+                        //-     div.control
+                        //-         button.button.is-fullwidth(@click="deleteContact(editIndex)") Delete contact
+
+            
+            modal(:visible="isAdding", @close="cancelAdd")
+                div.panel
+                    div.form.body.modal-panel
+                        div.title Add Account
+                        div.field
+                            label.label.is-small Name
+                            div.control
+                                input.input(v-model="addAlias", placeholder="Account Name")
+                        
+                        div.field
+                            div.control
+                                button.button.is-primary.is-fullwidth(@click="saveAdd") Save
+
+                        div.field
+                            div.control
+                                button.button.is-fullwidth(@click="cancelAdd") Cancel
+
             div.panel
-                div.form.body.modal-panel
-                    div.title Edit Account
-                    div.field
-                        label.label.is-small Name
-                        div.control
-                            input.input(v-model="editName", placeholder="Account name")
+                div.header Accounts
+                div.controls
+                    button.button.is-primary(@click="addAccount()") Add Account
+                div.component.body
+                    div.toolbar
+                        span.header-text Account
+                        span.header-text Actions
+                    div.accounts
+                        div.account(v-for="(account, index) in accountManager.accounts")
+                            div.details
+                                div.alias.selectable {{account.alias}}                        
+                                div.address.selectable {{account.identity.address}}
 
-                    div.field
-                        label.label.is-small Address
-                        div.control
-                            input.input.is-static(v-model="editAddress", readonly)
-                    
-                    div.field
-                        div.control
-                            button.button.is-primary.is-fullwidth(@click="saveEdit") Save
+                            span.icon-container(@click="editAccount(index)") 
+                                icon.edit-icon(name="cog")
 
-                    //- div.field
-                    //-     div.control
-                    //-         button.button.is-fullwidth(@click="deleteContact(editIndex)") Delete contact
+                            span.icon-container(v-if="account !== activeAccount", @click="activateAccount(account)") 
+                                icon.activate-icon-off(name="toggle-off",scale="2")
 
-        
-        modal(:visible="isAdding", @close="cancelAdd")
-            div.panel
-                div.form.body.modal-panel
-                    div.title Add Account
-                    div.field
-                        label.label.is-small Name
-                        div.control
-                            input.input(v-model="addAlias", placeholder="Account Name")
-                    
-                    div.field
-                        div.control
-                            button.button.is-primary.is-fullwidth(@click="saveAdd") Save
-
-                    div.field
-                        div.control
-                            button.button.is-fullwidth(@click="cancelAdd") Cancel
-
-        div.panel
-            div.header Accounts
-            div.controls
-                button.button.is-primary(@click="addAccount()") Add Account
-            div.component.body
-                div.toolbar
-                    span.header-text Account
-                    span.header-text Actions
-                div.accounts
-                    div.account(v-for="(account, index) in accountManager.accounts")
-                        div.details
-                            div.alias.selectable {{account.alias}}                        
-                            div.address.selectable {{account.identity.address}}
-
-                        span.icon-container(@click="editAccount(index)") 
-                            icon.edit-icon(name="cog")
-
-                        span.icon-container(v-if="account !== activeAccount", @click="activateAccount(account)") 
-                            icon.activate-icon-off(name="toggle-off",scale="2")
-
-                        span.icon-container(v-if="account === activeAccount") 
-                            icon.activate-icon-on(name="toggle-on",scale="2")
+                            span.icon-container(v-if="account === activeAccount") 
+                                icon.activate-icon-on(name="toggle-on",scale="2")                
 </template>
 
 <script lang="ts">
@@ -74,10 +75,12 @@ div
     import { RadixIdentity } from 'radixdlt'
     import Modal from '@app/components/shared/Modal.vue'
     import { WalletAccount } from '@app/modules/account/WalletAccount'
+    import HardwareWallets from "./HardwareWallets.vue"
 
     export default Vue.extend({
         components: {
             Modal,
+            HardwareWallets
         },
         data() {
             return {
@@ -138,9 +141,8 @@ div
 </script>
 
 <style lang="scss" scoped>
-
     .container {
-        padding: 0 20px 20px 20px;
+        padding: 0px 20px 20px 20px;
         height: 100%;
 
         .modal-panel {
@@ -153,6 +155,7 @@ div
 
         .component {
             min-height: 0;
+            padding: 10px;
             
             .toolbar {
                 display: grid;

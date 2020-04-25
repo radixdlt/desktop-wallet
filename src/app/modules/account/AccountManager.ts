@@ -13,6 +13,8 @@ export default class AccountManager {
     private masterNode: bip32.BIP32Interface
     private coinType = 1 // Testnet
 
+    public wallets: WalletAccount[] = []
+
     constructor(readonly keystorePath: string) {
     }
 
@@ -83,6 +85,12 @@ export default class AccountManager {
         this.accountsUpdatesSubject.next(this.accounts)
     }
 
+    public addWallet(identity: RadixLedgerIdentity, alias: string) {
+        this.wallets.push({
+            identity,
+            alias
+        })
+    }
     /**
      * Set the accounts list
      * 

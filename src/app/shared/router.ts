@@ -6,7 +6,7 @@ import Main from '@app/components/Main.vue'
 import Transactions from '@app/components/transactions/Transactions.vue'
 import Send from '@app/components/transactions/Send.vue'
 import Receive from '@app/components/transactions/Receive.vue'
-import AccountList from '@app/components/accounts/AccountList.vue'
+import Accounts from '@app/components/accounts/Accounts.vue'
 import Authentication from '@app/components/Authentication.vue'
 import Settings from '@app/components/settings/Settings.vue'
 import ChangePassword from '@app/components/settings/ChangePassword.vue'
@@ -65,7 +65,7 @@ export const router = new Router({
                 {
                     path: 'accounts',
                     name: 'accounts',
-                    component: AccountList
+                    component: Accounts
                 },
                 {
                     path: 'settings',
