@@ -28,7 +28,7 @@ import {
   RadixTransactionBuilder,
   RadixAccount,
   RRI,
-  RadixIdentity
+  RadixIdentity,
 } from 'radixdlt'
 
 import Config from '@app/shared/Config'
@@ -43,7 +43,7 @@ export default Vue.extend({
   } {
     return {
       activeToken: '',
-      tokens: {}
+      tokens: {},
     }
   },
   created() {
@@ -58,7 +58,7 @@ export default Vue.extend({
   computed: {
     identity(): RadixIdentity {
       return this.$store.state.activeAccount.identity
-    }
+    },
   },
   mounted() {
     this.update()
@@ -77,7 +77,10 @@ export default Vue.extend({
       const balances = this.identity.account.transferSystem.tokenUnitsBalance
       this.tokens = Object.entries(balances).reduce(
         (output, [uri, balance]) => {
-          if (!uri.endsWith('XRD') && balance.equals(0)) {
+          if (
+            !(radixTokenManager.nativeToken.toString() === uri) &&
+            balance.equals(0)
+          ) {
             if (this.activeToken === uri) {
               this.setActiveToken(radixTokenManager.nativeToken.toString())
             }
@@ -85,7 +88,7 @@ export default Vue.extend({
           }
           output[uri] = {
             rri: RRI.fromString(uri),
-            balance
+            balance,
           }
           return output
         },
@@ -101,14 +104,14 @@ export default Vue.extend({
         recipient,
         'Send me some money, pretty please!'
       ).signAndSubmit(this.identity)
-    }
+    },
   },
   watch: {
     identity() {
       this.update()
       this.setActiveToken(radixTokenManager.nativeToken.toString())
-    }
-  }
+    },
+  },
 })
 </script>
 
