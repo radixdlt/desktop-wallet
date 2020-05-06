@@ -92,13 +92,27 @@ export default Vue.extend({
           }
           return output
         },
+
         {}
       )
-
       this.$forceUpdate()
     },
     claimFaucet() {
-      const recipient = RadixAccount.fromAddress(Config.faucetAddress, true)
+      let faucetAddress
+
+      try {
+        const request = new XMLHttpRequest()
+        request.open('GET', '../universe.json', false)
+        request.send(null)
+        const json = JSON.parse(request.responseText)
+        if (json.faucetAddress) {
+          faucetAddress = json.faucetAddress
+        }
+      } catch (e) {
+        faucetAddress = Config.faucetAddress
+      }
+
+      const recipient = RadixAccount.fromAddress(faucetAddress, true)
       RadixTransactionBuilder.createRadixMessageAtom(
         this.identity.account,
         recipient,
@@ -166,3 +180,7 @@ export default Vue.extend({
   }
 }
 </style>
+
+
+
+    

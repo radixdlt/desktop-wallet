@@ -14,6 +14,8 @@ import {
   RadixNEDBAtomStore,
   RadixAtomStore,
   RadixAddress,
+    RadixUniverseConfig,
+    RadixNodeDiscoveryHardcoded,
 } from 'radixdlt'
 
 import Config from '../shared/Config'
@@ -79,8 +81,25 @@ export class RadixApplication extends events.EventEmitter {
     initialize(dataDir: string) {
         RadixLogger.setLevel('debug')
 
-        if (!(Config.universe in RadixUniverse)) {
+        let bootstrapConfig
+
+        try {
+            const request = new XMLHttpRequest()
+            request.open('GET', '../universe.json', false)
+            request.send(null)
+            const json = JSON.parse(request.responseText)
+            const universeConfig = new RadixUniverseConfig(json.universeConfig)
+            bootstrapConfig = {
+                universeConfig,
+                nodeDiscovery: new RadixNodeDiscoveryHardcoded([json.nodeAddress], json.useSSL),
+                finalityTime: 0,
+            }
+        } catch (e) {
+            if (Config.universe in RadixUniverse) {
+                bootstrapConfig = RadixUniverse[Config.universe]
+            } else {
             throw new Error(`Invalid universe config ${Config.universe}`)
+        }
         }
 
         this.dataDir = dataDir
@@ -91,7 +110,7 @@ export class RadixApplication extends events.EventEmitter {
         this.atomStore = RadixNEDBAtomStore.createPersistedStore(this.atomDBFileName)
 
         // Initialize universe
-        radixUniverse.bootstrap(RadixUniverse[Config.universe], this.atomStore)
+        radixUniverse.bootstrap(bootstrapConfig, this.atomStore)
 
         this.accountManager = new AccountManager(this.keystoreFileName)
 
