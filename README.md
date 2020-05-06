@@ -41,6 +41,24 @@ Run `yarn install`
 * Run tests with `yarn test:unit` after building the application
 * Run `yarn build:prod` and `yarn dist:all` to build the application packages for Windows, macOS and Linux
 
+
+## Use a custom universe (for testing)
+
+Put a `universe.json` file in the root of the project, with the following structure:
+
+```
+{
+    "universeConfig": {
+        ...
+        universe config json
+        ...
+    }
+    "nodeAddress": <IP address>,
+    "useSSL": <true | false>,
+    "faucetAddress": <optional, if a faucet service exists for the network>
+}
+```
+
 ## Contribute
 
 [Contributions](CONTRIBUTING.md) are welcome, we simply ask to:

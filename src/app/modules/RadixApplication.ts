@@ -2,19 +2,20 @@
 import { BehaviorSubject, Subject, Subscription } from 'rxjs'
 
 import {
-  radixUniverse,
-  RadixUniverse,
-  RadixKeyStore,
-  RadixIdentityManager,
-  RadixSimpleIdentity,
-  RadixIdentity,
-  RadixTransactionUpdate,
-  RadixMessageUpdate,
-  RadixLogger,
-  RadixNEDBAtomStore,
-  RadixAtomStore,
-  RadixAddress,
-  RadixLedgerIdentity,
+    radixUniverse,
+    RadixUniverse,
+    RadixKeyStore,
+    RadixIdentityManager,
+    RadixSimpleIdentity,
+    RadixIdentity,
+    RadixTransactionUpdate,
+    RadixMessageUpdate,
+    RadixLogger,
+    RadixNEDBAtomStore,
+    RadixAtomStore,
+    RadixAddress,
+    RadixUniverseConfig,
+    RadixNodeDiscoveryHardcoded,
 } from 'radixdlt'
 
 import Config from '../shared/Config'
@@ -38,20 +39,20 @@ export enum RadixApplicationStates {
     MNEMONIC_BACKUP,
     MNEMONIC_VERIFY,
     PASSWORD_SET,
-    
+
     // restore flow
     MNEMONIC_RESTORE,
 
     // hardware wallet flow
     HW_WALLET_IMPORT,
 
-    READY
+    READY,
 }
 
 export declare interface RadixApplication {
-  on(event: 'atom-received:transaction', listener: () => void): this
-  on(event: 'atom-received:message', listener: () => void): this
-  on(event: string, listener: Function): this
+    on(event: 'atom-received:transaction', listener: () => void): this
+    on(event: 'atom-received:message', listener: () => void): this
+    on(event: string, listener: Function): this
 }
 
 export class RadixApplication extends events.EventEmitter {
@@ -81,8 +82,25 @@ export class RadixApplication extends events.EventEmitter {
     initialize(dataDir: string) {
         RadixLogger.setLevel('debug')
 
-        if (!(Config.universe in RadixUniverse)) {
-            throw new Error(`Invalid universe config ${Config.universe}`)
+        let bootstrapConfig
+
+        try {
+            const request = new XMLHttpRequest()
+            request.open('GET', '../universe.json', false)
+            request.send(null)
+            const json = JSON.parse(request.responseText)
+            const universeConfig = new RadixUniverseConfig(json.universeConfig)
+            bootstrapConfig = {
+                universeConfig,
+                nodeDiscovery: new RadixNodeDiscoveryHardcoded([json.nodeAddress], json.useSSL),
+                finalityTime: 0,
+            }
+        } catch (e) {
+            if (Config.universe in RadixUniverse) {
+                bootstrapConfig = RadixUniverse[Config.universe]
+            } else {
+                throw new Error(`Invalid universe config ${Config.universe}`)
+            }
         }
 
         this.dataDir = dataDir
@@ -93,8 +111,8 @@ export class RadixApplication extends events.EventEmitter {
         this.atomStore = RadixNEDBAtomStore.createPersistedStore(this.atomDBFileName)
 
         // Initialize universe
-        radixUniverse.bootstrap(RadixUniverse[Config.universe], this.atomStore)
-        
+        radixUniverse.bootstrap(bootstrapConfig, this.atomStore)
+
         this.accountManager = new AccountManager(this.keystoreFileName)
 
         this.transactionUpdateSubject.subscribe((transactionUpdate) => {
@@ -104,7 +122,7 @@ export class RadixApplication extends events.EventEmitter {
         this.checkTerms()
     }
 
-    
+
     /**
      * Check whether terms and conditions have been accepted
      * Go to TERMS_AND_CONDITIONS or start authentication flow
@@ -125,7 +143,7 @@ export class RadixApplication extends events.EventEmitter {
         settingsStore.set('termsAccepted', true)
         this.loadKeystore()
     }
-    
+
     /**
      * Check if the keystore file exists on disk
      * Go to either DECRYPT_KEYSTORE_PASSWORD_REQUIRED or CREATE_OR_RESTORE
@@ -148,14 +166,14 @@ export class RadixApplication extends events.EventEmitter {
         this.accountManager.generateMnemonic()
         this.setState(RadixApplicationStates.MNEMONIC_BACKUP)
     }
-    
+
     /**
      * Get the generated mnemonic
      */
     public getMnemonic() {
         return this.accountManager.mnemonic
     }
-    
+
     /**
      * Go to MNEMONIC_VERIFY
      */
@@ -176,7 +194,7 @@ export class RadixApplication extends events.EventEmitter {
         this.setState(RadixApplicationStates.PASSWORD_SET)
     }
 
-    
+
     /**
      * Write private key from mnemonic to disk, encrypted by password
      * Go to READY
@@ -192,7 +210,7 @@ export class RadixApplication extends events.EventEmitter {
         this.keystorePassword = password
 
         await this.accountManager.store(this.keystorePassword)
-        
+
         this.setActiveAccount(this.accountManager.accounts[0])
         this.setState(RadixApplicationStates.READY)
     }
@@ -234,14 +252,14 @@ export class RadixApplication extends events.EventEmitter {
         this.stateHistory.push(this.getState())
         this.stateSubject.next(state)
     }
-    
+
     /**
      * Go to the previous state
      */
     public goBack() {
         this.stateSubject.next(this.stateHistory.pop())
     }
-    
+
     /**
      * Get the current state of the application
      */
@@ -274,7 +292,7 @@ export class RadixApplication extends events.EventEmitter {
         // Subscribe to updates
         this.transferSubscription = account.identity.account.transferSystem.transactionSubject
             .subscribe(this.transactionUpdateSubject)
-        
+
     }
 
     public deleteKeystore() {
