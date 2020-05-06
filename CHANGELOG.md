@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
  
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [2.0.0-beta.1](https://github.com/radixdlt/desktop-wallet/releases/tag/2.0.0-beta.1)
+
+* Support connecting to custom network
+* Fixed showing token balances
  
 ## [2.0.0-beta](https://github.com/radixdlt/desktop-wallet/releases/tag/2.0.0-beta)
 
