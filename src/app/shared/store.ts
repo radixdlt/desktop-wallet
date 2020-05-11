@@ -65,5 +65,5 @@ export const store = new Vuex.Store({
         activeAccount: state => {
             return state.activeAccount
         },
-    }
+    },
 })

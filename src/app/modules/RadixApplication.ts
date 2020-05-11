@@ -44,7 +44,7 @@ export  enum RadixApplicationStates {
     // restore flow
     MNEMONIC_RESTORE = 'MNEMONIC_RESTORE',
 
-    READY = 'READY'
+    READY = 'READY',
 }
 
 export declare interface RadixApplication {

@@ -19,13 +19,11 @@ export class AuthSystem {
 
     private db: Datastore
 
-    constructor() { }
-
     initialize() {
         this.db = new Datastore({ filename: radixApplication.authDBFileName, autoload: true })
     }
 
-    async register(appInfo: { name: string; description: string; permissions: string[]; }) {
+    async register(appInfo: { name: string; description: string; permissions: string[] }) {
         // Show popup
         // @ts-ignore
         await vue.$children[0].requestApplicationAccess(appInfo)
@@ -40,7 +38,7 @@ export class AuthSystem {
             permissions: appInfo.permissions,
 
             created_at: new Date(),
-            expires: new Date(Date.now() + 30 * 60 * 1000) // 30min
+            expires: new Date(Date.now() + 30 * 60 * 1000), // 30min
         }
 
         await this.db.insert(appEntry)
@@ -52,7 +50,7 @@ export class AuthSystem {
 
     async authenticate(token: string, perms: Array<string>) {
         // Find in db
-        const appInfo = await this.db.findOne<AppEntry>({_id: token})
+        const appInfo = await this.db.findOne<AppEntry>({ _id: token })
 
         if (!appInfo) {
             throw new Error('Invalid token')
