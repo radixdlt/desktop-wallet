@@ -1,4 +1,4 @@
-import {app, BrowserWindow, Menu, ipcMain, shell} from 'electron'
+import { app, BrowserWindow, Menu, ipcMain, shell } from 'electron'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import windowStateKeeper from 'electron-window-state'
 
@@ -7,13 +7,14 @@ import Config from '../app/shared/Config'
 import WebSocket from 'ws'
 
 import semver from 'semver'
- 
+
+// tslint:disable-next-line
 require('electron-context-menu')({
     prepend: (params, browserWindow) => [{
         label: 'Rainbow',
         // Only show it when right-clicking images
-        visible: params.mediaType === 'image'
-    }]
+        visible: params.mediaType === 'image',
+    }],
 })
 
 // Sentry
@@ -22,8 +23,8 @@ import { assertExistentialTypeParam } from 'babel-types'
 import Axios from 'axios'
 
 Sentry.init({
-  dsn: 'https://928631067058499eb64b254461a3ad43@sentry.io/1211444',
-  // more options...
+    dsn: 'https://928631067058499eb64b254461a3ad43@sentry.io/1211444',
+    // more options...
 })
 
 // App GUI stuff
@@ -35,7 +36,7 @@ let window: Electron.BrowserWindow | null
 const createWindow = async () => {
     let mainWindowState = windowStateKeeper({
         defaultWidth: 1170,
-        defaultHeight: 800
+        defaultHeight: 800,
     })
 
     window = new BrowserWindow({
@@ -53,7 +54,7 @@ const createWindow = async () => {
     window.loadURL(`file://${app.getAppPath()}/build/index.html`)
     if (isDevMode) {
         await installExtension(VUEJS_DEVTOOLS)
-        window.webContents.openDevTools({mode: 'bottom'})
+        window.webContents.openDevTools({ mode: 'bottom' })
     }
 
     window.on('closed', () => {
@@ -100,7 +101,7 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
     // } else {
     //   callback(false)
     // }
-  })
+})
 
 // Win10 Notification fix - doesn't work
 app.setAppUserModelId(process.execPath)
@@ -110,8 +111,8 @@ let updateNotificationWindow: Electron.BrowserWindow | null
 
 const checkForUpdates = async () => {
     try {
-        let response  = await Axios.get('https://api.github.com/repos/radixdlt/desktop-wallet/releases/latest')
-        
+        let response = await Axios.get('https://api.github.com/repos/radixdlt/desktop-wallet/releases/latest')
+
         const currentVersion = Config.version
         const publishedVersion = response.data.tag_name
 
@@ -121,14 +122,14 @@ const checkForUpdates = async () => {
                 darkTheme: true,
                 width: 450,
                 height: 200,
-                parent: window, 
+                parent: window,
                 // modal: true, 
-                show: false
+                show: false,
             })
-        
+
             updateNotificationWindow.loadURL(`file://${app.getAppPath()}/build/update.html`)
 
-            updateNotificationWindow.webContents.on('new-window', function(event, url) {
+            updateNotificationWindow.webContents.on('new-window', function (event, url) {
                 event.preventDefault()
                 shell.openExternal(url)
             })
@@ -140,7 +141,7 @@ const checkForUpdates = async () => {
     }
     catch (err) {
         console.error(err)
-    }    
+    }
 }
 
 // System menu
@@ -152,15 +153,15 @@ mainMenuTemplate.push({
         {
             label: 'Quit',
             accelerator: 'CmdOrCtrl+Q',
-            click() { app.quit() }
+            click() { app.quit() },
         },
         {
             label: 'Open devtools',
             click() {
-                window.webContents.openDevTools({mode: 'bottom'})
-            }
-        }
-    ]
+                window.webContents.openDevTools({ mode: 'bottom' })
+            },
+        },
+    ],
 })
 
 mainMenuTemplate.push({
@@ -189,21 +190,21 @@ mainMenuTemplate.push({
                 child.once('ready-to-show', () => {
                     child.show()
                 })
-            }
-        }
-    ]
+            },
+        },
+    ],
 })
 
 // OS X First menu item
 if (process.platform == 'darwin') {
     mainMenuTemplate.unshift({
         label: 'Radix Wallet',
-        submenu: []
+        submenu: [],
     })
 }
 
 // Localhost server
-const wss = new WebSocket.Server({ 
+const wss = new WebSocket.Server({
     host: 'localhost',
     port: 54345,
 })
@@ -220,7 +221,7 @@ wss.on('connection', (ws) => {
     window.webContents.send('wssEventIn', {
         channel: socketChannel,
         event: 'connection',
-        data: null
+        data: null,
     })
 
     ws.on('message', (message) => {
@@ -229,7 +230,7 @@ wss.on('connection', (ws) => {
         window.webContents.send('wsEventIn', {
             channel: socketChannel,
             event: 'message',
-            data: message
+            data: message,
         })
     })
 
@@ -237,7 +238,7 @@ wss.on('connection', (ws) => {
         window.webContents.send('wsEventIn', {
             channel: socketChannel,
             event: 'close',
-            data: args
+            data: args,
         })
     })
 })
@@ -252,6 +253,6 @@ ipcMain.on('wsEventOut', (event, data) => {
             ws.send(data.data)
         } else if (data.event === 'close') {
             ws.close(...data.data)
-        } 
+        }
     }
 })

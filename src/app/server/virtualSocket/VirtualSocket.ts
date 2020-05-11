@@ -23,7 +23,7 @@ export class VirtualSocket extends events.EventEmitter {
         let ipcMessage: WssEventData = {
             channel: this.channel,
             event: 'send',
-            data: data
+            data: data,
         }
 
         this.ipcPipe.send('wsEventOut', ipcMessage)
@@ -33,7 +33,7 @@ export class VirtualSocket extends events.EventEmitter {
         let ipcMessage: WssEventData = {
             channel: this.channel,
             event: 'send',
-            data: args
+            data: args,
         }
         this.ipcPipe.send('wsEventOut', ipcMessage)
     }

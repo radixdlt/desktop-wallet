@@ -136,7 +136,7 @@ export class RadixServer {
                     transactionCopy.balance = strigifiedBalance
 
                     ws.send(JSON.stringify(jsonrpc.notification('transaction.update', transactionCopy)))
-                }
+                },
             })
 
             ws.on('close', () => {
@@ -157,7 +157,7 @@ export class RadixServer {
                     messageCopy.from = message.from.getAddress()
 
                     ws.send(JSON.stringify(jsonrpc.notification('message.update', messageCopy)))
-                }
+                },
             })
 
             ws.on('close', () => {
@@ -173,7 +173,7 @@ export class RadixServer {
             const sub = this.identity().account.dataSystem.getApplicationData(params.application_id).subscribe({
                 next: (applicationMessage) => {
                     ws.send(JSON.stringify(jsonrpc.notification('application_message.update', applicationMessage)))
-                }
+                },
             })
 
             ws.on('close', () => {

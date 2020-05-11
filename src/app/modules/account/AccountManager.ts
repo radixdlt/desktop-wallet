@@ -1,14 +1,14 @@
-import { WalletAccount } from "./WalletAccount";
-import { RadixKeyStore, RadixSimpleIdentity, RadixAddress } from 'radixdlt';
+import { WalletAccount } from './WalletAccount'
+import { RadixKeyStore, RadixSimpleIdentity, RadixAddress } from 'radixdlt'
 import fs from 'fs-extra'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs'
 
 export default class AccountManager {
     public accounts: WalletAccount[] = []
     public mnemonic: string = ''
-    private accountsUpdatesSubject: BehaviorSubject<WalletAccount[]>= new BehaviorSubject(this.accounts)
+    private accountsUpdatesSubject: BehaviorSubject<WalletAccount[]> = new BehaviorSubject(this.accounts)
 
     private masterNode: bip32.BIP32Interface
     private coinType = 1 // Testnet
@@ -56,11 +56,11 @@ export default class AccountManager {
      * @returns WalletAccount
      */
     generateNewAccount(alias?: string): WalletAccount {
-        const accountIndex = this.accounts.length;
+        const accountIndex = this.accounts.length
         const node = this.masterNode.derivePath(`m/44'/${this.coinType}'/${accountIndex}`)
         const identity = RadixSimpleIdentity.fromPrivate(node.privateKey)
 
-        if(!alias) {
+        if (!alias) {
             alias = `Account #${accountIndex + 1}`
         }
         const account = {
@@ -117,7 +117,7 @@ export default class AccountManager {
         const accounts = this.accounts.map(account => {
             return {
                 alias: account.alias,
-                privateKey: account.identity.address.keyPair.getPrivate('hex')
+                privateKey: account.identity.address.keyPair.getPrivate('hex'),
             }
         })
 
@@ -149,7 +149,7 @@ export default class AccountManager {
         const accounts =  deserializedData.accounts.map(account => {
             return {
                 alias: account.alias,
-                identity: RadixSimpleIdentity.fromPrivate(account.privateKey)
+                identity: RadixSimpleIdentity.fromPrivate(account.privateKey),
             }
         })
         this.setAccounts(accounts)
