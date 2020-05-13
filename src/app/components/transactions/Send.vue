@@ -103,8 +103,8 @@ export default Vue.extend({
       }
 
       tokens.sort((t1, t2) => {
-        if (t2.label === 'XRD') {
-          return 1
+        if (radixTokenManager.nativeToken.toString() === t1.id) {
+          return -1
         }
         return t1.label.localeCompare(t2.label)
       })
