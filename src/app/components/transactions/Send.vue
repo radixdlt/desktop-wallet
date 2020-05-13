@@ -102,7 +102,12 @@ export default Vue.extend({
         }
       }
 
-      tokens.sort((t1, t2) => t1.label.localeCompare(t2.label))
+      tokens.sort((t1, t2) => {
+        if (t2.label === 'XRD') {
+          return 1
+        }
+        return t1.label.localeCompare(t2.label)
+      })
 
       return tokens
     },
