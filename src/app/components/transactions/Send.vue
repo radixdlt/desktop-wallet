@@ -133,16 +133,18 @@ export default Vue.extend({
         ).signAndSubmit(this.identity)
 
         transactionStatusSubject.subscribe({
-          next: status => {
-            // Maybe show status
+          next: update => {
+            if (update.status === 'SUBMITTED') {
+              this.transactionStatus = 'Submitted.'
+            }
           },
           complete: () => {
-            this.transactionStatus = 'Sent'
+            this.transactionStatus = 'Transaction successful.'
             this.amount = ''
           },
           error: error => {
             console.error(error)
-            this.transactionStatus = error.status
+            this.transactionStatus = `Transaction failed: ${error.status}`
           },
         })
       } catch (error) {
