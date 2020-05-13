@@ -137,12 +137,12 @@ export default Vue.extend({
           },
           error: error => {
             console.error(error)
-            this.transactionStatus = error.message
+            this.transactionStatus = error.status
           },
         })
       } catch (error) {
         console.error(error)
-        this.transactionStatus = error.message
+        this.transactionStatus = error.status
       }
     },
     update() {
