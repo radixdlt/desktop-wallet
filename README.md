@@ -8,41 +8,52 @@ The Desktop Wallet runs on Electron, is written in [Vue.js](https://vuejs.org/) 
 
 - [Changelog](CHANGELOG.md)
 - [Requirements](#requirements)
-- [How to use](#how-to-use)
-- [Available commands](#available-commands)
+- [First time setup](#first-time-setup)
+- [Building and running](#building-and-running)
+- [Building for distribution](#building-for-distribution)
+- [Connect to a custom universe](#connect-to-a-custom-universe)
 - [Contribute](#contribute)
 - [Links](#links)
 - [License](#license)
 
 ## Requirements
 
-To build the app, you need to also add 3 licenced fonts to the `src/app/assets/fonts/` directory:
+- [Node.js](https://nodejs.org/en/)
+- [Yarn](https://yarnpkg.com/)
 
-* Gotham-Book.otf
-* Gotham-Light.otf
-* Gotham-Medium.otf
-
-You can find them [here](https://www.cufonfonts.com/font/gotham).
-
-## How to use
-
-Install [EditorConfig plugin](http://editorconfig.org/) for your editor, to keep the formating consistent.
-
-Use [yarn](https://yarnpkg.com/en/) instead of [npm](https://www.npmjs.com/) for increased speed.
-
-### First time setup 
+## First time setup
 
 Run `yarn install`
 
-## Available commands
+## Building and running
 
-* Run `yarn build` to build code for development
-* After than you can run the application with `yarn start` or use F5 in VS Code
-* Run tests with `yarn test:unit` after building the application
-* Run `yarn build:prod` and `yarn dist:all` to build the application packages for Windows, macOS and Linux
+- Run `yarn build` to build code for development
+- Run `yarn build:watch` to build continually
+- After than you can run the application with `yarn start` or use F5 in VS Code
 
+## Building for distribution
 
-## Use a custom universe (for testing)
+### Setting up code signing
+
+You need two different code signing certificates, one for MacOS and one for Windows. Create an electron-builder.env file in the root directory of the project.
+
+```
+CSC_LINK=/path/to/code_sign_apple.p12
+CSC_KEY_PASSWORD={password "code_sign_apple.p12"}
+WIN_CSC_LINK=/path/to/code_sign.p12
+WIN_CSC_KEY_PASSWORD={password "code_sign.p12"}
+APPLEID={login "Apple Desktop Code Signing App-specific"}
+APPLEIDPASS={password "Apple Desktop Code Signing App-specific"}
+```
+
+### Building release artefacts
+
+1. `yarn build:prod` (takes 3-4 minutes)
+2. `yarn dist:all` - this will take about 10 minutes without showing much progress at some points, don't worry
+3. Alternatively it is possible to build for a specific platform only - `yarn dist:mac`, `yarn dist:linux`, `yarn dist:windows`
+4. You will find the build artefacts in the `dist` folder - .exe for Windows, .appimage for Linux and .dmg for OS X
+
+## Connect to a custom universe
 
 Put a `universe.json` file in the root of the project, with the following structure:
 
@@ -63,9 +74,11 @@ Put a `universe.json` file in the root of the project, with the following struct
 
 [Contributions](CONTRIBUTING.md) are welcome, we simply ask to:
 
-* Fork the latest `release` branch
-* Make a pull request towards the latest `rc` branch
-* Submit a pull request for review
+- Fork the latest `release` branch
+- Make a pull request towards the latest `rc` branch
+- Submit a pull request for review
+
+Install [EditorConfig plugin](http://editorconfig.org/) for your editor, to keep the formating consistent.
 
 When contributing to this repository, we recommend discussing with the development team the change you wish to make using a [GitHub issue](https://github.com/radixdlt/desktop-wallet/issues) before making changes.
 
@@ -83,4 +96,3 @@ Please follow our [Code of Conduct](CODE_OF_CONDUCT.md) in all your interactions
 ## License
 
 The Radix Desktop Wallet is released under the [MIT License](LICENSE).
-
