@@ -19,10 +19,14 @@ div
             icon.direction-icon.sent(name="regular/arrow-alt-circle-up", v-if="transaction.balance < 0")
             icon.direction-icon.received(name="regular/arrow-alt-circle-down", v-else)       
           div.action
-          div.participants
-            div.explanation {{transaction.balance < 0 ? 'Sent to' : 'Received from' }} {{ transaction.token.label }}
+            template(v-if="transaction.displayName")
+              div.explanation.
+                {{transaction.balance < 0 ? 'Sent to' : 'Received from' }} {{ transaction.token.label }}
               div.selectable.address {{ transaction.displayName }}
               div.message Note: {{ transaction.message }}
+            template(v-else)
+              div.explanation.
+                Token created
           div.atom-id.
             {{ transaction.aid }}
           div.balance
