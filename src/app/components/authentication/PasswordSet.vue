@@ -48,57 +48,57 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    import { radixApplication } from '@/app/modules/RadixApplication'
+import Vue from 'vue'
+import { radixApplication } from '@/app/modules/RadixApplication'
 
-    export default Vue.extend({
-        data() {
-            return {
-                password: '',
-                password2: '',
-                validationError: '',
-            }
-        },
-        methods: {
-            async setPassword() {
-                // Validate any rules
-                // TODO: probably want higher requirmenets
-                if (this.password.length < 6) {
-                    this.validationError = 'Password must be at least 6 characters long'
-                    return
-                }
+export default Vue.extend({
+  data() {
+    return {
+      password: '',
+      password2: '',
+      validationError: '',
+    }
+  },
+  methods: {
+    async setPassword() {
+      // Validate any rules
+      // TODO: probably want higher requirmenets
+      if (this.password.length < 6) {
+        this.validationError = 'Password must be at least 6 characters long'
+        return
+      }
 
-                if (this.password !== this.password2) {
-                    this.validationError = `Passwords don't match`
-                    return
-                }
+      if (this.password !== this.password2) {
+        this.validationError = `Passwords don't match`
+        return
+      }
 
-                await radixApplication.setPassword(this.password)
-            },
-        }
-    })
+      await radixApplication.setPassword(this.password)
+    },
+  },
+})
 </script>
 
 <style lang="scss" scoped>
-    .lock {
-        width: 14px;
-        height: 16px;
-        object-fit: contain;
-        margin: auto;
-    }
+.lock {
+  width: 14px;
+  height: 16px;
+  object-fit: contain;
+  margin: auto;
+}
 
-    .debug {
-        padding: 10px;
-        align-self: end;
+.debug {
+  padding: 10px;
+  align-self: end;
 
-        color: #D7EFFA;
-        font-size: 10px;
+  color: #d7effa;
+  font-size: 10px;
 
-        line-height: 20px;
+  line-height: 20px;
 
-        a:hover {
-            text-decoration: underline;
-            cursor: pointer;
-        }
-    }
+  a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
 </style>
