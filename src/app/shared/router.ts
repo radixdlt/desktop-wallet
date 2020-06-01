@@ -26,13 +26,13 @@ export const router = new Router({
             path: '/main',
             component: Main,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
             },
             children: [
                 {
                     path: '',
                     name: 'main',
-                    redirect: {name: 'dashboard'}
+                    redirect: { name: 'dashboard' },
                 },
                 {
                     path: 'dashboard',
@@ -43,7 +43,7 @@ export const router = new Router({
                     path: 'transactions',
                     name: 'transactions',
                     component: Transactions,
-                    redirect: {name: 'send'},
+                    redirect: { name: 'send' },
                     children: [
                         {
                             path: 'send/:address?',
@@ -60,18 +60,18 @@ export const router = new Router({
                 {
                     path: 'contacts',
                     name: 'contacts',
-                    component: Contacts
+                    component: Contacts,
                 },
                 {
                     path: 'accounts',
                     name: 'accounts',
-                    component: AccountList
+                    component: AccountList,
                 },
                 {
                     path: 'settings',
                     name: 'settings',
                     component: Settings,
-                    redirect: {name: 'changePassword'},
+                    redirect: { name: 'changePassword' },
                     children: [
                         {
                             path: 'changePassword',
@@ -84,14 +84,14 @@ export const router = new Router({
         },
         {
             path: '*',
-            redirect: 'main'
-        }
-    ]
+            redirect: 'main',
+        },
+    ],
 })
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth) && store.state.activeAccount === null) {
-        next({name: 'auth'})
+        next({ name: 'auth' })
     } else {
         next()
     }
