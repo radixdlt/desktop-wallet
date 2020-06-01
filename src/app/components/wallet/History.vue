@@ -9,29 +9,24 @@ div
       template(v-else)
         div.column-title Timestamp
         div.column-title
-        div.column-title Participants
+        div.column-title Action
         div.column-title Atom ID
         div.column-title Balance
-        div.column-title Fee
-        div.column-title Actions
 
         template(v-for="transaction in transactions") 
           div.timestamp {{ transaction.time }}
           div.icon
             icon.direction-icon.sent(name="regular/arrow-alt-circle-up", v-if="transaction.balance < 0")
             icon.direction-icon.received(name="regular/arrow-alt-circle-down", v-else)       
+          div.action
           div.participants
             div.explanation {{transaction.balance < 0 ? 'Sent to' : 'Received from' }} {{ transaction.token.label }}
-            div.selectable.address {{ transaction.displayName }}
-            div.message Note: {{ transaction.message }}
+              div.selectable.address {{ transaction.displayName }}
+              div.message Note: {{ transaction.message }}
           div.atom-id.
             {{ transaction.aid }}
           div.balance
             span.value {{ transaction.balance }} {{ transaction.token.name }}
-          div.fee
-          div.actions
-            span.transaction-button-container(@click="$router.push({ name: 'send', params: { address: transaction.address }})") 
-              icon.action.transaction-icon(name="external-link-square-alt")
             
 </template>
 
@@ -142,7 +137,7 @@ export default Vue.extend({
 
 .transaction-list {
   display: grid;
-  grid: auto-flow / repeat(7, 1fr);
+  grid: auto-flow / repeat(5, 1fr);
   padding: 18px;
   overflow: auto;
   > * {
@@ -173,7 +168,7 @@ export default Vue.extend({
   }
 }
 
-.participants {
+.action {
   font-size: 10px;
   font-weight: 300;
   color: $grey;
