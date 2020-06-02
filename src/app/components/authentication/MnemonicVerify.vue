@@ -25,60 +25,61 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    import { radixApplication } from '@/app/modules/RadixApplication'
-    import * as bip39 from 'bip39'
-    import MnemonicInput from './MnemonicInput.vue'
+import Vue from 'vue'
+import { radixApplication } from '@/app/modules/RadixApplication'
+import * as bip39 from 'bip39'
+import MnemonicInput from './MnemonicInput.vue'
+import { goBack } from '../../modules/application-state'
 
-    export default Vue.extend({
-        components: {
-            MnemonicInput,
-        },
-        data() {
-            return {
-                mnemonicSize: 12,
-                mnemonic: '',
+export default Vue.extend({
+  components: {
+    MnemonicInput,
+  },
+  data() {
+    return {
+      mnemonicSize: 12,
+      mnemonic: '',
 
-                error: '',
-                wordlist: radixApplication.wordlist
-            }
-        },
-        methods: {
-            next() {
-                try {
-                    radixApplication.verifyCheckMnemonic(this.mnemonic)
-                } catch {
-                    this.error = 'Mnemonic is not correct'
-                }
-            },
-            clearError() {
-                this.error = ''
-            },
-            back() {
-                radixApplication.goBack()
-            },
-        },
-    })
+      error: '',
+      wordlist: radixApplication.wordlist,
+    }
+  },
+  methods: {
+    next() {
+      try {
+        radixApplication.verifyCheckMnemonic(this.mnemonic)
+      } catch {
+        this.error = 'Mnemonic is not correct'
+      }
+    },
+    clearError() {
+      this.error = ''
+    },
+    back() {
+      goBack()
+    },
+  },
+})
 </script>
 
 <style lang="scss" scoped>
-    .error {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 60px;
-        width: 100%;
+.error {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 60px;
+  width: 100%;
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-        background-color: $red;
-        color: $white;
+  background-color: $red;
+  color: $white;
 
-        .inline-icon {
-            margin-right: 10px;
-            height: 24px;
-        }
-    }
+  .inline-icon {
+    margin-right: 10px;
+    height: 24px;
+  }
+}
 </style>
