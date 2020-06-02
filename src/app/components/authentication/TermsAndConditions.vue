@@ -28,20 +28,20 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    import { radixApplication } from '@/app/modules/RadixApplication'
+import Vue from 'vue'
+import { radixApplication } from '@/app/modules/RadixApplication'
 
-    export default Vue.extend({
-        data() {
-            return {
-                termsAccepted: false,
-                privacyPolicyAccepted: false,
-            }
-        },
-        methods: {
-            acceptTerms() {
-                radixApplication.acceptTerms()
-            }
-        },
-    })
+export default Vue.extend({
+  data() {
+    return {
+      termsAccepted: false,
+      privacyPolicyAccepted: false,
+    }
+  },
+  methods: {
+    acceptTerms() {
+      radixApplication.acceptTerms()
+    },
+  },
+})
 </script>
