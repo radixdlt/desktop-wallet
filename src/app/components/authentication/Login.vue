@@ -39,59 +39,58 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    import { radixApplication } from '@/app/modules/RadixApplication'
+import Vue from 'vue'
+import { radixApplication } from '@/app/modules/RadixApplication'
 import { remote } from 'electron'
 
-    export default Vue.extend({
-        data() {
-            return {
-                password: '',
-                validationError: '',
-            }
-        },
-        methods: {
-            login() {
-                radixApplication.decryptKeystore(this.password)
-                    .catch((error) => {
-                        console.error(error)
-                        this.validationError = 'Password incorrect'
-                    })
-            },
-            deleteWallet() {
-                radixApplication.deleteKeystore()
-                radixApplication.deleteAtomsDB()
+export default Vue.extend({
+  data() {
+    return {
+      password: '',
+      validationError: '',
+    }
+  },
+  methods: {
+    login() {
+      radixApplication.decryptKeystore(this.password).catch(error => {
+        console.error(error)
+        this.validationError = 'Password incorrect'
+      })
+    },
+    deleteWallet() {
+      radixApplication.deleteKeystore()
+      radixApplication.deleteAtomsDB()
 
-                remote.getCurrentWindow().reload()
-            },
-            deleteDB() {
-                radixApplication.deleteAtomsDB()
-                remote.getCurrentWindow().reload()
-            }
-        }
-    })
+      remote.getCurrentWindow().reload()
+    },
+    deleteDB() {
+      radixApplication.deleteAtomsDB()
+      remote.getCurrentWindow().reload()
+    },
+  },
+})
 </script>
 
 <style lang="scss" scoped>
-    .lock {
-        width: 14px;
-        height: 16px;
-        object-fit: contain;
-        margin: auto;
-    }
+.lock {
+  width: 14px;
+  height: 16px;
+  object-fit: contain;
+  margin: auto;
+}
 
-    .debug {
-        padding: 10px;
-        align-self: end;
+.debug {
+  padding: 10px;
+  align-self: end;
 
-        color: #D7EFFA;
-        font-size: 10px;
+  color: #d7effa;
+  font-size: 10px;
 
-        line-height: 20px;
+  line-height: 20px;
 
-        a:hover {
-            text-decoration: underline;
-            cursor: pointer;
-        }
-    }
+  a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
 </style>
