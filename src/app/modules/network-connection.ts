@@ -1,20 +1,19 @@
 import { radixUniverse, RadixUniverse, RadixUniverseConfig, RadixNodeDiscoveryHardcoded, RadixBootstrapConfig } from 'radixdlt'
 import { setAtomStore } from './atom-store'
 
-const connect = <T extends any[]>(func: (...args: T) => RadixBootstrapConfig) => (...args: T) => {
+const connect = (bootstrapConfig: RadixBootstrapConfig) => {
     const store = setAtomStore()
-    radixUniverse.bootstrap(func(...args), store)
+    radixUniverse.bootstrap(bootstrapConfig, store)
 }
 
-export const connectLocalhost = connect(() => RadixUniverse.LOCALHOST_SINGLENODE)
+export const connectLocalhost = connect.bind(null, RadixUniverse.LOCALHOST_SINGLENODE)
 
-export const connectCustomNode = connect<[string, boolean, any]>((address: string, useSSL: boolean, universe: any) => {
+export const connectCustomNode = (address: string, useSSL: boolean, universe: any) => {
     const universeConfig = new RadixUniverseConfig(universe)
-    return {
+    const bootstrapConfig = {
         universeConfig,
         nodeDiscovery: new RadixNodeDiscoveryHardcoded([address], useSSL),
         finalityTime: 0,
     }
-})
-
-connectCustomNode('', true, {})
+    connect(bootstrapConfig)
+}
