@@ -32,8 +32,6 @@ import {
 } from 'radixdlt'
 
 import Config from '@app/shared/Config'
-
-import { radixApplication } from '@app/modules/RadixApplication'
 import Decimal from 'decimal.js'
 import { Subscription } from 'rxjs'
 import { accountManager } from '../../modules/account/AccountManager'

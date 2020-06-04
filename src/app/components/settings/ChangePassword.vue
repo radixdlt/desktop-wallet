@@ -55,71 +55,66 @@ div
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-import { radixApplication } from '../../modules/RadixApplication'
+import Vue from 'vue'
 import { accountManager } from '../../modules/account/AccountManager'
-    
-    export default Vue.extend({
-        data() {
-            return {
-                oldPassword: '',
-                newPassword1: '',
-                newPassword2: '',
 
-                oldPasswordError: '',
-                newPasswordError: '',
-                successMessage: '',
-            }
-        },
-        methods: {
-            async changePassword() {
-                // Check rules
-                if (this.newPassword1.length < 6) {
-                   this.newPasswordError = 'Password must be at least 6 characters long'
-                   return
-                }
+export default Vue.extend({
+  data() {
+    return {
+      oldPassword: '',
+      newPassword1: '',
+      newPassword2: '',
 
-                // Check match
-                if (this.newPassword1 !== this.newPassword2) {
-                    this.newPasswordError = `The passwords don't match`
-                    return
-                }
+      oldPasswordError: '',
+      newPasswordError: '',
+      successMessage: '',
+    }
+  },
+  methods: {
+    async changePassword() {
+      // Check rules
+      if (this.newPassword1.length < 6) {
+        this.newPasswordError = 'Password must be at least 6 characters long'
+        return
+      }
 
-                // Check existing
-                if (!(await accountManager.checkPassword(this.oldPassword))) {
-                    this.oldPasswordError = 'Password incorrect'
-                    return
-                }
+      // Check match
+      if (this.newPassword1 !== this.newPassword2) {
+        this.newPasswordError = `The passwords don't match`
+        return
+      }
 
-                // Overwrite data store
-                accountManager.store(this.newPassword1)
-                accountManager.setKeystorePassword(this.newPassword1)
-                
-                this.oldPassword = ''
-                this.newPassword1 = ''
-                this.newPassword2 = ''
-                this.successMessage = 'Password changed'
-            },
-            clearErrors() {
-                this.oldPasswordError = ''
-                this.newPasswordError = ''
-                this.successMessage = ''
-            },
-        },
-    })
+      // Check existing
+      if (!(await accountManager.checkPassword(this.oldPassword))) {
+        this.oldPasswordError = 'Password incorrect'
+        return
+      }
+
+      // Overwrite data store
+      accountManager.store(this.newPassword1)
+      accountManager.setKeystorePassword(this.newPassword1)
+
+      this.oldPassword = ''
+      this.newPassword1 = ''
+      this.newPassword2 = ''
+      this.successMessage = 'Password changed'
+    },
+    clearErrors() {
+      this.oldPasswordError = ''
+      this.newPasswordError = ''
+      this.successMessage = ''
+    },
+  },
+})
 </script>
 
 <style lang="scss" scoped>
+.container {
+  padding: 30px;
+  height: 100%;
 
-    .container {
-        padding: 30px;
-        height: 100%;
-
-        .component {
-            min-height: 0;
-            
-        }
-    }
-    
-
+  .component {
+    min-height: 0;
+  }
+}
 </style>

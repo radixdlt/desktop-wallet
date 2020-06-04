@@ -68,7 +68,6 @@ div
 
 <script lang="ts">
 import Vue from 'vue'
-import { radixApplication } from '@app/modules/RadixApplication'
 import Contact from '@app/shared/contacts/Contact'
 import { RadixIdentity } from 'radixdlt'
 import Modal from '@app/components/shared/Modal.vue'

@@ -27,8 +27,6 @@ div
 
 <script lang="ts">
 import Vue from 'vue'
-
-import { radixApplication }  from '@app/modules/RadixApplication'
 import { RadixIdentity } from 'radixdlt'
 import { WalletAccount } from '../modules/account/WalletAccount'
 import { accountManager } from '../modules/account/AccountManager'

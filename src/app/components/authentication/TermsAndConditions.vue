@@ -29,7 +29,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { radixApplication } from '@/app/modules/RadixApplication'
 import { settingsStore } from '../../modules/SettingsStore'
 import { accountManager } from '../../modules/account/AccountManager'
 

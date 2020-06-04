@@ -43,7 +43,6 @@ import {
   RadixIdentity,
   RadixTransaction,
 } from 'radixdlt'
-import { radixApplication } from '../../modules/RadixApplication'
 import moment from 'moment'
 import { accountManager } from '../../modules/account/AccountManager'
 

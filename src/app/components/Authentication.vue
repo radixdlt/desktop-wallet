@@ -14,9 +14,6 @@
 
 <script lang="ts">
     import Vue from 'vue'
-
-    import { radixApplication } from '@/app/modules/RadixApplication'
-
     import CreateOrRestore from './authentication/CreateOrRestore.vue'
     import Login from './authentication/Login.vue'
     import TermsAndConditions from './authentication/TermsAndConditions.vue'

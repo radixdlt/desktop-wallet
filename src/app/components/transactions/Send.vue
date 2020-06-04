@@ -53,8 +53,6 @@ import {
   RadixIdentity,
 } from 'radixdlt'
 
-import { radixApplication } from '@app/modules/RadixApplication'
-
 import RadixContactItemTemplate from './RadixContactItemTemplate.vue'
 import Decimal from 'decimal.js'
 

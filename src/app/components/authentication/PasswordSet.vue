@@ -49,7 +49,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { radixApplication } from '@/app/modules/RadixApplication'
 import { accountManager } from '../../modules/account/AccountManager'
 
 export default Vue.extend({
@@ -74,7 +73,6 @@ export default Vue.extend({
         return
       }
 
-      // await radixApplication.setPassword(this.password)
       accountManager.setPassword(this.password)
     },
   },

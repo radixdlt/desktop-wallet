@@ -26,7 +26,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { radixApplication } from '@/app/modules/RadixApplication'
 import * as bip39 from 'bip39'
 import MnemonicInput from './MnemonicInput.vue'
 import { goBack, verifyCheckMnemonic } from '../../modules/application-state'
