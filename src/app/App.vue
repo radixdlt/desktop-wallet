@@ -26,24 +26,25 @@ import {
   RadixMessageUpdate,
   RadixTransactionUpdate,
   RRI,
+  RadixUniverseConfig,
 } from 'radixdlt'
-import {
-  radixApplication,
-  RadixApplicationStates,
-  connectLocalhost,
-} from '@app/modules/RadixApplication'
 import { radixServer } from '@app/server/RadixServer'
 import Modal from '@app/components/shared/Modal.vue'
 import Config from '@app/shared/Config'
 import fs from 'fs-extra'
 import { filter } from 'rxjs/operators'
+import { stateSubject, setState, AppState } from './modules/application-state'
+import { connectLocalhost, connectCustomNode } from './modules/network-connection'
+import { settingsStore } from './modules/SettingsStore'
+import { accountManager } from './modules/account/AccountManager'
+import { KEYSTORE_FILENAME, dataDir } from './modules/atom-store'
 
 export default Vue.extend({
   components: {
     Modal,
   },
   subscriptions: {
-    walletManagerState: radixApplication.stateSubject,
+    walletManagerState: stateSubject,
   },
   data() {
     return {
@@ -54,19 +55,21 @@ export default Vue.extend({
     }
   },
   created() {
-    radixApplication.initialize()
+    connectLocalhost()
+
+    if (!settingsStore.get('termsAccepted')) {
+      setState(AppState.TERMS_AND_CONDITIONS)
+    } else {
+      accountManager.loadKeystore()
+    }
+
     radixServer.start()
 
     // @ts-ignore
-    this.$store.state.contactsFileName = `${radixApplication.dataDir}/contacts.json`
+    this.$store.state.contactsFileName = `${dataDir}/contacts.json`
 
     this.$observables.walletManagerState
-      .pipe(
-        filter(
-          (state: RadixApplicationStates) =>
-            state == RadixApplicationStates.READY
-        )
-      )
+      .pipe(filter((state: AppState) => state == AppState.READY))
       .subscribe(state => {
         try {
           this.addContact(Config.faucetAddress, 'Faucet')
@@ -79,43 +82,7 @@ export default Vue.extend({
         this.$router.push('main')
       })
 
-    // Notifications
-    radixApplication.on(
-      'atom-received:message',
-      (messageUpdate: RadixMessageUpdate) => {
-        const message = messageUpdate.message
-        const address = message.from
-
-        // Don't notify about old messages
-        const timeDifference = Date.now() - message.timestamp
-        if (timeDifference > 10000) {
-          return
-        }
-
-        if (message.is_mine) {
-          return
-        } // Only incoming messages
-
-        let displayName = address.toString()
-        if (address.toString() in this.contacts) {
-          displayName = this.contacts[address.toString()].alias
-        }
-
-        let messageNotification = new Notification(displayName, {
-          body: message.content,
-        })
-
-        messageNotification.onclick = () => {
-          // @ts-ignore
-          this.$router.push({
-            path: '/messaging/chatlist/' + message.from.getAddress(),
-          })
-        }
-      }
-    )
-
-    radixApplication.on(
-      'atom-received:transaction',
+    accountManager.subscribeToTransferEvents(
       (transactionUpdate: RadixTransactionUpdate) => {
         const transaction = transactionUpdate.transaction
         const address = Object.keys(transaction.participants)[0]
@@ -161,7 +128,7 @@ export default Vue.extend({
           if (filePath === undefined) {
             return
           }
-          fs.copyFile(radixApplication.keystoreFileName, filePath, error => {
+          fs.copyFile(KEYSTORE_FILENAME, filePath, error => {
             if (error) {
               throw error
             }
@@ -220,7 +187,7 @@ export default Vue.extend({
   },
   computed: {
     identity: function() {
-      this.$store.state.activeAccount
+      return this.$store.state.activeAccount
     },
     contacts: function() {
       return this.$store.state.contacts
