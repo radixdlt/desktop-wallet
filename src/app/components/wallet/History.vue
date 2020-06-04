@@ -1,34 +1,36 @@
 <template lang="pug">
 // Always have an empty outer div, due to this issue https://github.com/vuejs/vue-loader/issues/957
 div 
-    div.container.panel
-        div.header Recent transactions
-        div.transaction-list.body
-            div.no-transactions(v-if="transactions.length === 0") 
-                p You don't have any transaction history yet
+  div.container.panel
+    div.header Recent transactions
+    div.transaction-list.body
+      div(v-if="transactions.length < 1") 
+          p You don't have any transaction history yet
+      template(v-else)
+        div.column-title Timestamp
+        div.column-title
+        div.column-title Action
+        div.column-title Atom ID
+        div.column-title Balance
 
-            div.transactons-table(v-if="transactions.length > 0")
-                div.transaction.header-row
-                    div.time Timestamp
-                    div.info Participants
-                    div.balance Balance
-                    div.buttons Actions
-
-                div.transaction(v-for="transaction in transactions") 
-                    div.time {{transaction.time}}
-                    div.icon
-                        icon.direction-icon.sent(name="regular/arrow-alt-circle-up", v-if="transaction.balance < 0")
-                        icon.direction-icon.received(name="regular/arrow-alt-circle-down", v-else)       
-                    div.info
-                        div.explaination {{transaction.balance < 0 ? 'Sent' : 'Received' }} {{ transaction.token.label }}
-                        div.selectable.address {{transaction.balance < 0 ? 'To' : 'From' }} {{ transaction.displayName }}
-                        div.message Note: {{transaction.message}}
-                    div.balance
-                        span.value {{ transaction.balance }} 
-                        span.token {{ transaction.token.name }}
-                    div.buttons
-                        span.transaction-button-container(@click="$router.push({ name: 'send', params: { address: transaction.address }})") 
-                            icon.action.transaction-icon(name="external-link-square-alt")
+        template(v-for="transaction in transactions") 
+          div.timestamp {{ transaction.time }}
+          div.icon
+            icon.direction-icon.sent(name="regular/arrow-alt-circle-up", v-if="transaction.balance < 0")
+            icon.direction-icon.received(name="regular/arrow-alt-circle-down", v-else)       
+          div.action
+            template(v-if="transaction.displayName")
+              div.explanation.
+                {{transaction.balance < 0 ? 'Sent to' : 'Received from' }} {{ transaction.token.label }}
+              div.selectable.address {{ transaction.displayName }}
+              div.message Note: {{ transaction.message }}
+            template(v-else)
+              div.explanation.
+                Token created
+          div.atom-id.
+            {{ transaction.aid }}
+          div.balance
+            span.value {{ transaction.balance }} {{ transaction.token.name }}
             
 </template>
 
@@ -96,6 +98,7 @@ export default Vue.extend({
           address: address,
           displayName: displayName,
           time: timeString,
+          aid: transaction.aid,
           message,
         }
       })
@@ -133,127 +136,87 @@ export default Vue.extend({
 <style lang="scss" scoped>
 .container {
   display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: max-content 1fr;
-  width: 100%;
   height: 100%;
-  min-height: 0;
+}
 
-  .transaction-list {
-    overflow: auto;
-    grid-column: 1;
-    grid-row: 2;
+.transaction-list {
+  display: grid;
+  grid: auto-flow / repeat(5, 1fr);
+  padding: 18px;
+  overflow: auto;
+  > * {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid $grey-light;
+    padding: 5px 10px;
+  }
+}
 
-    .no-transactions {
-      display: flex;
-      width: 100%;
-      height: 100%;
+.column-title {
+  font-size: 12px;
+  color: $grey;
+  font-weight: 500;
+  padding-bottom: 15px;
+}
 
-      p {
-        margin: auto;
-        text-align: center;
-      }
-    }
+.direction-icon {
+  width: 31px;
+  height: 31px;
 
-    .transaction {
-      width: 100%;
-      min-height: 60px;
-      border-bottom: 1px solid $grey-light;
+  &.sent {
+    color: $red;
+  }
 
-      display: grid;
-      grid-template-columns: 70px 50px auto 140px 70px;
+  &.received {
+    color: $green;
+  }
+}
 
-      align-items: center;
-      padding: 0 $panel-padding;
+.action {
+  font-size: 10px;
+  font-weight: 300;
+  color: $grey;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: space-between;
 
-      &.header-row {
-        height: 40px;
+  .explanation {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .message {
+    margin-top: 4px;
+  }
+}
 
-        div {
-          font-size: 12px !important;
-          color: $grey !important;
-          line-height: 40px !important;
-          font-weight: 500 !important;
-          margin: 0 !important;
-        }
-      }
+.balance {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
 
-      .time {
-        grid-column: 1;
+.atom-id {
+  font-size: 10px;
+  font-weight: 300;
+  color: $grey;
+}
 
-        font-size: 12px;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        line-height: 14px;
-      }
+.timestamp {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  line-height: 14px;
+}
 
-      .icon {
-        grid-column: 2;
+.actions {
+  span {
+    margin-left: 20px;
 
-        .direction-icon {
-          width: 31px;
-          height: 31px;
+    .action {
+      color: $grey;
 
-          &.sent {
-            color: $red;
-          }
-
-          &.received {
-            color: $green;
-          }
-        }
-      }
-
-      .info {
-        grid-column: 3;
-
-        .explaination {
-          font-size: 13px;
-          font-weight: 500;
-          line-height: 16px;
-        }
-
-        .address {
-          margin-top: 4px;
-          color: $grey;
-          font-size: 10px;
-          font-weight: 300;
-          line-height: 13px;
-        }
-
-        .message {
-          margin-top: 8px;
-          color: $grey;
-          font-size: 10px;
-          font-weight: 300;
-          line-height: 13px;
-        }
-      }
-
-      .balance {
-        grid-column: 4;
-
-        text-align: right;
-        font-size: 14px;
-        font-weight: 500;
-        line-height: 17px;
-      }
-
-      .buttons {
-        grid-column: 5;
-        justify-content: flex-end;
-
-        span {
-          margin-left: 20px;
-
-          .action {
-            color: $grey;
-
-            &:hover {
-              color: $grey-dark;
-            }
-          }
-        }
+      &:hover {
+        color: $grey-dark;
       }
     }
   }

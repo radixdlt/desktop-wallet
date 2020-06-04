@@ -88,7 +88,7 @@ export default Vue.extend({
     identity(): RadixIdentity {
       return this.$store.state.activeAccount.identity
     },
-    balance(): { [tokenId: string]: any } {
+    balance(): { [tokenId: string]: Decimal } {
       return this.identity.account.transferSystem.tokenUnitsBalance
     },
     tokens(): any[] {
@@ -104,7 +104,12 @@ export default Vue.extend({
         }
       }
 
-      tokens.sort((t1, t2) => t1.label.localeCompare(t2.label))
+      tokens.sort((t1, t2) => {
+        if (radixTokenManager.nativeToken.toString() === t1.id) {
+          return -1
+        }
+        return t1.label.localeCompare(t2.label)
+      })
 
       return tokens
     },
@@ -130,21 +135,27 @@ export default Vue.extend({
         ).signAndSubmit(this.identity)
 
         transactionStatusSubject.subscribe({
-          next: status => {
-            // Maybe show status
+          next: update => {
+            if (update.status === 'SUBMITTED') {
+              this.transactionStatus = 'Submitted.'
+            }
           },
           complete: () => {
-            this.transactionStatus = 'Sent'
+            this.transactionStatus = 'Transaction successful.'
             this.amount = ''
           },
           error: error => {
             console.error(error)
-            this.transactionStatus = error.message
+            this.transactionStatus = `Transaction failed: ${error.status}`
           },
         })
       } catch (error) {
         console.error(error)
-        this.transactionStatus = error.message
+        if (error.status) {
+          this.transactionStatus = error.status
+        } else {
+          this.transactionStatus = error
+        }
       }
     },
     update() {

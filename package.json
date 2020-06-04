@@ -1,6 +1,6 @@
 {
   "name": "radix-wallet",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "",
   "main": "build/main.js",
   "scripts": {
@@ -16,7 +16,8 @@
     "build:watch": "run-p build:main:watch build:app:watch build:unit:watch",
     "watch": "run-p build:main:watch build:app:watch build:unit:watch",
     "build:prod": "run-p build:main:prod build:app:prod",
-    "tslint": "tslint -t json -o tslint-report.json --project ./tsconfig.json --force 'src/**/*.{ts,tsx}'",
+    "lint": "tslint -p ./tsconfig.json -c ./tslint.json 'src/**/*.{ts,tsx}'",
+    "lint:fix": "npm run lint -- --fix",
     "coverage": "nyc --reporter=lcov mocha test/out/app.js --exit",
     "test:unit": "electron-mocha --renderer test/out/app.js",
     "test:e2e": "mocha test/e2e/index.js",

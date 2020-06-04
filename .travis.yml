@@ -32,6 +32,6 @@ script:
   - yarn test:unit || true
   - yarn test:e2e || true
   # Static code analysis
-  - yarn tslint
+  - yarn lint
   - yarn coverage
   # - sonar-scanner

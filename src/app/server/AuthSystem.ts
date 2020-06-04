@@ -21,7 +21,7 @@ export class AuthSystem {
         this.db = new Datastore({ filename: authDBFileName, autoload: true })
     }
 
-    async register(appInfo: { name: string; description: string; permissions: string[]; }) {
+    async register(appInfo: { name: string; description: string; permissions: string[] }) {
         // Show popup
         // @ts-ignore
         await vue.$children[0].requestApplicationAccess(appInfo)
@@ -48,7 +48,7 @@ export class AuthSystem {
 
     async authenticate(token: string, perms: Array<string>) {
         // Find in db
-        const appInfo = await this.db.findOne<AppEntry>({_id: token})
+        const appInfo = await this.db.findOne<AppEntry>({ _id: token })
 
         if (!appInfo) {
             throw new Error('Invalid token')

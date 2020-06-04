@@ -8,7 +8,7 @@ type TypedStore = {
 export const settingsStore = new Store<TypedStore>({
     defaults: {
         termsAccepted: false,
-    }
+    },
 })
 
 // Debug
