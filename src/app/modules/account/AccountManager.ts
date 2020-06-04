@@ -1,5 +1,5 @@
 import { WalletAccount } from './WalletAccount'
-import { RadixKeyStore, RadixSimpleIdentity, RadixAddress, RadixTransactionUpdate } from 'radixdlt'
+import { RadixKeyStore, RadixSimpleIdentity, RadixTransactionUpdate } from 'radixdlt'
 import fs from 'fs-extra'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
@@ -13,6 +13,7 @@ export let keystorePassword: string
 
 let transferSubscription: Subscription | any
 let transactionUpdateSubject: Subject<RadixTransactionUpdate> = new Subject()
+
 class AccountManager {
     public accounts: WalletAccount[] = []
     public mnemonic: string = ''
