@@ -5,8 +5,6 @@ import { ipcRenderer } from 'electron'
 import { authSystem } from './AuthSystem'
 import { store } from '../shared/store'
 
-import { radixApplication } from  '../modules/RadixApplication'
-
 import {
     radixTokenManager,
     RadixTransactionBuilder,
