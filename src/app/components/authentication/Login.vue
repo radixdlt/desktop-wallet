@@ -40,8 +40,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { radixApplication } from '@/app/modules/RadixApplication'
 import { remote } from 'electron'
+import { accountManager } from '../../modules/account/AccountManager'
+import { deleteAtomsDB } from '../../modules/atom-store'
 
 export default Vue.extend({
   data() {
@@ -52,19 +53,19 @@ export default Vue.extend({
   },
   methods: {
     login() {
-      radixApplication.decryptKeystore(this.password).catch(error => {
+      accountManager.decryptKeystore(this.password).catch(error => {
         console.error(error)
         this.validationError = 'Password incorrect'
       })
     },
     deleteWallet() {
-      radixApplication.deleteKeystore()
-      radixApplication.deleteAtomsDB()
+      accountManager.deleteKeystore()
+      deleteAtomsDB()
 
       remote.getCurrentWindow().reload()
     },
     deleteDB() {
-      radixApplication.deleteAtomsDB()
+      deleteAtomsDB()
       remote.getCurrentWindow().reload()
     },
   },

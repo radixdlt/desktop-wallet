@@ -57,6 +57,7 @@ div
 <script lang="ts">
     import Vue from 'vue'
 import { radixApplication } from '../../modules/RadixApplication'
+import { accountManager } from '../../modules/account/AccountManager'
     
     export default Vue.extend({
         data() {
@@ -85,14 +86,14 @@ import { radixApplication } from '../../modules/RadixApplication'
                 }
 
                 // Check existing
-                if (!(await radixApplication.accountManager.checkPassword(this.oldPassword))) {
+                if (!(await accountManager.checkPassword(this.oldPassword))) {
                     this.oldPasswordError = 'Password incorrect'
                     return
                 }
 
                 // Overwrite data store
-                radixApplication.accountManager.store(this.newPassword1)
-                radixApplication.keystorePassword = this.newPassword1
+                accountManager.store(this.newPassword1)
+                accountManager.setKeystorePassword(this.newPassword1)
                 
                 this.oldPassword = ''
                 this.newPassword1 = ''
@@ -104,7 +105,7 @@ import { radixApplication } from '../../modules/RadixApplication'
                 this.newPasswordError = ''
                 this.successMessage = ''
             },
-        }
+        },
     })
 </script>
 

@@ -67,155 +67,157 @@ div
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    
-    import { radixApplication } from '@app/modules/RadixApplication'
-    import Contact from '@app/shared/contacts/Contact'
-    import { RadixIdentity } from 'radixdlt'
-    import Modal from '@app/components/shared/Modal.vue'
-    import { WalletAccount } from '@app/modules/account/WalletAccount'
+import Vue from 'vue'
+import { radixApplication } from '@app/modules/RadixApplication'
+import Contact from '@app/shared/contacts/Contact'
+import { RadixIdentity } from 'radixdlt'
+import Modal from '@app/components/shared/Modal.vue'
+import { WalletAccount } from '@app/modules/account/WalletAccount'
+import {
+  accountManager,
+  keystorePassword,
+} from '../../modules/account/AccountManager'
 
-    export default Vue.extend({
-        components: {
-            Modal,
-        },
-        data() {
-            return {
-                isAdding: false,
-                addAlias: '',
-                
-                editIndex: -1,
-                editName: '',
-                editAddress: '',
-            }
-        },
-        methods: {
-            activateAccount(account) {
-                radixApplication.setActiveAccount(account)
-            },
-            editAccount(index) {
-                this.editIndex = index
-                this.editName = this.accountManager.accounts[index].alias
-                this.editAddress = this.accountManager.accounts[index].identity.address.toString()
-            },
-            saveEdit() {
-                this.accountManager.accounts[this.editIndex].alias = this.editName
-                this.accountManager.store(radixApplication.keystorePassword)
+export default Vue.extend({
+  components: {
+    Modal,
+  },
+  data() {
+    return {
+      isAdding: false,
+      addAlias: '',
 
-                this.dismissEdit()
-            },
-            deleteContact(index) {
-                this.dismissEdit()
-            },
-            dismissEdit() {
-                this.editIndex = -1
-            },
+      editIndex: -1,
+      editName: '',
+      editAddress: '',
+    }
+  },
+  methods: {
+    activateAccount(account) {
+      accountManager.setActiveAccount(account)
+    },
+    editAccount(index) {
+      this.editIndex = index
+      this.editName = accountManager.accounts[index].alias
+      this.editAddress = accountManager.accounts[
+        index
+      ].identity.address.toString()
+    },
+    saveEdit() {
+      accountManager.accounts[this.editIndex].alias = this.editName
+      accountManager.store(keystorePassword)
 
-            addAccount() {
-                this.addAlias = `Account #${this.accountManager.accounts.length + 1}`
-                this.isAdding = true
-            },
-            cancelAdd() {
-                this.isAdding = false
-            },
-            saveAdd() {
-                this.accountManager.addAccount(this.accountManager.generateNewAccount(this.addAlias))
-                this.isAdding = false
+      this.dismissEdit()
+    },
+    deleteContact(index) {
+      this.dismissEdit()
+    },
+    dismissEdit() {
+      this.editIndex = -1
+    },
 
-                // Save to disk
-                this.accountManager.store(radixApplication.keystorePassword)
-            },
-        },
-        computed: {
-            activeAccount(): WalletAccount {
-                return this.$store.state.activeAccount
-            },
-            accountManager() {
-                return radixApplication.accountManager
-            }
-        },
-    })
+    addAccount() {
+      this.addAlias = `Account #${accountManager.accounts.length + 1}`
+      this.isAdding = true
+    },
+    cancelAdd() {
+      this.isAdding = false
+    },
+    saveAdd() {
+      accountManager.addAccount(
+        accountManager.generateNewAccount(this.addAlias)
+      )
+      this.isAdding = false
+
+      // Save to disk
+      accountManager.store(keystorePassword)
+    },
+  },
+  computed: {
+    activeAccount(): WalletAccount {
+      return this.$store.state.activeAccount
+    },
+    accountManager() {
+        return accountManager
+    },
+  },
+})
 </script>
 
 <style lang="scss" scoped>
+.container {
+  padding: 0 20px 20px 20px;
+  height: 100%;
 
-    .container {
-        padding: 0 20px 20px 20px;
-        height: 100%;
+  .modal-panel {
+    padding: 30px;
 
-        .modal-panel {
-            padding: 30px;
-
-            .title {
-                font-size: 18px;
-            }
-        }
-
-        .component {
-            min-height: 0;
-            
-            .toolbar {
-                display: grid;
-                grid-template-rows: 40px;
-                grid-template-columns: 1fr max-content;
-                padding: 0 $panel-padding;
-
-                .header-text {
-                    font-size: 12px;
-                    color: $grey;
-                    line-height: 40px;
-                }
-            }
-
-            .accounts {
-                height: 100%;
-
-                .account {
-                    display: grid;
-                    grid-template-rows: 40px;
-                    grid-template-columns: 1fr max-content max-content;
-                    align-items: center;
-
-                    padding: 0 $panel-padding;
-                    border-top: 1px solid  $grey-light;
-
-                    .details {
-                        .alias {
-                            padding-bottom: 2px;
-                        }
-                        .address {
-                            color: $grey;
-                            font-size: 10px;
-                            font-weight: 300;
-                        }
-                    }
-
-                    .icon-container {
-                        margin-left: 10px;
-                        height: 100%;
-                        justify-self: end;
-
-                        .edit-icon {
-                            color: $green;
-                            height: 100%;
-                        }
-
-                        .activate-icon-off {
-                            color: $grey;
-                            height: 100%;
-                        }
-
-                        .activate-icon-on {
-                            color: $green;
-                            height: 100%;
-                        }
-                    }
-                    
-                }
-            }
-            
-        }
+    .title {
+      font-size: 18px;
     }
-    
+  }
 
+  .component {
+    min-height: 0;
+
+    .toolbar {
+      display: grid;
+      grid-template-rows: 40px;
+      grid-template-columns: 1fr max-content;
+      padding: 0 $panel-padding;
+
+      .header-text {
+        font-size: 12px;
+        color: $grey;
+        line-height: 40px;
+      }
+    }
+
+    .accounts {
+      height: 100%;
+
+      .account {
+        display: grid;
+        grid-template-rows: 40px;
+        grid-template-columns: 1fr max-content max-content;
+        align-items: center;
+
+        padding: 0 $panel-padding;
+        border-top: 1px solid $grey-light;
+
+        .details {
+          .alias {
+            padding-bottom: 2px;
+          }
+          .address {
+            color: $grey;
+            font-size: 10px;
+            font-weight: 300;
+          }
+        }
+
+        .icon-container {
+          margin-left: 10px;
+          height: 100%;
+          justify-self: end;
+
+          .edit-icon {
+            color: $green;
+            height: 100%;
+          }
+
+          .activate-icon-off {
+            color: $grey;
+            height: 100%;
+          }
+
+          .activate-icon-on {
+            color: $green;
+            height: 100%;
+          }
+        }
+      }
+    }
+  }
+}
 </style>

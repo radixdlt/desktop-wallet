@@ -1,9 +1,7 @@
 import Datastore from 'nedb-promises'
 import * as crypto from 'crypto'
-
-import { radixApplication } from '../modules/RadixApplication'
-
 import { vue } from '../renderer'
+import { authDBFileName } from '../modules/atom-store'
 
 interface AppEntry {
     token: string,
@@ -19,10 +17,8 @@ export class AuthSystem {
 
     private db: Datastore
 
-    constructor() { }
-
     initialize() {
-        this.db = new Datastore({ filename: radixApplication.authDBFileName, autoload: true })
+        this.db = new Datastore({ filename: authDBFileName, autoload: true })
     }
 
     async register(appInfo: { name: string; description: string; permissions: string[]; }) {
@@ -40,7 +36,7 @@ export class AuthSystem {
             permissions: appInfo.permissions,
 
             created_at: new Date(),
-            expires: new Date(Date.now() + 30 * 60 * 1000) // 30min
+            expires: new Date(Date.now() + 30 * 60 * 1000), // 30min
         }
 
         await this.db.insert(appEntry)

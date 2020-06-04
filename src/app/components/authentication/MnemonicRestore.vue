@@ -39,6 +39,8 @@
     import Vue from 'vue'
     import { radixApplication } from '@/app/modules/RadixApplication'
     import MnemonicInput from './MnemonicInput.vue'
+import { wordlist } from '../../modules/account/AccountManager'
+import { restoreCheckMnemonic, goBack, restoreProceedUnsafe } from '../../modules/application-state'
 
     export default Vue.extend({
         components: {
@@ -49,7 +51,7 @@
                 mnemonicSize: 12,
                 mnemonic: '',
 
-                wordlist: radixApplication.wordlist,
+                wordlist,
 
                 warningModalIsActive: false,
             }
@@ -57,19 +59,19 @@
         methods: {
             next() {
                 try {
-                    radixApplication.restoreCheckMnemonic(this.mnemonic)
+                    restoreCheckMnemonic(this.mnemonic)
                 } catch {
                     this.warningModalIsActive = true
                 }
             },
             back() {
-                radixApplication.goBack()
+                goBack()
             },
             closeModal() {
                 this.warningModalIsActive = false
             },
             proceedUnsafe() {
-                radixApplication.restoreProceedUnsafe(this.mnemonic)
+                restoreProceedUnsafe(this.mnemonic)
             },
         },
     })

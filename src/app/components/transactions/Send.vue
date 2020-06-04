@@ -43,148 +43,153 @@ div
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    
-    import {
-        radixTokenManager, 
-        RadixTransactionBuilder, 
-        RadixAccount,
-        RRI,
-        RadixIdentity,
-    } from 'radixdlt'
+import Vue from 'vue'
 
-    import { radixApplication } from '@app/modules/RadixApplication'
-    
-    import RadixContactItemTemplate from './RadixContactItemTemplate.vue'
-    import Decimal from 'decimal.js'
+import {
+  radixTokenManager,
+  RadixTransactionBuilder,
+  RadixAccount,
+  RRI,
+  RadixIdentity,
+} from 'radixdlt'
 
-    export default Vue.extend({
-        data() {
-            return {
-                address: '',
-                amount: '',
-                token_id: '',
-                message: '',
-                transactionStatus: '',
-                contacts: [],
-                template: RadixContactItemTemplate,
-            }
-        },
-        created() {            
-            radixApplication.on('atom-received:transaction', this.update)
-            radixApplication.on('contact-added', this.update)
-        },
-        destroyed() {
-            radixApplication.removeListener('atom-received:transaction', this.update)
-            radixApplication.removeListener('contact-added', this.update)
-        },
-        mounted() {
-            this.update()
-            this.getRouteAddress()
-        },
-        computed: {
-            identity(): RadixIdentity {
-                return this.$store.state.activeAccount.identity
-            },
-            balance(): { [tokenId: string]: Decimal} {
-                return this.identity.account.transferSystem.tokenUnitsBalance
-            },
-            tokens(): any[] {
-                const tokens = []
-                for (let token_id in this.balance) {
-                    const tokenReference = RRI.fromString(token_id)
+import { radixApplication } from '@app/modules/RadixApplication'
 
-                    if(this.balance[token_id].gt(0)) {
-                        tokens.push({
-                            id: token_id,
-                            label: tokenReference.name
-                        })
-                    }
-                }
+import RadixContactItemTemplate from './RadixContactItemTemplate.vue'
+import Decimal from 'decimal.js'
+import { transferSubscription } from '../../modules/network-events'
 
-                tokens.sort((t1, t2) => t1.label.localeCompare(t2.label))
+export default Vue.extend({
+  data() {
+    return {
+      address: '',
+      amount: '',
+      token_id: '',
+      message: '',
+      transactionStatus: '',
+      contacts: [],
+      template: RadixContactItemTemplate,
+      subscription: undefined,
+    }
+  },
+  created() {
+    this.subscription = transferSubscription.subscribe(this.update)
+  },
+  destroyed() {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  },
+  mounted() {
+    this.update()
+    this.getRouteAddress()
+  },
+  computed: {
+    identity(): RadixIdentity {
+      return this.$store.state.activeAccount.identity
+    },
+    balance(): { [tokenId: string]: any } {
+      return this.identity.account.transferSystem.tokenUnitsBalance
+    },
+    tokens(): any[] {
+      const tokens = []
+      for (let token_id in this.balance) {
+        const tokenReference = RRI.fromString(token_id)
 
-                return tokens
-            },
-        },
-        watch: {
-            $route(to, from) {
-                this.getRouteAddress();
-            }
-        },      
-        methods: {
-            send() {
-                this.transactionStatus = 'Sending...'
-
-                try {
-                    const to = RadixAccount.fromAddress(this.address, true)
-
-                    const transactionStatusSubject = RadixTransactionBuilder
-                        .createTransferAtom(this.identity.account, to, this.token_id, this.amount, this.message)
-                        .signAndSubmit(this.identity)
-
-                    transactionStatusSubject.subscribe({
-                        next: (status) => {
-                            // Maybe show status
-                        },
-                        complete: () => {
-                            this.transactionStatus = 'Sent'
-                            this.amount = ''
-                        },
-                        error: (error) => {
-                            console.error(error)
-                            this.transactionStatus = error.message
-                        }
-                    })
-                } catch (error) {
-                    console.error(error)
-                    this.transactionStatus = error.message
-                }
-            },
-            update() {
-                if (!this.token_id && this.tokens.length > 0) {
-                    this.token_id = this.tokens[0].id
-                }
-
-                this.$forceUpdate()
-            },
-            getContactLabel(contact) {
-                if (contact.alias !== contact.address) {
-                    return contact.alias + ' ' + contact.address
-                }
-                return contact.address
-            },
-            sendAll() {
-                this.amount = this.balance[this.token_id].toString()
-            },
-            getRouteAddress() {
-                // @ts-ignore
-                if (this.$route.params.address) {
-                    // @ts-ignore
-                    this.address = this.$route.params.address
-                }
-            },
+        if (this.balance[token_id].gt(0)) {
+          tokens.push({
+            id: token_id,
+            label: tokenReference.name,
+          })
         }
-    })
+      }
+
+      tokens.sort((t1, t2) => t1.label.localeCompare(t2.label))
+
+      return tokens
+    },
+  },
+  watch: {
+    $route(to, from) {
+      this.getRouteAddress()
+    },
+  },
+  methods: {
+    send() {
+      this.transactionStatus = 'Sending...'
+
+      try {
+        const to = RadixAccount.fromAddress(this.address, true)
+
+        const transactionStatusSubject = RadixTransactionBuilder.createTransferAtom(
+          this.identity.account,
+          to,
+          this.token_id,
+          this.amount,
+          this.message
+        ).signAndSubmit(this.identity)
+
+        transactionStatusSubject.subscribe({
+          next: status => {
+            // Maybe show status
+          },
+          complete: () => {
+            this.transactionStatus = 'Sent'
+            this.amount = ''
+          },
+          error: error => {
+            console.error(error)
+            this.transactionStatus = error.message
+          },
+        })
+      } catch (error) {
+        console.error(error)
+        this.transactionStatus = error.message
+      }
+    },
+    update() {
+      if (!this.token_id && this.tokens.length > 0) {
+        this.token_id = this.tokens[0].id
+      }
+
+      this.$forceUpdate()
+    },
+    getContactLabel(contact) {
+      if (contact.alias !== contact.address) {
+        return contact.alias + ' ' + contact.address
+      }
+      return contact.address
+    },
+    sendAll() {
+      this.amount = this.balance[this.token_id].toString()
+    },
+    getRouteAddress() {
+      // @ts-ignore
+      if (this.$route.params.address) {
+        // @ts-ignore
+        this.address = this.$route.params.address
+      }
+    },
+  },
+})
 </script>
 
 <style lang="scss" scoped>
+.container {
+  height: 100%;
+  width: 100%;
 
-    .container {
-        height: 100%;
-        width: 100%;
+  .columns,
+  .column {
+    margin-bottom: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+  }
 
-        .columns, .column {
-            margin-bottom: 0;
-            margin-top: 0;
-            padding-bottom: 0;
-            padding-top: 0;
-        }
-
-        .send-all {
-            font-size: 10px;
-            margin-bottom: 0.5em;
-        }
-    }
-
+  .send-all {
+    font-size: 10px;
+    margin-bottom: 0.5em;
+  }
+}
 </style>

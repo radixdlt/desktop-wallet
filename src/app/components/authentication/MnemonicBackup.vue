@@ -29,6 +29,8 @@
 <script lang="ts">
     import Vue from 'vue'
     import { radixApplication } from '@/app/modules/RadixApplication'
+import { accountManager } from '../../modules/account/AccountManager'
+import { goBack, mnemonicBackedUp } from '../../modules/application-state'
 
     export default Vue.extend({
         data() {
@@ -37,19 +39,19 @@
             }
         },
         mounted() {
-            this.mnemonic = radixApplication.getMnemonic()
+            this.mnemonic = accountManager.mnemonic
         },
         computed: {
             mnemonicWords(): string[] {
                 return this.mnemonic.split(' ')
-            }
+            },
         },
         methods: {
             next() {
-                radixApplication.mnemonicBackedUp()
+                mnemonicBackedUp()
             },
             back() {
-                radixApplication.goBack()
+                goBack()
             },
         },
     })

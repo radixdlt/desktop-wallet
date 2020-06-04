@@ -29,7 +29,8 @@ import Vue from 'vue'
 import { radixApplication } from '@/app/modules/RadixApplication'
 import * as bip39 from 'bip39'
 import MnemonicInput from './MnemonicInput.vue'
-import { goBack } from '../../modules/application-state'
+import { goBack, verifyCheckMnemonic } from '../../modules/application-state'
+import { wordlist, accountManager } from '../../modules/account/AccountManager'
 
 export default Vue.extend({
   components: {
@@ -41,13 +42,13 @@ export default Vue.extend({
       mnemonic: '',
 
       error: '',
-      wordlist: radixApplication.wordlist,
+      wordlist: wordlist,
     }
   },
   methods: {
     next() {
       try {
-        radixApplication.verifyCheckMnemonic(this.mnemonic)
+        verifyCheckMnemonic(this.mnemonic)
       } catch {
         this.error = 'Mnemonic is not correct'
       }

@@ -1,14 +1,22 @@
-import { WalletAccount } from "./WalletAccount";
-import { RadixKeyStore, RadixSimpleIdentity, RadixAddress } from 'radixdlt';
+import { WalletAccount } from './WalletAccount'
+import { RadixKeyStore, RadixSimpleIdentity, RadixAddress, RadixTransactionUpdate } from 'radixdlt'
 import fs from 'fs-extra'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, Subject } from 'rxjs'
+import { AppState, setState } from '../application-state'
+import { store } from '../../shared/store'
+import { KEYSTORE_FILENAME } from '../atom-store'
 
-export default class AccountManager {
+export const wordlist = bip39.wordlists.english
+export let keystorePassword: string
+
+let transferSubscription: Subscription | any
+let transactionUpdateSubject: Subject<RadixTransactionUpdate> = new Subject()
+class AccountManager {
     public accounts: WalletAccount[] = []
     public mnemonic: string = ''
-    private accountsUpdatesSubject: BehaviorSubject<WalletAccount[]>= new BehaviorSubject(this.accounts)
+    private accountsUpdatesSubject: BehaviorSubject<WalletAccount[]> = new BehaviorSubject(this.accounts)
 
     private masterNode: bip32.BIP32Interface
     private coinType = 1 // Testnet
@@ -16,7 +24,7 @@ export default class AccountManager {
     constructor(readonly keystorePath: string) {
     }
 
-    
+
     /**
      * Provide an existing mnemonic for the root account
      * This will initiate an account discovery process, 
@@ -56,11 +64,11 @@ export default class AccountManager {
      * @returns WalletAccount
      */
     generateNewAccount(alias?: string): WalletAccount {
-        const accountIndex = this.accounts.length;
+        const accountIndex = this.accounts.length
         const node = this.masterNode.derivePath(`m/44'/${this.coinType}'/${accountIndex}`)
         const identity = RadixSimpleIdentity.fromPrivate(node.privateKey)
 
-        if(!alias) {
+        if (!alias) {
             alias = `Account #${accountIndex + 1}`
         }
         const account = {
@@ -81,6 +89,10 @@ export default class AccountManager {
         }
 
         this.accountsUpdatesSubject.next(this.accounts)
+    }
+
+    public setKeystorePassword(password: string) {
+        keystorePassword = password
     }
 
     /**
@@ -117,7 +129,7 @@ export default class AccountManager {
         const accounts = this.accounts.map(account => {
             return {
                 alias: account.alias,
-                privateKey: account.identity.address.keyPair.getPrivate('hex')
+                privateKey: account.identity.address.keyPair.getPrivate('hex'),
             }
         })
 
@@ -127,7 +139,7 @@ export default class AccountManager {
         })
     }
 
-    
+
     /**
      * Deserialize AccountManager state from a json string
      * 
@@ -146,15 +158,96 @@ export default class AccountManager {
         this.mnemonic = deserializedData.mnemonic
         this.masterNode = bip32.fromSeed(bip39.mnemonicToSeedSync(this.mnemonic))
 
-        const accounts =  deserializedData.accounts.map(account => {
+        const accounts = deserializedData.accounts.map(account => {
             return {
                 alias: account.alias,
-                identity: RadixSimpleIdentity.fromPrivate(account.privateKey)
+                identity: RadixSimpleIdentity.fromPrivate(account.privateKey),
             }
         })
         this.setAccounts(accounts)
     }
-    
+
+
+    /**
+     * Check if the mnemonic is valid, store it and go to PASSWORD_SET
+     * 
+     * @param  {string} mnemonic
+     */
+    public restoreCheckMnemonic(mnemonic: string) {
+        if (!bip39.validateMnemonic(mnemonic, wordlist)) {
+            throw new Error('Mnemonic is not valid')
+        }
+
+        this.setMnemonic(mnemonic)
+
+        setState(AppState.PASSWORD_SET)
+    }
+
+    /**
+   * Write private key from mnemonic to disk, encrypted by password
+   * Go to READY
+   * 
+   * @param  {string} password
+   */
+    public async setPassword(password: string) {
+        // Check any requirements
+        if (password.length < 6) {
+            throw new Error('Password should be at least 6 symbols long')
+        }
+
+        await this.store(password)
+
+        this.setActiveAccount(this.accounts[0])
+        setState(AppState.READY)
+    }
+
+    /**
+     * Decrypt the keystore file on disk and load the private key
+     * Go to READY
+     * 
+     * @param  {string} password
+     */
+    public async decryptKeystore(password: string) {
+        await this.load(password)
+        keystorePassword = password
+
+        this.setActiveAccount(this.accounts[0])
+
+        setState(AppState.READY)
+    }
+
+    public setActiveAccount(account: WalletAccount) {
+        // Unsubscribe old updates
+        if (transferSubscription) {
+            transferSubscription.unsubscribe()
+        }
+
+        store.commit('setActiveAccount', account)
+
+        // Subscribe to updates
+        transferSubscription = account.identity.account.transferSystem.transactionSubject
+            .subscribe(transactionUpdateSubject)
+    }
+
+    public subscribeToTransferEvents(func: any) {
+        transactionUpdateSubject.subscribe(func)
+    }
+
+    /**
+  * Check if the keystore file exists on disk
+  * Go to either DECRYPT_KEYSTORE_PASSWORD_REQUIRED or CREATE_OR_RESTORE
+  */
+    public async loadKeystore() {
+        // Check if keystore file exists
+        const exists = await fs.pathExists(KEYSTORE_FILENAME)
+
+        if (exists) {
+            setState(AppState.DECRYPT_KEYSTORE_PASSWORD_REQUIRED)
+        } else {
+            setState(AppState.CREATE_OR_RESTORE)
+        }
+    }
+
     /**
      * Store the AccountManager state at the provided path, encrypted with the password provided
      * 
@@ -180,6 +273,13 @@ export default class AccountManager {
         this.fromString(serilaizedData)
     }
 
+    public logout() {
+        this.reset()
+        transferSubscription.unsubscribe()
+        store.commit('logout')
+        this.loadKeystore()
+    }
+
     /**
      * Clear mnemonic and account information
      * Useful for logging out
@@ -189,6 +289,24 @@ export default class AccountManager {
         this.masterNode = null
         this.mnemonic = null
     }
+
+    /**
+        * Generate a new mnemonic, go to MNEMONIC_BACKUP
+        */
+    public createWallet() {
+        this.generateMnemonic()
+        setState(AppState.MNEMONIC_BACKUP)
+    }
+
+    public restoreWallet() {
+        setState(AppState.MNEMONIC_RESTORE)
+    }
+
+
+    public deleteKeystore() {
+        fs.removeSync(KEYSTORE_FILENAME)
+    }
+
     /**
      * Check if the current keystore is encrypted with the password provided
      * 
@@ -212,3 +330,5 @@ export default class AccountManager {
         return this.accountsUpdatesSubject.share()
     }
 }
+
+export const accountManager = new AccountManager(KEYSTORE_FILENAME)

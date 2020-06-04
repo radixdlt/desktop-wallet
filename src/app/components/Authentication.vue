@@ -15,7 +15,7 @@
 <script lang="ts">
     import Vue from 'vue'
 
-    import { radixApplication, RadixApplicationStates } from '@/app/modules/RadixApplication'
+    import { radixApplication } from '@/app/modules/RadixApplication'
 
     import CreateOrRestore from './authentication/CreateOrRestore.vue'
     import Login from './authentication/Login.vue'
@@ -24,6 +24,7 @@
     import MnemonicVerify from './authentication/MnemonicVerify.vue'
     import PasswordSet from './authentication/PasswordSet.vue'
     import MnemonicRestore from './authentication/MnemonicRestore.vue'
+import { AppState, stateSubject } from '../modules/application-state'
 
     export default Vue.extend({
         components: {
@@ -38,18 +39,18 @@
         data() {
             return {
                 stateComponentMap: {
-                    [RadixApplicationStates.TERMS_AND_CONDITIONS]: TermsAndConditions,
-                    [RadixApplicationStates.DECRYPT_KEYSTORE_PASSWORD_REQUIRED]: Login,
-                    [RadixApplicationStates.CREATE_OR_RESTORE]: CreateOrRestore,
-                    [RadixApplicationStates.MNEMONIC_BACKUP]: MnemonicBackup,
-                    [RadixApplicationStates.MNEMONIC_VERIFY]: MnemonicVerify,
-                    [RadixApplicationStates.PASSWORD_SET]: PasswordSet,
-                    [RadixApplicationStates.MNEMONIC_RESTORE]: MnemonicRestore,
-                }
+                    [AppState.TERMS_AND_CONDITIONS]: TermsAndConditions,
+                    [AppState.DECRYPT_KEYSTORE_PASSWORD_REQUIRED]: Login,
+                    [AppState.CREATE_OR_RESTORE]: CreateOrRestore,
+                    [AppState.MNEMONIC_BACKUP]: MnemonicBackup,
+                    [AppState.MNEMONIC_VERIFY]: MnemonicVerify,
+                    [AppState.PASSWORD_SET]: PasswordSet,
+                    [AppState.MNEMONIC_RESTORE]: MnemonicRestore,
+                },
             }
         },
         subscriptions: {
-            authenticationState: radixApplication.stateSubject,
+            authenticationState: stateSubject,
         },
     })
 </script>

@@ -31,6 +31,7 @@ import Vue from 'vue'
 import { radixApplication }  from '@app/modules/RadixApplication'
 import { RadixIdentity } from 'radixdlt'
 import { WalletAccount } from '../modules/account/WalletAccount'
+import { accountManager } from '../modules/account/AccountManager'
 
 export default Vue.extend({
     computed: {
@@ -40,19 +41,19 @@ export default Vue.extend({
     },
     methods: {
         logout() {
-            radixApplication.logout()
+            accountManager.logout()
             this.$router.push({name: 'auth'})
         },
         activateAccount(account) {
-            radixApplication.setActiveAccount(account)
+            accountManager.setActiveAccount(account)
         },
     },
     subscriptions() {
         return {
-            favouriteAccounts: radixApplication.accountManager.getAccountsUpdatesObservable()
-                .map((accounts) => accounts.slice(0, 3))
+            favouriteAccounts: accountManager.getAccountsUpdatesObservable()
+                .map((accounts) => accounts.slice(0, 3)),
         }
-    }
+    },
 })
 </script>
 
