@@ -75,7 +75,7 @@ export default Vue.extend({
       }
 
       // await radixApplication.setPassword(this.password)
-      accountManager.store(this.password)
+      accountManager.setPassword(this.password)
     },
   },
 })
