@@ -194,7 +194,9 @@ class AccountManager {
         // Check any requirements
         if (password.length < 6) {
             throw new Error('Password should be at least 6 symbols long')
-        }
+        } 
+        
+        keystorePassword = password
 
         await this.store(password)
 
