@@ -37,35 +37,24 @@ div
 <script lang="ts">
 import Vue from 'vue'
 import _ from 'lodash'
-
 import {
   radixTokenManager,
   RRI,
   RadixIdentity,
   RadixTransaction,
 } from 'radixdlt'
-
 import { radixApplication } from '../../modules/RadixApplication'
 import moment from 'moment'
-import { transferSubscription } from '../../modules/network-events'
 import { accountManager } from '../../modules/account/AccountManager'
 
 export default Vue.extend({
   data() {
     return {
       transactions: [],
-      subscription: undefined,
     }
   },
   created() {
-    this.subscription = accountManager.subscribeToTransferEvents(
-      this.updateTransactionList
-    )
-  },
-  destroyed() {
-    if (this.subscription) {
-      this.subscription.unsubscribe()
-    }
+    accountManager.subscribeToTransferEvents(this.updateTransactionList)
   },
   activated() {
     this.updateTransactionList()

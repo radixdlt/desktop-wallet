@@ -57,7 +57,6 @@ import { radixApplication } from '@app/modules/RadixApplication'
 
 import RadixContactItemTemplate from './RadixContactItemTemplate.vue'
 import Decimal from 'decimal.js'
-import { transferSubscription } from '../../modules/network-events'
 
 export default Vue.extend({
   data() {
@@ -70,14 +69,6 @@ export default Vue.extend({
       contacts: [],
       template: RadixContactItemTemplate,
       subscription: undefined,
-    }
-  },
-  created() {
-    this.subscription = transferSubscription.subscribe(this.update)
-  },
-  destroyed() {
-    if (this.subscription) {
-      this.subscription.unsubscribe()
     }
   },
   mounted() {

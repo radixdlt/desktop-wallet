@@ -35,7 +35,6 @@ import Config from '@app/shared/Config'
 
 import { radixApplication } from '@app/modules/RadixApplication'
 import Decimal from 'decimal.js'
-import { transferSubscription } from '../../modules/network-events'
 import { Subscription } from 'rxjs'
 import { accountManager } from '../../modules/account/AccountManager'
 
@@ -43,12 +42,10 @@ export default Vue.extend({
   data(): {
     activeToken: string;
     tokens: { uri: { rri: RRI; balance: Decimal } } | {};
-    subscription: Subscription;
   } {
     return {
       activeToken: '',
       tokens: {},
-      subscription: undefined,
     }
   },
   created() {
@@ -56,11 +53,6 @@ export default Vue.extend({
     this.setActiveToken(radixTokenManager.nativeToken.toString())
 
     accountManager.subscribeToTransferEvents(this.update)
-  },
-  destroyed() {
-    if (this.subscription) {
-      this.subscription.unsubscribe()
-    }
   },
   computed: {
     identity(): RadixIdentity {

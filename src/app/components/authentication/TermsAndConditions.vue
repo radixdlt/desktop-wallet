@@ -30,6 +30,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import { radixApplication } from '@/app/modules/RadixApplication'
+import { settingsStore } from '../../modules/SettingsStore'
+import { accountManager } from '../../modules/account/AccountManager'
 
 export default Vue.extend({
   data() {
@@ -40,7 +42,8 @@ export default Vue.extend({
   },
   methods: {
     acceptTerms() {
-      radixApplication.acceptTerms()
+      settingsStore.set('termsAccepted', true)
+      accountManager.loadKeystore()
     },
   },
 })
