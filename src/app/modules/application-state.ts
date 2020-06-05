@@ -1,6 +1,9 @@
 import { BehaviorSubject } from 'rxjs'
 import { accountManager, wordlist } from './account/AccountManager'
 import * as bip39 from 'bip39'
+import { KEYSTORE_FILENAME } from './atom-store'
+import fs from 'fs-extra'
+import { settingsStore } from './SettingsStore'
 
 export enum AppState {
     STARTING,
@@ -23,7 +26,7 @@ export enum AppState {
 export let stateSubject: BehaviorSubject<AppState> = new BehaviorSubject(AppState.STARTING)
 export let stateHistory: AppState[] = []
 
-export function setState(state: AppState) {
+function setState(state: AppState) {
     stateHistory.push(getState())
     stateSubject.next(state)
 }
@@ -36,12 +39,25 @@ export function goBack() {
     stateSubject.next(stateHistory.pop())
 }
 
+export function createWallet() {
+    accountManager.generateMnemonic()
+    setState(AppState.MNEMONIC_BACKUP)
+}
+
 export function restoreWallet() {
     setState(AppState.MNEMONIC_RESTORE)
 }
 
 export function mnemonicBackedUp() {
     setState(AppState.MNEMONIC_VERIFY)
+}
+
+export function checkTerms() {
+    if (!settingsStore.get('termsAccepted')) {
+        setState(AppState.TERMS_AND_CONDITIONS)
+    } else {
+        loadKeystore()
+    }
 }
 
 /**
@@ -71,4 +87,52 @@ export function restoreCheckMnemonic(mnemonic: string) {
     accountManager.setMnemonic(mnemonic)
 
     setState(AppState.PASSWORD_SET)
+}
+
+/**
+* Write private key from mnemonic to disk, encrypted by password
+* Go to READY
+* 
+* @param  {string} password
+*/
+export async function setPassword(password: string) {
+    if (password.length < 6) {
+        throw new Error('Password should be at least 6 symbols long')
+    }
+
+    accountManager.setKeystorePassword(password)
+
+    await accountManager.store(password)
+
+    accountManager.setActiveAccount(accountManager.accounts[0])
+    setState(AppState.READY)
+}
+
+/**
+ * Decrypt the keystore file on disk and load the private key
+ * Go to READY
+ * 
+ * @param  {string} password
+ */
+export async function decryptKeystore(password: string) {
+    await accountManager.load(password)
+    accountManager.setKeystorePassword(password)
+
+    accountManager.setActiveAccount(accountManager.accounts[0])
+
+    setState(AppState.READY)
+}
+
+/**
+* Check if the keystore file exists on disk
+* Go to either DECRYPT_KEYSTORE_PASSWORD_REQUIRED or CREATE_OR_RESTORE
+*/
+export async function loadKeystore() {
+    const exists = await fs.pathExists(KEYSTORE_FILENAME)
+
+    if (exists) {
+        setState(AppState.DECRYPT_KEYSTORE_PASSWORD_REQUIRED)
+    } else {
+        setState(AppState.CREATE_OR_RESTORE)
+    }
 }

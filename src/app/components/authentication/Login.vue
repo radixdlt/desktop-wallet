@@ -43,6 +43,7 @@ import Vue from 'vue'
 import { remote } from 'electron'
 import { accountManager } from '../../modules/account/AccountManager'
 import { deleteAtomsDB } from '../../modules/atom-store'
+import { decryptKeystore } from '../../modules/application-state'
 
 export default Vue.extend({
   data() {
@@ -53,7 +54,7 @@ export default Vue.extend({
   },
   methods: {
     login() {
-      accountManager.decryptKeystore(this.password).catch(error => {
+      decryptKeystore(this.password).catch(error => {
         console.error(error)
         this.validationError = 'Password incorrect'
       })

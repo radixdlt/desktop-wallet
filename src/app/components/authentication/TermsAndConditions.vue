@@ -31,6 +31,7 @@
 import Vue from 'vue'
 import { settingsStore } from '../../modules/SettingsStore'
 import { accountManager } from '../../modules/account/AccountManager'
+import { loadKeystore } from '../../modules/application-state'
 
 export default Vue.extend({
   data() {
@@ -42,7 +43,7 @@ export default Vue.extend({
   methods: {
     acceptTerms() {
       settingsStore.set('termsAccepted', true)
-      accountManager.loadKeystore()
+      loadKeystore()
     },
   },
 })

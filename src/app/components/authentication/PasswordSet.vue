@@ -50,6 +50,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { accountManager } from '../../modules/account/AccountManager'
+import { setPassword } from '../../modules/application-state'
 
 export default Vue.extend({
   data() {
@@ -73,7 +74,7 @@ export default Vue.extend({
         return
       }
 
-      accountManager.setPassword(this.password)
+      setPassword(this.password)
     },
   },
 })

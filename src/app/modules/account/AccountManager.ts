@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import { BehaviorSubject, Observable, Subscription, Subject } from 'rxjs'
-import { AppState, setState } from '../application-state'
+import { loadKeystore } from '../application-state'
 import { store } from '../../shared/store'
 import { KEYSTORE_FILENAME } from '../atom-store'
 
@@ -168,57 +168,6 @@ class AccountManager {
         this.setAccounts(accounts)
     }
 
-
-    /**
-     * Check if the mnemonic is valid, store it and go to PASSWORD_SET
-     * 
-     * @param  {string} mnemonic
-     */
-    public restoreCheckMnemonic(mnemonic: string) {
-        if (!bip39.validateMnemonic(mnemonic, wordlist)) {
-            throw new Error('Mnemonic is not valid')
-        }
-
-        this.setMnemonic(mnemonic)
-
-        setState(AppState.PASSWORD_SET)
-    }
-
-    /**
-   * Write private key from mnemonic to disk, encrypted by password
-   * Go to READY
-   * 
-   * @param  {string} password
-   */
-    public async setPassword(password: string) {
-        // Check any requirements
-        if (password.length < 6) {
-            throw new Error('Password should be at least 6 symbols long')
-        } 
-        
-        keystorePassword = password
-
-        await this.store(password)
-
-        this.setActiveAccount(this.accounts[0])
-        setState(AppState.READY)
-    }
-
-    /**
-     * Decrypt the keystore file on disk and load the private key
-     * Go to READY
-     * 
-     * @param  {string} password
-     */
-    public async decryptKeystore(password: string) {
-        await this.load(password)
-        keystorePassword = password
-
-        this.setActiveAccount(this.accounts[0])
-
-        setState(AppState.READY)
-    }
-
     public setActiveAccount(account: WalletAccount) {
         // Unsubscribe old updates
         if (transferSubscription) {
@@ -234,21 +183,6 @@ class AccountManager {
 
     public subscribeToTransferEvents(func: any) {
         transactionUpdateSubject.subscribe(func)
-    }
-
-    /**
-  * Check if the keystore file exists on disk
-  * Go to either DECRYPT_KEYSTORE_PASSWORD_REQUIRED or CREATE_OR_RESTORE
-  */
-    public async loadKeystore() {
-        // Check if keystore file exists
-        const exists = await fs.pathExists(KEYSTORE_FILENAME)
-
-        if (exists) {
-            setState(AppState.DECRYPT_KEYSTORE_PASSWORD_REQUIRED)
-        } else {
-            setState(AppState.CREATE_OR_RESTORE)
-        }
     }
 
     /**
@@ -280,7 +214,7 @@ class AccountManager {
         this.reset()
         transferSubscription.unsubscribe()
         store.commit('logout')
-        this.loadKeystore()
+        loadKeystore()
     }
 
     /**
@@ -292,19 +226,6 @@ class AccountManager {
         this.masterNode = null
         this.mnemonic = null
     }
-
-    /**
-        * Generate a new mnemonic, go to MNEMONIC_BACKUP
-        */
-    public createWallet() {
-        this.generateMnemonic()
-        setState(AppState.MNEMONIC_BACKUP)
-    }
-
-    public restoreWallet() {
-        setState(AppState.MNEMONIC_RESTORE)
-    }
-
 
     public deleteKeystore() {
         fs.removeSync(KEYSTORE_FILENAME)
@@ -319,13 +240,14 @@ class AccountManager {
     public async checkPassword(password: string): Promise<boolean> {
         try {
             const keystoreData = await fs.readJSON(this.keystorePath)
-            const serilaizedData = await RadixKeyStore.decryptKeystore(keystoreData, password)
+            await RadixKeyStore.decryptKeystore(keystoreData, password)
         } catch (e) {
             return false
         }
 
         return true
     }
+
     /**
      * Get an RxJs observable for accounts updates
      */

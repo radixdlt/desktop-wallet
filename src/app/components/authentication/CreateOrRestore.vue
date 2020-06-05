@@ -25,6 +25,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { accountManager } from '../../modules/account/AccountManager'
+import { createWallet, restoreWallet } from '../../modules/application-state'
 
 export default Vue.extend({
   data() {
@@ -32,10 +33,10 @@ export default Vue.extend({
   },
   methods: {
     createWallet() {
-      accountManager.createWallet()
+      createWallet()
     },
     restoreWallet() {
-      accountManager.restoreWallet()
+      restoreWallet()
     },
   },
 })

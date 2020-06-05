@@ -56,12 +56,7 @@ export default Vue.extend({
   },
   created() {
     connectLocalhost()
-
-    if (!settingsStore.get('termsAccepted')) {
-      setState(AppState.TERMS_AND_CONDITIONS)
-    } else {
-      accountManager.loadKeystore()
-    }
+    checkTerms()
 
     radixServer.start()
 
