@@ -5,6 +5,11 @@ import { KEYSTORE_FILENAME } from './atom-store'
 import fs from 'fs-extra'
 import { settingsStore } from './SettingsStore'
 
+function setState(state: AppState) {
+    stateHistory.push(getState())
+    stateSubject.next(state)
+}
+
 export enum AppState {
     STARTING,
     TERMS_AND_CONDITIONS,
@@ -22,14 +27,8 @@ export enum AppState {
     READY,
 }
 
-
-export let stateSubject: BehaviorSubject<AppState> = new BehaviorSubject(AppState.STARTING)
-export let stateHistory: AppState[] = []
-
-function setState(state: AppState) {
-    stateHistory.push(getState())
-    stateSubject.next(state)
-}
+export const stateSubject: BehaviorSubject<AppState> = new BehaviorSubject(AppState.STARTING)
+export const stateHistory: AppState[] = []
 
 export function getState() {
     return stateSubject.getValue()
