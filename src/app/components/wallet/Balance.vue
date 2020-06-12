@@ -35,6 +35,7 @@ import Config from '@app/shared/Config'
 import Decimal from 'decimal.js'
 import { Subscription } from 'rxjs'
 import { accountManager } from '../../modules/account/AccountManager'
+import { faucetAddress } from '../../modules/network-connection'
 
 export default Vue.extend({
   data(): {
@@ -72,6 +73,7 @@ export default Vue.extend({
     },
     update() {
       const balances = this.identity.account.transferSystem.tokenUnitsBalance
+      console.log(balances)
       this.tokens = Object.entries(balances).reduce(
         (output, [uri, balance]) => {
           if (
@@ -95,21 +97,8 @@ export default Vue.extend({
       this.$forceUpdate()
     },
     claimFaucet() {
-      let faucetAddress
-
-      try {
-        const request = new XMLHttpRequest()
-        request.open('GET', '../universe.json', false)
-        request.send(null)
-        const json = JSON.parse(request.responseText)
-        if (json.faucetAddress) {
-          faucetAddress = json.faucetAddress
-        }
-      } catch (e) {
-        faucetAddress = Config.faucetAddress
-      }
-
       const recipient = RadixAccount.fromAddress(faucetAddress, true)
+      console.log('faucet: recipient ', recipient)
       RadixTransactionBuilder.createRadixMessageAtom(
         this.identity.account,
         recipient,

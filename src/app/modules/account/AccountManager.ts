@@ -19,8 +19,8 @@ class AccountManager {
     public mnemonic: string = ''
     private accountsUpdatesSubject: BehaviorSubject<WalletAccount[]> = new BehaviorSubject(this.accounts)
 
-    private masterNode: bip32.BIP32Interface
-    private coinType = 1 // Testnet
+    public masterNode: bip32.BIP32Interface
+    public coinType = 1 // Testnet
 
     constructor(readonly keystorePath: string) {
     }
@@ -179,6 +179,15 @@ class AccountManager {
         // Subscribe to updates
         transferSubscription = account.identity.account.transferSystem.transactionSubject
             .subscribe(transactionUpdateSubject)
+    }
+
+    public setUniverse(universe: string) {
+        for (let i = 0; i < this.accounts.length; i++) {
+            const node = this.masterNode.derivePath(`m/44'/${this.coinType}'/${i}`)
+            this.accounts[i].identity = RadixSimpleIdentity.fromPrivate(node.privateKey)
+        }
+        store.commit('setUniverse', universe)
+        this.setActiveAccount(this.accounts[0])
     }
 
     public subscribeToTransferEvents(func: any) {

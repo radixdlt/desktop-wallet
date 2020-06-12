@@ -10,6 +10,7 @@ import AccountList from '@app/components/accounts/AccountList.vue'
 import Authentication from '@app/components/Authentication.vue'
 import Settings from '@app/components/settings/Settings.vue'
 import ChangePassword from '@app/components/settings/ChangePassword.vue'
+import Network from '@app/components/settings/Network.vue'
 import { store } from './store'
 
 Vue.use(Router)
@@ -77,6 +78,11 @@ export const router = new Router({
                             path: 'changePassword',
                             name: 'changePassword',
                             component: ChangePassword,
+                        },
+                        {
+                            path: 'network',
+                            name: 'network',
+                            component: Network,
                         },
                     ],
                 },

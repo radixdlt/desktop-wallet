@@ -1,21 +1,25 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { RadixAddress } from 'radixdlt'
+import { RadixAddress, RadixSimpleIdentity } from 'radixdlt'
 import fs from 'fs-extra'
 import Contact from './contacts/Contact'
 import { WalletAccount } from '@app/modules/account/WalletAccount'
+import { accountManager } from '../modules/account/AccountManager'
+import { setAtomStore } from '../modules/atom-store'
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
     state: {
-        contacts: <{[address: string]: Contact}>{},
+        contacts: <{ [address: string]: Contact }>{},
         contactsFileName: '',
 
         activeAccount: <WalletAccount>null,
+
+        universe: '',
     },
     mutations: {
-        addOrUpdateContact({contacts}, contact: Contact) {
+        addOrUpdateContact({ contacts }, contact: Contact) {
             // Validate address
             RadixAddress.fromAddress(contact.address)
 
@@ -25,18 +29,21 @@ export const store = new Vuex.Store({
 
             Vue.set(contacts, contact.address, contact)
         },
-        deleteContact({contacts}, address: string) {
+        deleteContact({ contacts }, address: string) {
             Vue.delete(contacts, address)
         },
         setActiveAccount(state, account: WalletAccount) {
-            state.activeAccount = account 
+            state.activeAccount = account
+        },
+        setUniverse(state, universe: string) {
+            state.universe = universe
         },
         logout(state) {
             state.activeAccount = null
         },
     },
     actions: {
-        async loadContacts({state, commit}) {
+        async loadContacts({ state, commit }) {
             try {
                 const serializedContacts = await fs.readJson(state.contactsFileName)
 
@@ -48,9 +55,9 @@ export const store = new Vuex.Store({
                 console.log(error)
             }
         },
-        async saveContacts({state}) {
+        async saveContacts({ state }) {
             const serializedContacts = Object.values(state.contacts)
-            
+
             // TODO: encrypt
             await fs.writeJson(state.contactsFileName, serializedContacts)
         },
