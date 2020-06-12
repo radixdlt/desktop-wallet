@@ -33,8 +33,11 @@ import Modal from '@app/components/shared/Modal.vue'
 import Config from '@app/shared/Config'
 import fs from 'fs-extra'
 import { filter } from 'rxjs/operators'
-import { stateSubject, setState, AppState } from './modules/application-state'
-import { connectLocalhost, connectCustomNode } from './modules/network-connection'
+import { stateSubject, AppState, loadKeystore, checkTerms } from './modules/application-state'
+import {
+  connectLocalhost,
+  connectCustomNode,
+} from './modules/network-connection'
 import { settingsStore } from './modules/SettingsStore'
 import { accountManager } from './modules/account/AccountManager'
 import { KEYSTORE_FILENAME, dataDir } from './modules/atom-store'
@@ -57,7 +60,7 @@ export default Vue.extend({
   created() {
     connectLocalhost()
     checkTerms()
-
+  
     radixServer.start()
 
     // @ts-ignore
