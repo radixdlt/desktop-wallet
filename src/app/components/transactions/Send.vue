@@ -55,6 +55,8 @@ import {
 
 import RadixContactItemTemplate from './RadixContactItemTemplate.vue'
 import Decimal from 'decimal.js'
+import { ReturnCode } from '@radixdlt/hardware-wallet/build/types'
+import { sendTransfer } from '../../modules/send-transactions'
 
 export default Vue.extend({
   data() {
@@ -109,20 +111,15 @@ export default Vue.extend({
     },
   },
   methods: {
-    send() {
+    async send() {
       this.transactionStatus = 'Sending...'
+      this.$store.commit('setIsSigning', true)
 
       try {
         const to = RadixAccount.fromAddress(this.address, true)
 
-        const transactionStatusSubject = RadixTransactionBuilder.createTransferAtom(
-          this.identity.account,
-          to,
-          this.token_id,
-          this.amount,
-          this.message
-        ).signAndSubmit(this.identity)
-
+        const transactionStatusSubject = await sendTransfer(to, this.token_id, this.amount, this.message)
+       
         transactionStatusSubject.subscribe({
           next: update => {
             if (update.status === 'SUBMITTED') {
@@ -135,6 +132,10 @@ export default Vue.extend({
           },
           error: error => {
             console.error(error)
+            if (error.returnCode && error.returnCode === ReturnCode.SW_USER_REJECTED) {
+              this.transactionStatus = `Transaction declined.`
+              return
+            }
             this.transactionStatus = `Transaction failed: ${error.status}`
           },
         })
