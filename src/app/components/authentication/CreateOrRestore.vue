@@ -20,16 +20,32 @@
                     //- img(src="@assets/svg/icons/refresh.svg")
                     icon(name="undo")
                 div.text Restore an existing wallet
+            div.large-button(@click="hardwareWallet()")
+                div.icon
+                    //- img(src="@assets/svg/icons/refresh.svg")
+                    icon(name="undo")
+                div.text Hardware Wallet
+        HardwareWalletModal(v-if="hardwareWalletSelected === true" v-bind:onClose="onHardwareWalletClose")
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import { accountManager } from '../../modules/account/AccountManager'
-import { createWallet, restoreWallet } from '../../modules/application-state'
+import {
+  createWallet,
+  restoreWallet,
+  connectHardwareWallet,
+} from '../../modules/application-state'
+import HardwareWalletModal from './HardwareWalletModal.vue'
 
 export default Vue.extend({
+  components: {
+    HardwareWalletModal,
+  },
   data() {
-    return {}
+    return {
+      hardwareWalletSelected: false,
+    }
   },
   methods: {
     createWallet() {
@@ -37,6 +53,12 @@ export default Vue.extend({
     },
     restoreWallet() {
       restoreWallet()
+    },
+    hardwareWallet() {
+      this.hardwareWalletSelected = true
+    },
+    onHardwareWalletClose() {
+      this.hardwareWalletSelected = false
     },
   },
 })
