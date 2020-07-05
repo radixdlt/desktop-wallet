@@ -24,6 +24,8 @@ cache:
 
 before_install:
   # Build the assembly
+  - sudo apt install libusb-1.0-0 libusb-1.0-0-dev
+  - sudo apt-get install libmagickwand-dev
   - yarn install --network-concurrency 1
   - yarn build
 
