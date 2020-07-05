@@ -29,24 +29,26 @@ import {
   RadixAccount,
   RRI,
   RadixIdentity,
+  RadixSimpleIdentity,
 } from 'radixdlt'
 
 import Config from '@app/shared/Config'
 import Decimal from 'decimal.js'
 import { Subscription } from 'rxjs'
 import { accountManager } from '../../modules/account/AccountManager'
+import * as bip32 from 'bip32'
+import * as bip39 from 'bip39'
+import EC, { curves } from 'elliptic'
+import { sendFaucetRequest } from '../../modules/send-transactions'
 
 export default Vue.extend({
-  data(): {
-    activeToken: string;
-    tokens: { uri: { rri: RRI; balance: Decimal } } | {};
-  } {
+  data() {
     return {
       activeToken: '',
       tokens: {},
     }
   },
-  created() {
+  async created() {
     this.update()
     this.setActiveToken(radixTokenManager.nativeToken.toString())
 
@@ -55,6 +57,9 @@ export default Vue.extend({
   computed: {
     identity(): RadixIdentity {
       return this.$store.state.activeAccount.identity
+    },
+    hardwareWallet(): boolean {
+      return this.$store.state.hardwareWallet
     },
   },
   mounted() {
@@ -94,27 +99,10 @@ export default Vue.extend({
       )
       this.$forceUpdate()
     },
-    claimFaucet() {
-      let faucetAddress
-
-      try {
-        const request = new XMLHttpRequest()
-        request.open('GET', '../universe.json', false)
-        request.send(null)
-        const json = JSON.parse(request.responseText)
-        if (json.faucetAddress) {
-          faucetAddress = json.faucetAddress
-        }
-      } catch (e) {
-        faucetAddress = Config.faucetAddress
-      }
-
-      const recipient = RadixAccount.fromAddress(faucetAddress, true)
-      RadixTransactionBuilder.createRadixMessageAtom(
-        this.identity.account,
-        recipient,
-        'Send me some money, pretty please!'
-      ).signAndSubmit(this.identity)
+    async claimFaucet() {
+      this.$store.commit('setIsSigning', true)   
+      
+      await sendFaucetRequest()
     },
   },
   watch: {
