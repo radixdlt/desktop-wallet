@@ -1,5 +1,6 @@
 import { WalletAccount } from './WalletAccount'
-import { RadixKeyStore, RadixSimpleIdentity, RadixTransactionUpdate } from 'radixdlt'
+import { RadixKeyStore, RadixSimpleIdentity, RadixTransactionUpdate, RadixHardwareWalletIdentity } from 'radixdlt'
+import { ledgerApp } from '@radixdlt/hardware-wallet'
 import fs from 'fs-extra'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
@@ -94,6 +95,19 @@ class AccountManager {
 
     public setKeystorePassword(password: string) {
         keystorePassword = password
+    }
+
+    public async loadHardwareWalletAccount() {
+        const BIP44_PATH = '80000002' + '00000001' + '00000003'
+
+        const identity = await RadixHardwareWalletIdentity.createNew(ledgerApp, BIP44_PATH)
+
+        this.addAccount({
+            alias: 'Hardware Wallet',
+            identity,
+        })
+        this.setActiveAccount(this.accounts[0])
+        store.commit('setHardwareWallet', true)
     }
 
     /**
