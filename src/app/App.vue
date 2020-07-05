@@ -16,6 +16,9 @@
                         button.button.is-primary.is-fullwidth.approve(@click="dismissAccessRequest(currentAccessRequest, true)") Approve
                     div.field
                         button.button.is-fullwidth.reject(@click="dismissAccessRequest(currentAccessRequest, false)") Reject
+
+        div(v-if="hardwareWallet && isSigning")
+          ConfirmSign(:close="closeSignModal")
 </template>
 
 <script lang="ts">
@@ -31,17 +34,27 @@ import {
 import { radixServer } from '@app/server/RadixServer'
 import Modal from '@app/components/shared/Modal.vue'
 import Config from '@app/shared/Config'
+import ConfirmSign from '@app/components/hardware-wallet/ConfirmSign.vue'
 import fs from 'fs-extra'
 import { filter } from 'rxjs/operators'
-import { stateSubject, setState, AppState } from './modules/application-state'
-import { connectLocalhost, connectCustomNode } from './modules/network-connection'
+import {
+  stateSubject,
+  AppState,
+  checkTerms,
+} from './modules/application-state'
+import {
+  connectLocalhost,
+  connectCustomNode,
+} from './modules/network-connection'
 import { settingsStore } from './modules/SettingsStore'
 import { accountManager } from './modules/account/AccountManager'
 import { KEYSTORE_FILENAME, dataDir } from './modules/atom-store'
+import { subscribeConnection, ConnectionEvent } from './modules/hardware-wallet-connection'
 
 export default Vue.extend({
   components: {
     Modal,
+    ConfirmSign,
   },
   subscriptions: {
     walletManagerState: stateSubject,
@@ -52,10 +65,10 @@ export default Vue.extend({
       version: Config.version,
       accessRequestQueue: [],
       currentAccessRequest: null,
+      hardwareWalletSubscription: undefined,
     }
   },
-  created() {
-    connectLocalhost()
+  async created() {
     checkTerms()
 
     radixServer.start()
@@ -111,6 +124,16 @@ export default Vue.extend({
         }
       }
     )
+    this.hardwareWalletSubscription = await subscribeConnection(event => {
+      switch (event) {
+        case ConnectionEvent.SIGN_CONFIRM:
+          this.$store.commit('setIsSigning', false)
+          break
+        case ConnectionEvent.SIGN_REJECT:
+          this.$store.commit('setIsSigning', false)
+          break
+      }
+    })
   },
   methods: {
     exportWallet() {
@@ -179,6 +202,9 @@ export default Vue.extend({
         accessRequest.reject('Access denied')
       }
     },
+    closeSignModal() {
+      this.$store.commit('setIsSigning', false)
+    },
   },
   computed: {
     identity: function() {
@@ -186,6 +212,12 @@ export default Vue.extend({
     },
     contacts: function() {
       return this.$store.state.contacts
+    },
+    hardwareWallet(): boolean {
+      return this.$store.state.hardwareWallet
+    },
+    isSigning(): boolean {
+      return this.$store.state.isSigning
     },
   },
 })
