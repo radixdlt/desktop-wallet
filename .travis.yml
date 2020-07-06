@@ -11,7 +11,6 @@ addons:
     token:
       secure: "RdpUu22Suk5wX+DsQKWiUnUygHV7QULgdaKTdpDa6bjHIH6hrB2dipwruqtnp81yMmyzQw1Z6zZgsT/7ZeGFSRUVM9ZTl0DlPLgosrgJ1rGXbT4L3vA2r2DYlilhoQoeS5d189NQeOIMDoV+3VfENc5WyKeP7YCjFAzaTMCYP90D8o/qV4L7EUH8v9BqYO0S+4jVr3n9hx/t728Iwywt0n0S56TRpr1UKnjr5W8Wy0fVmOeXjd/HgVfbFgPkQGnZ6z81sIDzS2SPhzU4fs68dee91C6F2YukUEdWWI4MNV3tuf8MgdGPsBeAoNt1s9eYJ1/+u1NXhLHtcmn68JzrkwYdUrg6ejWuwWKc9ciN1XBTi1xclkkSCMSv9LK4lZMYx21xXg3WAhoqs2tDnfAFJl+0YOMNtaPKNXb8WGEzBF/a1OaY38idutYuM3ISZSLihk7uzLDA6aghGwMl6bPPT+h5e2rNBqjKYHKyfQSptz7dv/qjB9wzDWEINgANCxJVkjttcYWm3NUE9S6eMSApE/DQQd8nmrcy7GYaOgvBT3V6Ea/kb1tF2trUhwDR33fxVC0vp6iKYl+rnFLz7THhvGPhs6Vy8yoWhxywB6pIGT3fX/fiiHvMbmypEaNxt+PsBHjVnY8P8IJtxOEmZNIrdRHXFE+FdftgSausiWR2raA="
 
-
 cache:
   yarn: true
 
@@ -24,16 +23,19 @@ cache:
 
 before_install:
   # Build the assembly
-  - sudo apt install libusb-1.0-0 libusb-1.0-0-dev
-  - sudo apt-get install libmagickwand-dev
-  - yarn install --network-concurrency 1
+  - sudo apt-get -y install build-essential git
+  - sudo apt-get -y install gcc-4.8 g++-4.8 && export CXX=g++-4.8
+  - sudo apt-get -y install libusb-1.0-0 libusb-1.0-0-dev
+  - sudo apt-get -y install libudev-dev
+ 
+  #- yarn install --network-concurrency 1
   - yarn build
 
 script:
   # Run tests, don't fail if they fail...
-  - yarn test:unit || true
-  - yarn test:e2e || true
+  # - yarn test:unit || true
+  # - yarn test:e2e || true
   # Static code analysis
   - yarn lint
-  - yarn coverage
+  # - yarn coverage
   # - sonar-scanner

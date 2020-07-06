@@ -212,25 +212,18 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.17.0.tgz#a3e946d915abf9c1f168bfba357a4c18a5431bfe"
   integrity sha512-cY3aL9hLdQONFJihQDaO3szmyo53nLdMYisVLfjxJ2SBH5SOyoAtg6Utwz4u6Y3Cf464BJ0wZu3/SlVO0kboBQ==
 
-"@radixdlt/hardware-wallet@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-1.1.4.tgz#0e9b295998c48736504c08f45d39c6e16090355d"
-  integrity sha512-fUyA8RWnGElB5vzRAOTMDwIHRt4oxY5M0UG7rZvmXvNxo6c7SthwPqu+1N6FC0Fqnkha4YOBHgnQxH8e/xFRiA==
+"@radixdlt/hardware-wallet@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-1.1.5.tgz#b6ff8edd55e917b013035233f84ce40d1233d0f5"
+  integrity sha512-0DCcHOxijpkXXR2UabS11STtdQmnWXm8Ay02w/aGBdCpLJLvio+PQrzLrCZVOcdgoYy9jnmrBINfUjyVyhdZyA==
   dependencies:
     "@ledgerhq/hw-transport-node-hid" "^5.12.0"
     bip32 "^2.0.5"
     bip39 "^3.0.2"
     cbor "^5.0.2"
     elliptic "^6.5.3"
-    radixdlt "git://github.com/radixdlt/radixdlt-js.git#release/2.0-beta.10"
+    radixdlt "git://github.com/radixdlt/radixdlt-js.git#release/2.0-beta.11"
     rxjs "^6.5.5"
-
-"@reactivex/rxjs@^6.2.2":
-  version "6.5.5"
-  resolved "https://registry.yarnpkg.com/@reactivex/rxjs/-/rxjs-6.5.5.tgz#628c1ba30985b48d40949f8deccf77ed4e8861a6"
-  integrity sha512-s2KQyapwCisWZITSo2ML3ALoRaVYcShC1vMfou9rBjxVe5lBdzcw1KxbF87iTIPBulQ/J0Nsrj1cY9cOgovuCg==
-  dependencies:
-    tslib "^1.9.0"
 
 "@sentry/browser@0.5.4":
   version "0.5.4"
@@ -1507,7 +1500,7 @@ caseless@~0.12.0:
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
-cbor@^5.0.1, cbor@^5.0.2:
+cbor@^5.0.2:
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/cbor/-/cbor-5.0.2.tgz#aa8c3820280ebb9f3a45b2a4c66ac344294443de"
   integrity sha512-6JiKVURxxO92FntzTJq54QdN/8fBaBwD7+nNyGIAi1HL9mBgU3YK6ULV8k7WTuT/EwfRsjy3MuqDKlkQMCmfXg==
@@ -5977,37 +5970,6 @@ querystring@0.2.0:
   resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
   integrity sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=
 
-"radixdlt@git://github.com/radixdlt/radixdlt-js.git#release/2.0-beta.10":
-  version "2.0.0-beta.10"
-  resolved "git://github.com/radixdlt/radixdlt-js.git#0228e550281842e0b8ca6348642ab817aead5de2"
-  dependencies:
-    "@reactivex/rxjs" "^6.2.2"
-    "@types/bn.js" "^4.11.3"
-    "@types/elliptic" "^6.4.9"
-    "@types/long" "^4.0.0"
-    axios "^0.18.0"
-    bn.js "^4.11.8"
-    bs58 "^4.0.1"
-    buffer "^5.2.1"
-    buffer-reader "^0.1.0"
-    bufferutil "^4.0.0"
-    cbor "^5.0.1"
-    decimal.js "^10.0.1"
-    elliptic "^6.4.1"
-    ipaddr.js "^1.9.0"
-    loglevel "^1.6.1"
-    long "^4.0.0"
-    nedb "^1.8.0"
-    nedb-promises "^3.0.2"
-    promise-retry "^1.1.1"
-    reflect-metadata "^0.1.12"
-    rpc-websockets "^4.3.5"
-    rxjs "^6.2.2"
-    rxjs-compat "^6.2.2"
-    typescript-map "0.0.6"
-    utf-8-validate "^5.0.1"
-    ws "^6.1.2"
-
 "radixdlt@git://github.com/radixdlt/radixdlt-js.git#release/2.0-beta.11":
   version "2.0.0-beta.11"
   resolved "git://github.com/radixdlt/radixdlt-js.git#5bbdd82c6ed801dc743bfd84a396f3b4f1f8ece5"
@@ -6424,17 +6386,12 @@ rx-lite@*, rx-lite@^4.0.8:
   resolved "https://registry.yarnpkg.com/rx-lite/-/rx-lite-4.0.8.tgz#0b1e11af8bc44836f04a6407e92da42467b79444"
   integrity sha1-Cx4Rr4vESDbwSmQH6S2kJGe3lEQ=
 
-rxjs-compat@^6.2.2:
-  version "6.5.5"
-  resolved "https://registry.yarnpkg.com/rxjs-compat/-/rxjs-compat-6.5.5.tgz#073c40510f29c45a2a5fc02dde87f8c3ad75f2c2"
-  integrity sha512-F42sssVbUyWH4vJswEo6m+Eh02xHv3q93n8S7nUJO58R7sbc3CvJIOts605zdaBhWa1xMB9aVSyqPqhQ5q3eXg==
-
 rxjs-compat@^6.3.2:
   version "6.5.3"
   resolved "https://registry.yarnpkg.com/rxjs-compat/-/rxjs-compat-6.5.3.tgz#18440949b2678bf87a78a754009676b2c49183dc"
   integrity sha512-BIJX2yovz3TBpjJoAZyls2QYuU6ZiCaZ+U96SmxQpuSP/qDUfiXPKOVLbThBB2WZijNHkdTTJXKRwvv5Y48H7g==
 
-rxjs@6.5.5, rxjs@^6.2.2, rxjs@^6.3.1, rxjs@^6.5.5:
+rxjs@6.5.5, rxjs@^6.3.1, rxjs@^6.5.5:
   version "6.5.5"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.5.tgz#c5c884e3094c8cfee31bf27eb87e54ccfc87f9ec"
   integrity sha512-WfQI+1gohdf0Dai/Bbmk5L5ItH5tYqm3ki2c5GdWhKjalzjg93N3avFjVStyZZz+A2Em+ZxKH5bNghw9UeylGQ==
