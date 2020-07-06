@@ -77,7 +77,7 @@ export function restoreProceedUnsafe(mnemonic: string) {
 
 export function verifyCheckMnemonic(mnemonic: string) {
     if (mnemonic !== accountManager.mnemonic) {
-      //  throw new Error('Mnemonic is not correct')
+        throw new Error('Mnemonic is not correct')
     }
 
     setState(AppState.PASSWORD_SET)
