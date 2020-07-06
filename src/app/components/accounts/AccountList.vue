@@ -44,7 +44,7 @@ div
 
         div.panel
             div.header Accounts
-            div.controls
+            div(v-if="!hardwareWallet").controls
                 button.button.is-primary(@click="addAccount()") Add Account
             div.component.body
                 div.toolbar
@@ -135,6 +135,9 @@ export default Vue.extend({
   computed: {
     activeAccount(): WalletAccount {
       return this.$store.state.activeAccount
+    },
+    hardwareWallet(): boolean {
+      return this.$store.state.hardwareWallet
     },
     accountManager() {
         return accountManager
