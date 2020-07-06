@@ -98,7 +98,7 @@ class AccountManager {
     }
 
     public async loadHardwareWalletAccount() {
-        const BIP44_PATH = '80000002' + '00000001' + '00000003'
+        const BIP44_PATH = '80000000' + '00000000' + '00000000'
 
         const identity = await RadixHardwareWalletIdentity.createNew(ledgerApp, BIP44_PATH)
 
