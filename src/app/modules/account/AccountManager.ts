@@ -197,7 +197,7 @@ class AccountManager {
             .subscribe(transactionUpdateSubject)
     }
 
-    public subscribeToTransferEvents(func: any) {
+    public subscribeToTransferEvents(func: (update: RadixTransactionUpdate) => void) {
         transactionUpdateSubject.subscribe(func)
     }
 
