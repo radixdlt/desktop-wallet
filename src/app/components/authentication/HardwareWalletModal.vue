@@ -14,19 +14,32 @@
                             Radix App opened
                         icon.checkIcon(v-if="appConnected" name="check")
                         icon.crossIcon(v-else name="times")
+                    div(v-if="account")
+                      p.
+                        Using address {{ account.identity.address.toString() }}
+                      button.button.is-primary(@click="confirm()").
+                        Confirm
 
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Modal from '@app/components/shared/Modal.vue'
-import { connectHardwareWallet } from '../../modules/application-state'
+import {
+  appReady,
+} from '../../modules/application-state'
 import {
   subscribeConnection,
   ConnectionEvent,
 } from '../../modules/hardware-wallet-connection'
-import { subscribeAppConnection, subscribeDeviceConnection } from '@radixdlt/hardware-wallet'
+import {
+  subscribeAppConnection,
+  subscribeDeviceConnection,
+} from '@radixdlt/hardware-wallet'
 import { Subscription, Observer } from 'rxjs'
+import { accountManager } from '../../modules/account/AccountManager'
+import { WalletAccount } from '../../modules/account/WalletAccount'
+
 export default Vue.extend({
   components: {
     Modal,
@@ -39,7 +52,14 @@ export default Vue.extend({
       deviceConnected: false,
       appConnected: false,
       subscription: undefined,
+      confirmAddress: <() => void> undefined,
     }
+  },
+  methods: {
+    confirm() {
+      this.confirmAddress()
+      appReady()
+    },
   },
   async created() {
     this.subscription = await subscribeConnection(event => {
@@ -58,10 +78,15 @@ export default Vue.extend({
           break
       }
     })
-    connectHardwareWallet()
+    this.confirmAddress = await accountManager.loadHardwareWalletAccount()
   },
   beforeDestroy() {
     this.subscription.unsubscribe()
+  },
+  computed: {
+    account(): WalletAccount {
+      return this.$store.state.activeAccount
+    },
   },
 })
 </script>

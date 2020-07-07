@@ -34,7 +34,6 @@ import { accountManager } from '../../modules/account/AccountManager'
 import {
   createWallet,
   restoreWallet,
-  connectHardwareWallet,
 } from '../../modules/application-state'
 import HardwareWalletModal from './HardwareWalletModal.vue'
 

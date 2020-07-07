@@ -97,17 +97,19 @@ class AccountManager {
         keystorePassword = password
     }
 
-    public async loadHardwareWalletAccount() {
+    public async loadHardwareWalletAccount(): Promise<() => void> {
         const BIP44_PATH = '80000000' + '00000000' + '00000000'
 
-        const identity = await RadixHardwareWalletIdentity.createNew(ledgerApp, BIP44_PATH)
+        const result = await RadixHardwareWalletIdentity.createNew(ledgerApp, BIP44_PATH)
 
         this.addAccount({
             alias: 'Hardware Wallet',
-            identity,
+            identity: result.identity,
         })
         this.setActiveAccount(this.accounts[0])
         store.commit('setHardwareWallet', true)
+
+        return result.done
     }
 
     /**

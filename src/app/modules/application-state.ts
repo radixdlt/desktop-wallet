@@ -47,8 +47,7 @@ export function restoreWallet() {
     setState(AppState.MNEMONIC_RESTORE)
 }
 
-export async function connectHardwareWallet() {
-    await accountManager.loadHardwareWalletAccount()
+export function appReady() {
     setState(AppState.READY)
 }
 
