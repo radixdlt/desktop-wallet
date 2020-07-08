@@ -100,8 +100,6 @@ export default Vue.extend({
       this.$forceUpdate()
     },
     async claimFaucet() {
-      this.$store.commit('setIsSigning', true)   
-      
       await sendFaucetRequest()
     },
   },

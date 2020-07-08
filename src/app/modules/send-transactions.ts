@@ -17,7 +17,8 @@ try {
     faucetAddress = Config.faucetAddress
 }
 
-async function submit(builder: RadixTransactionBuilder) {
+export async function submit(builder: RadixTransactionBuilder) {
+    store.commit('setIsSigning', true)
     if (store.state.hardwareWallet && !store.state.ledgerAppOpen) {
         await new Promise(async (resolve, reject) => {
             const subscription = await subscribeConnection(event => {

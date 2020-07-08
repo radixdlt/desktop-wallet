@@ -113,7 +113,6 @@ export default Vue.extend({
   methods: {
     async send() {
       this.transactionStatus = 'Sending...'
-      this.$store.commit('setIsSigning', true)
 
       try {
         const to = RadixAccount.fromAddress(this.address, true)
