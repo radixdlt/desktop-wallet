@@ -96,7 +96,7 @@
     "promise-retry": "^1.1.1",
     "pug-loader": "^2.4.0",
     "qr-image": "^3.2.0",
-    "radixdlt": "git://github.com/radixdlt/radixdlt-js.git#release/2.0-beta.11",
+    "radixdlt": "git://github.com/radixdlt/radixdlt-js.git#release/2.0-beta.10",
     "raw-loader": "^0.5.1",
     "rpc-websockets": "^4.1.1",
     "rxjs": "^6.5.5",
