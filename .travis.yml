@@ -29,7 +29,6 @@ before_install:
   - sudo apt-get -y install libudev-dev
 
   - yarn install --network-concurrency 1
-  - yarn build
 
 script:
   # Run tests, don't fail if they fail...
