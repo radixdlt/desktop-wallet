@@ -28,6 +28,8 @@ before_install:
   - sudo apt-get -y install libusb-1.0-0 libusb-1.0-0-dev
   - sudo apt-get -y install libudev-dev
  
+  - yarn
+  
   #- yarn install --network-concurrency 1
   - yarn build
 
