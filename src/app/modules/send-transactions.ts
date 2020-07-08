@@ -1,4 +1,4 @@
-import { RadixTransactionBuilder, RadixAccount, RadixIdentity, RRI } from 'radixdlt'
+import { RadixTransactionBuilder, RadixAccount, RadixIdentity, RRI, RadixAtom } from 'radixdlt'
 import { store } from '../shared/store'
 import Config from '../shared/Config'
 import { subscribeConnection, ConnectionEvent } from './hardware-wallet-connection'
@@ -55,6 +55,15 @@ export function sendTransfer(
         to,
         tokenRef,
         amount,
+        message
+    )
+    return submit(builder)
+}
+
+export function sendMessage(to: RadixAccount, message: string) {
+    const builder = RadixTransactionBuilder.createRadixMessageAtom(
+        store.state.activeAccount.identity.account,
+        to,
         message
     )
     return submit(builder)
