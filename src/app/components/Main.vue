@@ -19,8 +19,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-
-import { radixApplication } from '@/app/modules/RadixApplication'
 import TopMenu from './TopMenu.vue'
 
 export default Vue.extend({
@@ -46,7 +44,7 @@ export default Vue.extend({
             // @ts-ignore
             return this.$store.state.contacts[this.identity.account.getAddress()]
         }
-    }
+    },
 })
 </script>
 

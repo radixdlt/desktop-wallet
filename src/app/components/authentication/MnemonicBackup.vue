@@ -27,43 +27,44 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    import { radixApplication } from '@/app/modules/RadixApplication'
+import Vue from 'vue'
+import { accountManager } from '../../modules/account/AccountManager'
+import { goBack, mnemonicBackedUp } from '../../modules/application-state'
 
-    export default Vue.extend({
-        data() {
-            return {
-                mnemonic: '',
-            }
-        },
-        mounted() {
-            this.mnemonic = radixApplication.getMnemonic()
-        },
-        computed: {
-            mnemonicWords(): string[] {
-                return this.mnemonic.split(' ')
-            }
-        },
-        methods: {
-            next() {
-                radixApplication.mnemonicBackedUp()
-            },
-            back() {
-                radixApplication.goBack()
-            },
-        },
-    })
+export default Vue.extend({
+  data() {
+    return {
+      mnemonic: '',
+    }
+  },
+  mounted() {
+    this.mnemonic = accountManager.mnemonic
+  },
+  computed: {
+    mnemonicWords(): string[] {
+      return this.mnemonic.split(' ')
+    },
+  },
+  methods: {
+    next() {
+      mnemonicBackedUp()
+    },
+    back() {
+      goBack()
+    },
+  },
+})
 </script>
 
 <style lang="scss" scoped>
-    .mnemonic-word {
-        background-color: $purple;
-        color: $grey-light;
-        font-size: 12px;
-        text-align: center;
-        border-radius: 3px;
-        margin: 4px;
-        height: 34px;
-        line-height: 34px;
-    }
+.mnemonic-word {
+  background-color: $purple;
+  color: $grey-light;
+  font-size: 12px;
+  text-align: center;
+  border-radius: 3px;
+  margin: 4px;
+  height: 34px;
+  line-height: 34px;
+}
 </style>

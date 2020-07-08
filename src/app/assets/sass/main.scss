@@ -2,14 +2,14 @@
 // @import "~bulma/bulma";
 
 // Import a Google Font
-@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap");
 
 // Set your brand colors
 $white: #ffffff;
-$blue: #052CC0;
-$blue-dark: #060F8F;
+$blue: #052cc0;
+$blue-dark: #060f8f;
 
-$green: #00C389;
+$green: #00c389;
 $green-dark: #00ab84;
 
 $blue-grey: #003057;
@@ -17,7 +17,7 @@ $blue-grey: #003057;
 $grey-darker: #425563;
 $grey-dark: #4f758b;
 $grey: #7a99ac;
-$grey-light: #F2F2FC;
+$grey-light: #f2f2fc;
 $grey-lighter: #dde5ed;
 $red: #ef4136;
 $cyan: #00aeef;
@@ -47,7 +47,6 @@ $label-weight: 400;
 
 @import "./auth.scss";
 
-
 // Import only what you need from Bulma
 @import "~bulma/sass/utilities/_all.sass";
 @import "~bulma/sass/base/_all.sass";
@@ -62,7 +61,6 @@ $label-weight: 400;
 @import "~bulma/sass/layout/hero.sass";
 @import "~bulma/sass/layout/section.sass";
 @import "~bulma/sass/grid/columns.sass";
-
 
 .test {
     background-color: crimson;
@@ -86,11 +84,9 @@ $label-weight: 400;
 input {
     &[type="checkbox"],
     &[type="radio"] {
-      margin-right: .5em
+        margin-right: 0.5em;
     }
-  }
-
-
+}
 
 $panel-padding: 18px;
 .panel {
@@ -131,7 +127,7 @@ $panel-padding: 18px;
     }
 }
 
-.button { 
+.button {
     border-radius: 18px;
     font-size: 14px;
     line-height: 1.5;
@@ -145,9 +141,8 @@ $panel-padding: 18px;
         margin-right: 1em;
         font-size: 14px;
         color: $grey;
-        user-select: none; 
+        user-select: none;
         cursor: pointer;
-
 
         &.is-active {
             color: $green;
@@ -158,5 +153,13 @@ $panel-padding: 18px;
             color: $grey-dark;
             border-bottom: 3px solid $grey-dark;
         }
+    }
+}
+
+.modal-panel {
+    padding: 30px;
+
+    .title {
+        font-size: 18px;
     }
 }

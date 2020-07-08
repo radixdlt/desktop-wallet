@@ -32,7 +32,7 @@ export const router = new Router({
                 {
                     path: '',
                     name: 'main',
-                    redirect: {name: 'dashboard'},
+                    redirect: { name: 'dashboard' },
                 },
                 {
                     path: 'dashboard',
@@ -43,7 +43,7 @@ export const router = new Router({
                     path: 'transactions',
                     name: 'transactions',
                     component: Transactions,
-                    redirect: {name: 'send'},
+                    redirect: { name: 'send' },
                     children: [
                         {
                             path: 'send/:address?',
@@ -71,7 +71,7 @@ export const router = new Router({
                     path: 'settings',
                     name: 'settings',
                     component: Settings,
-                    redirect: {name: 'changePassword'},
+                    redirect: { name: 'changePassword' },
                     children: [
                         {
                             path: 'changePassword',
@@ -91,7 +91,7 @@ export const router = new Router({
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth) && store.state.activeAccount === null) {
-        next({name: 'auth'})
+        next({ name: 'auth' })
     } else {
         next()
     }

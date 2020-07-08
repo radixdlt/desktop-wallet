@@ -53,10 +53,10 @@ import {
   RadixIdentity,
 } from 'radixdlt'
 
-import { radixApplication } from '@app/modules/RadixApplication'
-
 import RadixContactItemTemplate from './RadixContactItemTemplate.vue'
 import Decimal from 'decimal.js'
+import { ReturnCode } from '@radixdlt/hardware-wallet/build/types'
+import { sendTransfer } from '../../modules/send-transactions'
 
 export default Vue.extend({
   data() {
@@ -68,15 +68,8 @@ export default Vue.extend({
       transactionStatus: '',
       contacts: [],
       template: RadixContactItemTemplate,
+      subscription: undefined,
     }
-  },
-  created() {
-    radixApplication.on('atom-received:transaction', this.update)
-    radixApplication.on('contact-added', this.update)
-  },
-  destroyed() {
-    radixApplication.removeListener('atom-received:transaction', this.update)
-    radixApplication.removeListener('contact-added', this.update)
   },
   mounted() {
     this.update()
@@ -118,20 +111,14 @@ export default Vue.extend({
     },
   },
   methods: {
-    send() {
+    async send() {
       this.transactionStatus = 'Sending...'
 
       try {
         const to = RadixAccount.fromAddress(this.address, true)
 
-        const transactionStatusSubject = RadixTransactionBuilder.createTransferAtom(
-          this.identity.account,
-          to,
-          this.token_id,
-          this.amount,
-          this.message
-        ).signAndSubmit(this.identity)
-
+        const transactionStatusSubject = await sendTransfer(to, this.token_id, this.amount, this.message)
+       
         transactionStatusSubject.subscribe({
           next: update => {
             if (update.status === 'SUBMITTED') {
@@ -144,6 +131,10 @@ export default Vue.extend({
           },
           error: error => {
             console.error(error)
+            if (error.returnCode && error.returnCode === ReturnCode.SW_USER_REJECTED) {
+              this.transactionStatus = `Transaction declined.`
+              return
+            }
             this.transactionStatus = `Transaction failed: ${error.status}`
           },
         })

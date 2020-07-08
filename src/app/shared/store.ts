@@ -9,13 +9,16 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
     state: {
-        contacts: <{[address: string]: Contact}>{},
+        contacts: <{ [address: string]: Contact }>{},
         contactsFileName: '',
 
         activeAccount: <WalletAccount>null,
+        hardwareWallet: false,
+        isSigning: false,
+        ledgerAppOpen: false,
     },
     mutations: {
-        addOrUpdateContact({contacts}, contact: Contact) {
+        addOrUpdateContact({ contacts }, contact: Contact) {
             // Validate address
             RadixAddress.fromAddress(contact.address)
 
@@ -25,18 +28,27 @@ export const store = new Vuex.Store({
 
             Vue.set(contacts, contact.address, contact)
         },
-        deleteContact({contacts}, address: string) {
+        deleteContact({ contacts }, address: string) {
             Vue.delete(contacts, address)
         },
         setActiveAccount(state, account: WalletAccount) {
-            state.activeAccount = account 
+            state.activeAccount = account
+        },
+        setHardwareWallet(state, value: boolean) {
+            state.hardwareWallet = value
+        },
+        setIsSigning(state, value: boolean) {
+            state.isSigning = value
+        },
+        setLedgerAppOpen(state, value: boolean) {
+            state.ledgerAppOpen = value
         },
         logout(state) {
             state.activeAccount = null
         },
     },
     actions: {
-        async loadContacts({state, commit}) {
+        async loadContacts({ state, commit }) {
             try {
                 const serializedContacts = await fs.readJson(state.contactsFileName)
 
@@ -48,9 +60,9 @@ export const store = new Vuex.Store({
                 console.log(error)
             }
         },
-        async saveContacts({state}) {
+        async saveContacts({ state }) {
             const serializedContacts = Object.values(state.contacts)
-            
+
             // TODO: encrypt
             await fs.writeJson(state.contactsFileName, serializedContacts)
         },
@@ -64,6 +76,15 @@ export const store = new Vuex.Store({
         },
         activeAccount: state => {
             return state.activeAccount
+        },
+        hardwareWallet: state => {
+            return state.hardwareWallet
+        },
+        isSigning: state => {
+            return state.isSigning
+        },
+        ledgerAppOpen: state => {
+            return state.ledgerAppOpen
         },
     },
 })
