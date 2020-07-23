@@ -69,6 +69,7 @@ export default Vue.extend({
     }
   },
   async created() {
+    connectLocalhost()
     checkTerms()
 
     radixServer.start()
