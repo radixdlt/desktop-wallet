@@ -1,21 +1,7 @@
-import { RadixTransactionBuilder, RadixAccount, RadixIdentity, RRI, RadixAtom } from 'radixdlt'
+import { RadixTransactionBuilder, RadixAccount, RRI } from 'radixdlt'
 import { store } from '../shared/store'
-import Config from '../shared/Config'
 import { subscribeConnection, ConnectionEvent } from './hardware-wallet-connection'
-
-let faucetAddress
-
-try {
-    const request = new XMLHttpRequest()
-    request.open('GET', '../universe.json', false)
-    request.send(null)
-    const json = JSON.parse(request.responseText)
-    if (json.faucetAddress) {
-        faucetAddress = json.faucetAddress
-    }
-} catch (e) {
-    faucetAddress = Config.faucetAddress
-}
+import { faucetAddress } from './network-connection'
 
 export async function submit(builder: RadixTransactionBuilder) {
     store.commit('setIsSigning', true)
@@ -30,10 +16,13 @@ export async function submit(builder: RadixTransactionBuilder) {
         })
         return builder.signAndSubmit(store.state.activeAccount.identity)
     }
+    console.log('yep')
     return builder.signAndSubmit(store.state.activeAccount.identity)
 }
 
 export async function sendFaucetRequest() {
+    console.log(faucetAddress)
+    console.log(store.state.activeAccount.identity.account)
     const faucetAccount = RadixAccount.fromAddress(faucetAddress, true)
 
     const builder = RadixTransactionBuilder.createRadixMessageAtom(

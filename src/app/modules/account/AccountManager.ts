@@ -20,8 +20,8 @@ class AccountManager {
     public mnemonic: string = ''
     private accountsUpdatesSubject: BehaviorSubject<WalletAccount[]> = new BehaviorSubject(this.accounts)
 
-    private masterNode: bip32.BIP32Interface
-    private coinType = 1 // Testnet
+    public masterNode: bip32.BIP32Interface
+    public coinType = 1 // Testnet
 
     constructor(readonly keystorePath: string) {
     }
@@ -139,6 +139,19 @@ class AccountManager {
         })
     }
 
+    public setUniverse(universe: string) {
+        if (!store.state.hardwareWallet) {
+            for (let i = 0; i < this.accounts.length; i++) {
+                const node = this.masterNode.derivePath(`m/44'/${this.coinType}'/${i}`)
+                this.accounts[i].identity = RadixSimpleIdentity.fromPrivate(node.privateKey)
+                console.log(this.accounts[i])
+            }
+        }
+        store.commit('setUniverse', universe)
+        this.setActiveAccount(this.accounts[0])
+        console.log('activbe account', this.accounts[0])
+    }
+
     /**
      * Serialize the account manager to a json string
      */
@@ -209,8 +222,10 @@ class AccountManager {
     public async store(password: string) {
         const data = this.toString()
         // Encrypt
+        console.log('what')
         const keystoreData = await RadixKeyStore.encryptData(data, 'multi', password)
         // Write to disk
+        console.log(this.keystorePath)
         await fs.writeJSON(this.keystorePath, keystoreData)
     }
     /**

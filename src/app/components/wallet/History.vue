@@ -109,12 +109,18 @@ export default Vue.extend({
     identity(): RadixIdentity {
       return this.$store.state.activeAccount.identity
     },
+    network() {
+      return this.$store.state.universe
+    },
   },
   watch: {
     contacts() {
       this.updateTransactionList()
     },
     identity() {
+      this.updateTransactionList()
+    },
+    network() {
       this.updateTransactionList()
     },
   },

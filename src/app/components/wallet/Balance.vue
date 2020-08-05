@@ -97,6 +97,14 @@ export default Vue.extend({
 
         {}
       )
+      if (!this.tokens[radixTokenManager.nativeToken.toString()]) {
+        this.tokens[radixTokenManager.nativeToken.toString()] = {
+          rri: RRI.fromString(radixTokenManager.nativeToken.toString()),
+          balance: 0,
+        }
+      }
+      console.log('active token', this.activeToken)
+      console.log('tokens', this.tokens)
       this.$forceUpdate()
     },
     async claimFaucet() {

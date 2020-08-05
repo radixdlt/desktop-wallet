@@ -16,6 +16,7 @@ export const store = new Vuex.Store({
         hardwareWallet: false,
         isSigning: false,
         ledgerAppOpen: false,
+        universe: '',
     },
     mutations: {
         addOrUpdateContact({ contacts }, contact: Contact) {
@@ -42,6 +43,9 @@ export const store = new Vuex.Store({
         },
         setLedgerAppOpen(state, value: boolean) {
             state.ledgerAppOpen = value
+        },
+        setUniverse(state, universe: string) {
+            state.universe = universe
         },
         logout(state) {
             state.activeAccount = null
