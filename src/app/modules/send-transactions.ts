@@ -34,14 +34,27 @@ export async function submit(builder: RadixTransactionBuilder) {
 }
 
 export async function sendFaucetRequest() {
-    const faucetAccount = RadixAccount.fromAddress(faucetAddress, true)
+    await store.state.activeAccount.identity.account.requestTestTokensFromFaucetWithLinearBackingOffRetry()
+}
 
-    const builder = RadixTransactionBuilder.createRadixMessageAtom(
+export const prepareTransferAtom = (
+    to: RadixAccount,
+    tokenRef: string | RRI,
+    amount: string | number,
+    message?: string
+) => {
+    const builder = RadixTransactionBuilder.createTransferAtom(
         store.state.activeAccount.identity.account,
-        faucetAccount,
-        'Send me some money, pretty please!'
+        to,
+        tokenRef,
+        amount,
+        message
     )
-    return submit(builder)
+
+    return {
+        atom: builder.buildAtom(),
+        submit: submit.bind(null, builder)
+    }
 }
 
 export function sendTransfer(
@@ -57,6 +70,7 @@ export function sendTransfer(
         amount,
         message
     )
+
     return submit(builder)
 }
 

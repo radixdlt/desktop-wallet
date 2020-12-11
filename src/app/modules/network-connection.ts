@@ -3,10 +3,10 @@ import { setAtomStore } from './atom-store'
 
 const connect = (bootstrapConfig: RadixBootstrapConfig) => {
     const store = setAtomStore()
-    radixUniverse.bootstrap(bootstrapConfig, store)
+    radixUniverse.bootstrapTrustedNode(bootstrapConfig, store)
 }
 
-export const connectLocalhost = connect.bind(null, RadixUniverse.LOCALHOST_SINGLENODE)
+export const connectLocalhost = connect.bind(null, RadixUniverse.LOCAL_SINGLE_NODE)
 
 export const connectCustomNode = (address: string, useSSL: boolean, universe: any) => {
     const universeConfig = new RadixUniverseConfig(universe)
