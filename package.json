@@ -28,7 +28,7 @@
     "dist:linux": "electron-builder --linux --config electron-builder.yml",
     "dist:win": "electron-builder --windows --config electron-builder.yml",
     "dist:all": "electron-builder --mac --linux --windows --config electron-builder.yml",
-    "DISABLED_postinstall": "electron-rebuild -f && run-p addbindings",
+    "postinstall": "electron-rebuild -f && run-p addbindings",
     "addbindings": "cp node_modules/node-hid/build/Release/HID-hidraw.node build && cp node_modules/usb/build/Release/usb_bindings.node build"
   },
   "author": "Radix DLT",
@@ -69,7 +69,7 @@
     "webpack-cli": "^3.1.1"
   },
   "dependencies": {
-    "@radixdlt/hardware-wallet": "^1.1.8",
+    "@radixdlt/hardware-wallet": "1.1.10",
     "@sentry/electron": "^0.5.4",
     "@types/bs58": "^3.0.30",
     "@types/fs-extra": "^5.0.2",
