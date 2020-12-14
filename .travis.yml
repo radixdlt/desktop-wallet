@@ -28,8 +28,5 @@ before_install:
   - yarn build
 
 script:
-  # Run tests, don't fail if they fail...
-  - yarn test:unit || true
-  - yarn test:e2e || true
   # Static code analysis
   - yarn lint
