@@ -28,20 +28,23 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    import { radixApplication } from '@/app/modules/RadixApplication'
+import Vue from 'vue'
+import { settingsStore } from '../../modules/SettingsStore'
+import { accountManager } from '../../modules/account/AccountManager'
+import { loadKeystore } from '../../modules/application-state'
 
-    export default Vue.extend({
-        data() {
-            return {
-                termsAccepted: false,
-                privacyPolicyAccepted: false,
-            }
-        },
-        methods: {
-            acceptTerms() {
-                radixApplication.acceptTerms()
-            }
-        },
-    })
+export default Vue.extend({
+  data() {
+    return {
+      termsAccepted: false,
+      privacyPolicyAccepted: false,
+    }
+  },
+  methods: {
+    acceptTerms() {
+      settingsStore.set('termsAccepted', true)
+      loadKeystore()
+    },
+  },
+})
 </script>

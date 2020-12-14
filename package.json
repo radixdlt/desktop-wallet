@@ -1,6 +1,6 @@
 {
   "name": "radix-wallet",
-  "version": "2.0.0-beta.2",
+  "version": "2.0.0-beta.3",
   "description": "",
   "main": "build/main.js",
   "scripts": {
@@ -27,7 +27,9 @@
     "dist:mac": "electron-builder --mac --config electron-builder.yml",
     "dist:linux": "electron-builder --linux --config electron-builder.yml",
     "dist:win": "electron-builder --windows --config electron-builder.yml",
-    "dist:all": "electron-builder --mac --linux --windows --config electron-builder.yml"
+    "dist:all": "electron-builder --mac --linux --windows --config electron-builder.yml",
+    "postinstall": "electron-rebuild -f && run-p addbindings",
+    "addbindings": "cp node_modules/node-hid/build/Release/HID-hidraw.node build && cp node_modules/usb/build/Release/usb_bindings.node build"
   },
   "author": "Radix DLT",
   "license": "Apache-2.0",
@@ -67,7 +69,7 @@
     "webpack-cli": "^3.1.1"
   },
   "dependencies": {
-    "@reactivex/rxjs": "^6.1.0",
+    "@radixdlt/hardware-wallet": "^1.1.8",
     "@sentry/electron": "^0.5.4",
     "@types/bs58": "^3.0.30",
     "@types/fs-extra": "^5.0.2",
@@ -94,10 +96,10 @@
     "promise-retry": "^1.1.1",
     "pug-loader": "^2.4.0",
     "qr-image": "^3.2.0",
-    "radixdlt": "git://github.com/radixdlt/radixdlt-js.git#release/2.0-beta.9",
+    "radixdlt": "git://github.com/radixdlt/radixdlt-js.git#release/2.0-beta.11",
     "raw-loader": "^0.5.1",
     "rpc-websockets": "^4.1.1",
-    "rxjs": "^6.3.3",
+    "rxjs": "^6.5.5",
     "rxjs-compat": "^6.3.2",
     "semver": "^5.6.0",
     "tslint": "^5.10.0",

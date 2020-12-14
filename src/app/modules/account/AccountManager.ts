@@ -1,11 +1,21 @@
 import { WalletAccount } from './WalletAccount'
-import { RadixKeyStore, RadixSimpleIdentity, RadixAddress } from 'radixdlt'
+import { RadixKeyStore, RadixSimpleIdentity, RadixTransactionUpdate, RadixHardwareWalletIdentity } from 'radixdlt'
+import { ledgerApp } from '@radixdlt/hardware-wallet'
 import fs from 'fs-extra'
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
-import { BehaviorSubject, Observable } from 'rxjs'
+import { BehaviorSubject, Observable, Subscription, Subject } from 'rxjs'
+import { loadKeystore } from '../application-state'
+import { store } from '../../shared/store'
+import { KEYSTORE_FILENAME } from '../atom-store'
 
-export default class AccountManager {
+export const wordlist = bip39.wordlists.english
+export let keystorePassword: string
+
+let transferSubscription: Subscription | any
+let transactionUpdateSubject: Subject<RadixTransactionUpdate> = new Subject()
+
+class AccountManager {
     public accounts: WalletAccount[] = []
     public mnemonic: string = ''
     private accountsUpdatesSubject: BehaviorSubject<WalletAccount[]> = new BehaviorSubject(this.accounts)
@@ -16,7 +26,7 @@ export default class AccountManager {
     constructor(readonly keystorePath: string) {
     }
 
-    
+
     /**
      * Provide an existing mnemonic for the root account
      * This will initiate an account discovery process, 
@@ -83,6 +93,25 @@ export default class AccountManager {
         this.accountsUpdatesSubject.next(this.accounts)
     }
 
+    public setKeystorePassword(password: string) {
+        keystorePassword = password
+    }
+
+    public async loadHardwareWalletAccount(): Promise<() => void> {
+        const BIP44_PATH = '80000000' + '00000000' + '00000000'
+
+        const result = await RadixHardwareWalletIdentity.createNew(ledgerApp, BIP44_PATH)
+
+        this.addAccount({
+            alias: 'Hardware Wallet',
+            identity: result.identity,
+        })
+        this.setActiveAccount(this.accounts[0])
+        store.commit('setHardwareWallet', true)
+
+        return result.done
+    }
+
     /**
      * Set the accounts list
      * 
@@ -127,7 +156,7 @@ export default class AccountManager {
         })
     }
 
-    
+
     /**
      * Deserialize AccountManager state from a json string
      * 
@@ -146,7 +175,7 @@ export default class AccountManager {
         this.mnemonic = deserializedData.mnemonic
         this.masterNode = bip32.fromSeed(bip39.mnemonicToSeedSync(this.mnemonic))
 
-        const accounts =  deserializedData.accounts.map(account => {
+        const accounts = deserializedData.accounts.map(account => {
             return {
                 alias: account.alias,
                 identity: RadixSimpleIdentity.fromPrivate(account.privateKey),
@@ -154,7 +183,24 @@ export default class AccountManager {
         })
         this.setAccounts(accounts)
     }
-    
+
+    public setActiveAccount(account: WalletAccount) {
+        // Unsubscribe old updates
+        if (transferSubscription) {
+            transferSubscription.unsubscribe()
+        }
+
+        store.commit('setActiveAccount', account)
+
+        // Subscribe to updates
+        transferSubscription = account.identity.account.transferSystem.transactionSubject
+            .subscribe(transactionUpdateSubject)
+    }
+
+    public subscribeToTransferEvents(func: (update: RadixTransactionUpdate) => void) {
+        transactionUpdateSubject.subscribe(func)
+    }
+
     /**
      * Store the AccountManager state at the provided path, encrypted with the password provided
      * 
@@ -180,6 +226,13 @@ export default class AccountManager {
         this.fromString(serilaizedData)
     }
 
+    public logout() {
+        this.reset()
+        transferSubscription.unsubscribe()
+        store.commit('logout')
+        loadKeystore()
+    }
+
     /**
      * Clear mnemonic and account information
      * Useful for logging out
@@ -189,6 +242,11 @@ export default class AccountManager {
         this.masterNode = null
         this.mnemonic = null
     }
+
+    public deleteKeystore() {
+        fs.removeSync(KEYSTORE_FILENAME)
+    }
+
     /**
      * Check if the current keystore is encrypted with the password provided
      * 
@@ -198,13 +256,14 @@ export default class AccountManager {
     public async checkPassword(password: string): Promise<boolean> {
         try {
             const keystoreData = await fs.readJSON(this.keystorePath)
-            const serilaizedData = await RadixKeyStore.decryptKeystore(keystoreData, password)
+            await RadixKeyStore.decryptKeystore(keystoreData, password)
         } catch (e) {
             return false
         }
 
         return true
     }
+
     /**
      * Get an RxJs observable for accounts updates
      */
@@ -212,3 +271,5 @@ export default class AccountManager {
         return this.accountsUpdatesSubject.share()
     }
 }
+
+export const accountManager = new AccountManager(KEYSTORE_FILENAME)

@@ -13,8 +13,6 @@ div
 <script lang="ts">
 import Vue from 'vue'
 import qr from 'qr-image'
-
-import { radixApplication }  from '@app/modules/RadixApplication'
 import { RadixIdentity } from 'radixdlt'
 
 export default Vue.extend({

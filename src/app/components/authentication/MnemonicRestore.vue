@@ -36,41 +36,46 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue'
-    import { radixApplication } from '@/app/modules/RadixApplication'
-    import MnemonicInput from './MnemonicInput.vue'
+import Vue from 'vue'
+import MnemonicInput from './MnemonicInput.vue'
+import { wordlist } from '../../modules/account/AccountManager'
+import {
+  restoreCheckMnemonic,
+  goBack,
+  restoreProceedUnsafe,
+} from '../../modules/application-state'
 
-    export default Vue.extend({
-        components: {
-            MnemonicInput,
-        },
-        data() {
-            return {
-                mnemonicSize: 12,
-                mnemonic: '',
+export default Vue.extend({
+  components: {
+    MnemonicInput,
+  },
+  data() {
+    return {
+      mnemonicSize: 12,
+      mnemonic: '',
 
-                wordlist: radixApplication.wordlist,
+      wordlist,
 
-                warningModalIsActive: false,
-            }
-        },
-        methods: {
-            next() {
-                try {
-                    radixApplication.restoreCheckMnemonic(this.mnemonic)
-                } catch {
-                    this.warningModalIsActive = true
-                }
-            },
-            back() {
-                radixApplication.goBack()
-            },
-            closeModal() {
-                this.warningModalIsActive = false
-            },
-            proceedUnsafe() {
-                radixApplication.restoreProceedUnsafe(this.mnemonic)
-            },
-        },
-    })
+      warningModalIsActive: false,
+    }
+  },
+  methods: {
+    next() {
+      try {
+        restoreCheckMnemonic(this.mnemonic)
+      } catch {
+        this.warningModalIsActive = true
+      }
+    },
+    back() {
+      goBack()
+    },
+    closeModal() {
+      this.warningModalIsActive = false
+    },
+    proceedUnsafe() {
+      restoreProceedUnsafe(this.mnemonic)
+    },
+  },
+})
 </script>

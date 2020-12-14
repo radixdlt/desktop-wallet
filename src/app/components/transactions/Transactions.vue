@@ -22,44 +22,40 @@ div
 
 <script lang="ts">
 import Vue from 'vue'
-
-import { radixApplication }  from '@app/modules/RadixApplication'
 import { RadixIdentity } from 'radixdlt'
 
 export default Vue.extend({
-    data() {
-        return {
-            sections: [
-                { path: '/main/transactions/send', name: 'Send' },
-                { path: '/main/transactions/receive', name: 'Receive' }
-            ],
-        }
+  data() {
+    return {
+      sections: [
+        { path: '/main/transactions/send', name: 'Send' },
+        { path: '/main/transactions/receive', name: 'Receive' },
+      ],
+    }
+  },
+  computed: {
+    identity(): RadixIdentity {
+      return this.$store.state.activeAccount.identity
     },
-    computed: {
-        identity(): RadixIdentity {
-            return this.$store.state.activeAccount.identity
-        },
-    },
+  },
 })
 </script>
 
 <style lang="scss" scoped>
+.container {
+  padding: 0 20px 30px;
 
-    .container {
-        padding: 0 20px 30px;
+  .panel {
+    max-width: 680px;
+    margin: 0 auto;
 
-        .panel {
-            max-width: 680px;
-            margin: 0 auto;
+    .body {
+      padding: 30px;
 
-            .body {
-                padding: 30px;
-
-                .content {
-                    margin-top: 20px;
-                }
-            }
-        }
+      .content {
+        margin-top: 20px;
+      }
     }
-
+  }
+}
 </style>

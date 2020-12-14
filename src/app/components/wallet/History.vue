@@ -37,16 +37,14 @@ div
 <script lang="ts">
 import Vue from 'vue'
 import _ from 'lodash'
-
 import {
   radixTokenManager,
   RRI,
   RadixIdentity,
   RadixTransaction,
 } from 'radixdlt'
-
-import { radixApplication } from '../../modules/RadixApplication'
 import moment from 'moment'
+import { accountManager } from '../../modules/account/AccountManager'
 
 export default Vue.extend({
   data() {
@@ -55,16 +53,7 @@ export default Vue.extend({
     }
   },
   created() {
-    radixApplication.on(
-      'atom-received:transaction',
-      this.updateTransactionList
-    )
-  },
-  destroyed() {
-    radixApplication.removeListener(
-      'atom-received:transaction',
-      this.updateTransactionList
-    )
+    accountManager.subscribeToTransferEvents(this.updateTransactionList)
   },
   activated() {
     this.updateTransactionList()
@@ -83,7 +72,6 @@ export default Vue.extend({
         const timeString = moment(transaction.timestamp).format(
           'DD/MM/Y \n HH:mm'
         )
-
         const address = Object.keys(transaction.participants)[0] // Assume single participant transactions
         const message = transaction.message
 

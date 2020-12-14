@@ -5,8 +5,6 @@ import { ipcRenderer } from 'electron'
 import { authSystem } from './AuthSystem'
 import { store } from '../shared/store'
 
-import { radixApplication } from  '../modules/RadixApplication'
-
 import {
     radixTokenManager,
     RadixTransactionBuilder,
@@ -18,6 +16,7 @@ import {
 } from 'radixdlt'
 
 import * as jsonrpc from 'jsonrpc-lite'
+import { sendTransfer, sendMessage, submit } from '../modules/send-transactions'
 
 export class RadixServer {
 
@@ -28,7 +27,7 @@ export class RadixServer {
     start() {
         authSystem.initialize()
 
-        let server = new JsonRpcServer(new VirtualSocketServer(ipcRenderer))  
+        let server = new JsonRpcServer(new VirtualSocketServer(ipcRenderer))
 
         server.register('register', async (params, ws) => {
             if (!store || !this.identity()) {
@@ -60,26 +59,22 @@ export class RadixServer {
 
         server.register('send_transaction', async (params, ws) => {
             await authSystem.authenticate(params.token, ['send_transactions'])
-            
-            await RadixTransactionBuilder.createTransferAtom(
-                this.identity().account,
+
+            await sendTransfer(
                 RadixAccount.fromAddress(params.recipient),
                 params.asset,
                 params.quantity,
-                params.message)
-            .signAndSubmit(this.identity())
-            .toPromise()
+                params.message
+            )
         })
 
         server.register('send_message', async (params, ws) => {
             await authSystem.authenticate(params.token, ['send_messages'])
 
-            await RadixTransactionBuilder.createRadixMessageAtom(
-                this.identity().account,
+            await sendMessage(
                 RadixAccount.fromAddress(params.recipient),
-                params.message)
-            .signAndSubmit(this.identity())
-            .toPromise()
+                params.message
+            )
         })
 
         server.register('send_application_message', async (params, ws) => {
@@ -89,13 +84,11 @@ export class RadixServer {
                 return RadixAccount.fromAddress(recipient)
             }).push(this.identity().account)
 
-            await RadixTransactionBuilder.createPayloadAtom(
+            await submit(RadixTransactionBuilder.createPayloadAtom(
                 readers,
                 params.application_id,
                 params.payload,
-                params.encrypted)
-            .signAndSubmit(this.identity())
-            .toPromise()
+                params.encrypted))
         })
 
         server.register('balance', async (params, ws) => {
@@ -110,7 +103,7 @@ export class RadixServer {
 
                     ws.send(JSON.stringify(jsonrpc.notification('balance.update', strigifiedBalance)))
                 })
-            
+
 
             ws.on('close', () => {
                 sub.unsubscribe()
@@ -121,7 +114,7 @@ export class RadixServer {
 
         server.register('transactions', async (params, ws) => {
             await authSystem.authenticate(params.token, ['transactions'])
-            
+
             const sub = this.identity().account.transferSystem.getAllTransactions().subscribe({
                 next: (transactionUpdate: RadixTransactionUpdate) => {
                     const transaction = transactionUpdate.transaction
@@ -148,7 +141,7 @@ export class RadixServer {
 
         server.register('messages', async (params, ws) => {
             await authSystem.authenticate(params.token, ['messages'])
-     
+
             const sub = this.identity().account.messagingSystem.getAllMessages().subscribe({
                 next: (message: any) => {
                     let messageCopy = JSON.parse(JSON.stringify(message))
