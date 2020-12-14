@@ -53,7 +53,7 @@ export const prepareTransferAtom = (
 
     return {
         atom: builder.buildAtom(),
-        submit: submit.bind(null, builder)
+        submit: submit.bind(null, builder),
     }
 }
 
