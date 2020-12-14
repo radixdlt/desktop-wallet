@@ -69,10 +69,10 @@ export default Vue.extend({
       ).map((transaction: RadixTransaction) => {
         const token_id = Object.keys(transaction.balance)[0] // Assume single token transactions
         const token = this.tokens[token_id]
-        const timeString = moment(transaction.timestamp).format(
-          'DD/MM/Y \n HH:mm'
-        )
-        const address = Object.keys(transaction.participants)[0] // Assume single participant transactions
+        //const timeString = moment(transaction.timestamp).format(
+        //  'DD/MM/Y \n HH:mm'
+        //)
+        const address = transaction.from.getAddress() // Assume single participant transactions
         const message = transaction.message
 
         let displayName = address
@@ -85,7 +85,7 @@ export default Vue.extend({
           balance: transaction.tokenUnitsBalance[token_id].toString(),
           address: address,
           displayName: displayName,
-          time: timeString,
+          // time: timeString,
           aid: transaction.aid,
           message,
         }

@@ -69,9 +69,11 @@ export default Vue.extend({
     }
   },
   async created() {
+    connectLocalhost()
     checkTerms()
 
     radixServer.start()
+
 
     // @ts-ignore
     this.$store.state.contactsFileName = `${dataDir}/contacts.json`
@@ -93,17 +95,17 @@ export default Vue.extend({
     accountManager.subscribeToTransferEvents(
       (transactionUpdate: RadixTransactionUpdate) => {
         const transaction = transactionUpdate.transaction
-        const address = Object.keys(transaction.participants)[0]
+        const address = transaction.from.getAddress()
 
         // Don't notify about old messages
-        const timeDifference = Date.now() - transaction.timestamp
-        if (timeDifference > 10000) {
-          return
-        }
+        // const timeDifference = Date.now() - transaction.timestamp
+        // if (timeDifference > 10000) {
+        //  return
+        // }
 
         const tokenId = Object.keys(transaction.balance)[0] // Assume single token transactions
         const tokenReference = RRI.fromString(tokenId)
-        const timeString = new Date(transaction.timestamp).toLocaleTimeString()
+        // const timeString = new Date(transaction.timestamp).toLocaleTimeString()
         const balance = transaction.tokenUnitsBalance[tokenId]
 
         let displayName = address
