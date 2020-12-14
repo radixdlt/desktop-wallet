@@ -28,7 +28,7 @@
     "dist:linux": "electron-builder --linux --config electron-builder.yml",
     "dist:win": "electron-builder --windows --config electron-builder.yml",
     "dist:all": "electron-builder --mac --linux --windows --config electron-builder.yml",
-    "postinstall": "electron-rebuild -f && run-p addbindings",
+    "DISABLED_postinstall": "electron-rebuild -f && run-p addbindings",
     "addbindings": "cp node_modules/node-hid/build/Release/HID-hidraw.node build && cp node_modules/usb/build/Release/usb_bindings.node build"
   },
   "author": "Radix DLT",
