@@ -1,7 +1,7 @@
 import { RadixTransactionBuilder, RadixAccount, RadixIdentity, RRI, RadixAtom } from 'radixdlt'
 import { store } from '../shared/store'
 import Config from '../shared/Config'
-import { subscribeConnection, ConnectionEvent } from './hardware-wallet-connection'
+// import { subscribeConnection, ConnectionEvent } from './hardware-wallet-connection'
 
 let faucetAddress
 
@@ -19,6 +19,7 @@ try {
 
 export async function submit(builder: RadixTransactionBuilder) {
     store.commit('setIsSigning', true)
+    /*
     if (store.state.hardwareWallet && !store.state.ledgerAppOpen) {
         await new Promise(async (resolve, reject) => {
             const subscription = await subscribeConnection(event => {
@@ -30,11 +31,12 @@ export async function submit(builder: RadixTransactionBuilder) {
         })
         return builder.signAndSubmit(store.state.activeAccount.identity)
     }
+    */
     return builder.signAndSubmit(store.state.activeAccount.identity)
 }
 
 export async function sendFaucetRequest() {
-    await store.state.activeAccount.identity.account.requestTestTokensFromFaucetWithLinearBackingOffRetry()
+    await store.state.activeAccount.identity.account.requestTestTokensFromFaucetWithLinearBackingOffRetry('https://testnet3-faucet.radixdlt.com/faucet')
 }
 
 export const prepareTransferAtom = (

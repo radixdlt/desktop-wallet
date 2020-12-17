@@ -49,7 +49,7 @@ import {
 import { settingsStore } from './modules/SettingsStore'
 import { accountManager } from './modules/account/AccountManager'
 import { KEYSTORE_FILENAME, dataDir } from './modules/atom-store'
-import { subscribeConnection, ConnectionEvent } from './modules/hardware-wallet-connection'
+// import { subscribeConnection, ConnectionEvent } from './modules/hardware-wallet-connection'
 
 export default Vue.extend({
   components: {
@@ -69,7 +69,8 @@ export default Vue.extend({
     }
   },
   async created() {
-    connectLocalhost()
+    connectCustomNode('18.135.69.34', true)
+    //connectLocalhost()
     checkTerms()
 
     radixServer.start()
@@ -126,6 +127,7 @@ export default Vue.extend({
         }
       }
     )
+    /*
     this.hardwareWalletSubscription = await subscribeConnection(event => {
       switch (event) {
         case ConnectionEvent.SIGN_CONFIRM:
@@ -136,6 +138,7 @@ export default Vue.extend({
           break
       }
     })
+    */
   },
   methods: {
     exportWallet() {

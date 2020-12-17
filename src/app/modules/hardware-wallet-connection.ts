@@ -1,3 +1,5 @@
+
+/*
 import { subscribeAppConnection, subscribeDeviceConnection, AppState } from '@radixdlt/hardware-wallet'
 import { store } from '../shared/store'
 
@@ -61,3 +63,4 @@ subscribeConnection(event => {
             break
     }
 })
+*/

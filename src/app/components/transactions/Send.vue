@@ -57,7 +57,7 @@ import {
 } from 'radixdlt'
 
 import RadixContactItemTemplate from './RadixContactItemTemplate.vue'
-import { ReturnCode } from '@radixdlt/hardware-wallet/build/types'
+// import { ReturnCode } from '@radixdlt/hardware-wallet/build/types'
 import { prepareTransferAtom, sendTransfer } from '../../modules/send-transactions'
 import TxModal from './TxModal.vue'
 
@@ -154,10 +154,12 @@ export default Vue.extend({
           },
           error: error => {
             console.error(error)
+            /*
             if (error.returnCode && error.returnCode === ReturnCode.SW_USER_REJECTED) {
               this.transactionStatus = `Transaction declined.`
               return
             }
+            */
             this.transactionStatus = `Transaction failed: ${error.status}`
           },
         })

@@ -43,11 +43,13 @@ import { RadixIdentity } from 'radixdlt'
 import { WalletAccount } from '../modules/account/WalletAccount'
 import { accountManager } from '../modules/account/AccountManager'
 import { Subscription } from 'rxjs'
+/*
 import {
   subscribeConnection,
   ConnectionEvent,
 } from '../modules/hardware-wallet-connection'
-import { ledgerApp } from '@radixdlt/hardware-wallet'
+*/
+// import { ledgerApp } from '@radixdlt/hardware-wallet'
 
 export default Vue.extend({
   data() {
@@ -83,9 +85,11 @@ export default Vue.extend({
     }
   },
   async created() {
+    /*
     ledgerApp.getVersion().then(version => {
       this.hardwareWalletVersion = version
     })
+    */
   },
 })
 </script>

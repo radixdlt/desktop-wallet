@@ -18,7 +18,7 @@ div
 <script lang="ts">
 import Vue from 'vue'
 import Modal from '../shared/Modal.vue'
-import { atomHashObservable } from '@radixdlt/hardware-wallet'
+// import { atomHashObservable } from '@radixdlt/hardware-wallet'
 
 export default Vue.extend({
   components: {
@@ -41,9 +41,9 @@ export default Vue.extend({
     },
   },
   created() {
-    atomHashObservable.subscribe(hash => {
+    /*atomHashObservable.subscribe(hash => {
       this.atomHash = hash
-    })
+    })*/
   },
 })
 </script>

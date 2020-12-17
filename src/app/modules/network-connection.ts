@@ -1,19 +1,19 @@
 import { radixUniverse, RadixUniverse, RadixUniverseConfig, RadixNodeDiscoveryHardcoded, RadixBootstrapConfig } from 'radixdlt'
+import { RadixPartialBootstrapConfig } from 'radixdlt/build/module/modules/universe/RadixBootstrapConfig'
 import { setAtomStore } from './atom-store'
 
-const connect = (bootstrapConfig: RadixBootstrapConfig) => {
+const connect = (bootstrapConfig: RadixPartialBootstrapConfig, useSSL) => {
     const store = setAtomStore()
-    radixUniverse.bootstrapTrustedNode(bootstrapConfig, store)
+    radixUniverse.bootstrapTrustedNode(bootstrapConfig, store, useSSL)
 }
 
-export const connectLocalhost = connect.bind(null, RadixUniverse.LOCAL_SINGLE_NODE)
+export const connectLocalhost = connect.bind(null, RadixUniverse.LOCAL_SINGLE_NODE, false)
 
-export const connectCustomNode = (address: string, useSSL: boolean, universe: any) => {
-    const universeConfig = new RadixUniverseConfig(universe)
+export const connectCustomNode = (address: string, useSSL: boolean) => {
+    //const universeConfig = new RadixUniverseConfig(universe)
     const bootstrapConfig = {
-        universeConfig,
         nodeDiscovery: new RadixNodeDiscoveryHardcoded([address], useSSL),
         finalityTime: 0,
     }
-    connect(bootstrapConfig)
+    connect(bootstrapConfig, true)
 }
