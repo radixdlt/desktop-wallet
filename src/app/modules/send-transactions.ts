@@ -39,6 +39,26 @@ export async function sendFaucetRequest() {
     await store.state.activeAccount.identity.account.requestTestTokensFromFaucetWithLinearBackingOffRetry('https://testnet3-faucet.radixdlt.com/faucet')
 }
 
+export const prepareTransferAtom = (
+    to: RadixAccount,
+    tokenRef: string | RRI,
+    amount: string | number,
+    message?: string
+) => {
+    const builder = RadixTransactionBuilder.createTransferAtom(
+        store.state.activeAccount.identity.account,
+        to,
+        tokenRef,
+        amount,
+        message
+    )
+
+    return {
+        atom: builder.buildAtom(),
+        submit: submit.bind(null, builder),
+    }
+}
+
 export function sendTransfer(
     to: RadixAccount,
     tokenRef: string | RRI,
@@ -52,6 +72,7 @@ export function sendTransfer(
         amount,
         message
     )
+
     return submit(builder)
 }
 

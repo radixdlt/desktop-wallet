@@ -37,9 +37,10 @@ div
             
             div.field.columns
                 div.control.column.is-half.is-offset-one-quarter
-                    button.button.is-primary.is-fullwidth.send(@click="send()") Send
+                    button.button.is-primary.is-fullwidth.send(@click="openTxModal()") Send
             
             span.status {{transactionStatus}}
+            TxModal(:close="closeTxModal" :onSubmit="send" v-bind:visible="modalOpen" v-bind:fee="fee" v-bind:amount="amount" v-bind:token="token_id")
 </template>
 
 <script lang="ts">
@@ -51,6 +52,8 @@ import {
   RadixAccount,
   RRI,
   RadixIdentity,
+  calculateFeeForAtom,
+  RadixTokenDefinition
 } from 'radixdlt'
 
 import RadixContactItemTemplate from './RadixContactItemTemplate.vue'
@@ -69,11 +72,16 @@ export default Vue.extend({
       contacts: [],
       template: RadixContactItemTemplate,
       subscription: undefined,
+      modalOpen: false,
+      fee: 0
     }
   },
   mounted() {
     this.update()
     this.getRouteAddress()
+  },
+  components: {
+    TxModal
   },
   computed: {
     identity(): RadixIdentity {
@@ -111,7 +119,22 @@ export default Vue.extend({
     },
   },
   methods: {
+    openTxModal() {
+      const to = RadixAccount.fromAddress(this.address, true)
+      const {
+        atom,
+        submit
+      } = prepareTransferAtom(to, this.token_id, this.amount, this.message)
+
+      this.fee = RadixTokenDefinition.fromSubunitsToDecimal(calculateFeeForAtom(atom)).toNumber()
+
+      this.modalOpen = true
+    },
+    closeTxModal() {
+      this.modalOpen = false
+    },
     async send() {
+      this.modalOpen = false
       this.transactionStatus = 'Sending...'
 
       try {

@@ -14,7 +14,7 @@ div
         props: {
             visible: {
                 type: Boolean,
-                default: true,
+                default: false,
             },
         }
     })
