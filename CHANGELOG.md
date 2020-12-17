@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
  
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0-beta.4](https://github.com/radixdlt/desktop-wallet/releases/tag/2.0.0-beta.4)
+
+* Support for core version 21.
+
 ## [2.0.0-beta.3](https://github.com/radixdlt/desktop-wallet/releases/tag/2.0.0-beta.3)
 
 * Hardware wallet support.
