@@ -28,14 +28,18 @@ import Modal from '@app/components/shared/Modal.vue'
 import {
   appReady,
 } from '../../modules/application-state'
+/*
 import {
   subscribeConnection,
   ConnectionEvent,
 } from '../../modules/hardware-wallet-connection'
+*/
+/*
 import {
   subscribeAppConnection,
   subscribeDeviceConnection,
 } from '@radixdlt/hardware-wallet'
+*/
 import { Subscription, Observer } from 'rxjs'
 import { accountManager } from '../../modules/account/AccountManager'
 import { WalletAccount } from '../../modules/account/WalletAccount'
@@ -62,6 +66,7 @@ export default Vue.extend({
     },
   },
   async created() {
+    /*
     this.subscription = await subscribeConnection(event => {
       switch (event) {
         case ConnectionEvent.DEVICE_CONNECTED:
@@ -78,7 +83,8 @@ export default Vue.extend({
           break
       }
     })
-    this.confirmAddress = await accountManager.loadHardwareWalletAccount()
+    */
+   //this.confirmAddress = await accountManager.loadHardwareWalletAccount()
   },
   beforeDestroy() {
     this.subscription.unsubscribe()

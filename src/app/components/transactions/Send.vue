@@ -54,9 +54,9 @@ import {
 } from 'radixdlt'
 
 import RadixContactItemTemplate from './RadixContactItemTemplate.vue'
-import Decimal from 'decimal.js'
-import { ReturnCode } from '@radixdlt/hardware-wallet/build/types'
-import { sendTransfer } from '../../modules/send-transactions'
+// import { ReturnCode } from '@radixdlt/hardware-wallet/build/types'
+import { prepareTransferAtom, sendTransfer } from '../../modules/send-transactions'
+import TxModal from './TxModal.vue'
 
 export default Vue.extend({
   data() {
@@ -79,7 +79,7 @@ export default Vue.extend({
     identity(): RadixIdentity {
       return this.$store.state.activeAccount.identity
     },
-    balance(): { [tokenId: string]: Decimal } {
+    balance(): { [tokenId: string]: any } {
       return this.identity.account.transferSystem.tokenUnitsBalance
     },
     tokens(): any[] {
@@ -131,10 +131,12 @@ export default Vue.extend({
           },
           error: error => {
             console.error(error)
+            /*
             if (error.returnCode && error.returnCode === ReturnCode.SW_USER_REJECTED) {
               this.transactionStatus = `Transaction declined.`
               return
             }
+            */
             this.transactionStatus = `Transaction failed: ${error.status}`
           },
         })

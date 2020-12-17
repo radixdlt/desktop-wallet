@@ -7,14 +7,15 @@ div
       div(v-if="transactions.length < 1") 
           p You don't have any transaction history yet
       template(v-else)
-        div.column-title Timestamp
+        //div.column-title Timestamp
         div.column-title
         div.column-title Action
         div.column-title Atom ID
         div.column-title Balance
+        // div.column-title Fee
 
         template(v-for="transaction in transactions") 
-          div.timestamp {{ transaction.time }}
+          //div.timestamp {{ transaction.time }}
           div.icon
             icon.direction-icon.sent(name="regular/arrow-alt-circle-up", v-if="transaction.balance < 0")
             icon.direction-icon.received(name="regular/arrow-alt-circle-down", v-else)       
@@ -31,6 +32,8 @@ div
             {{ transaction.aid }}
           div.balance
             span.value {{ transaction.balance }} {{ transaction.token.name }}
+          //div.balance
+          //  span.value {{ transaction.fee }}
             
 </template>
 
@@ -88,6 +91,7 @@ export default Vue.extend({
           time: timeString,
           aid: transaction.aid,
           message,
+          fee: transaction.fee
         }
       })
 
@@ -129,7 +133,7 @@ export default Vue.extend({
 
 .transaction-list {
   display: grid;
-  grid: auto-flow / repeat(5, 1fr);
+  grid: auto-flow / repeat(4, 1fr);
   padding: 18px;
   overflow: auto;
   > * {
