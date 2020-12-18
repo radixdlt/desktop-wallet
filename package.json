@@ -3,39 +3,6 @@
   "version": "2.0.0-beta.4",
   "description": "",
   "main": "build/main.js",
-  "build": {
-    "asar": false,
-    "productName": "xxx",
-    "appId": "com.xxx.xxx",
-    "files": [
-      "dist/**/*",
-      "package.json"
-    ],
-    "mac": {
-      "artifactName": "${productName}-${version}-osx.${ext}",
-      "category": "public.app-category.productivity",
-      "target": [
-        "dmg",
-        "zip"
-      ]
-    },
-    "linux": {
-      "artifactName": "${productName}-${version}-${arch}-linux.${ext}",
-      "maintainer": "xxxx",
-      "target": [
-        "tar.gz",
-        "deb",
-        "rpm"
-      ]
-    },
-    "win": {
-      "target": [
-        "zip",
-        "dir"
-      ]
-    },
-    "extends": null
-  },
   "scripts": {
     "build:main": "webpack --config webpack.main.config.dev.js --progress",
     "build:main:watch": "webpack --config webpack.main.config.dev.js --watch --progress",
@@ -58,9 +25,9 @@
     "pack": "electron-builder --dir --config electron-builder.yml",
     "postinstall_DISABLED": "electron-rebuild -f && run-p addbindings",
     "addbindings": "cp node_modules/node-hid/build/Release/HID-hidraw.node build && cp node_modules/usb/build/Release/usb_bindings.node build",
-    "package:linux": "electron-packager . RadixWallet --platform=linux",
-    "package:windows": "electron-packager . RadixWallet --platform=win32",
-    "package:mac": "electron-packager . RadixWallet --platform=darwin"
+    "package:linux": "electron-packager . RadixWallet --platform=linux --overwrite",
+    "package:windows": "electron-packager . RadixWallet --platform=win32 --overwrite",
+    "package:mac": "electron-packager . RadixWallet --platform=darwin --overwrite"
   },
   "author": "Radix DLT",
   "license": "Apache-2.0",

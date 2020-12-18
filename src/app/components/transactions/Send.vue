@@ -161,6 +161,7 @@ export default Vue.extend({
             }
             */
             this.transactionStatus = `Transaction failed: ${error.status}`
+            console.error(error.data.message)
           },
         })
       } catch (error) {
