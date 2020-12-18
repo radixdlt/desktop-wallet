@@ -20,7 +20,8 @@
                     //- img(src="@assets/svg/icons/refresh.svg")
                     icon(name="undo")
                 div.text Restore an existing wallet
-            div.large-button(@click="hardwareWallet()")
+            
+            //div.large-button(@click="hardwareWallet()")
                 div.icon
                     //- img(src="@assets/svg/icons/refresh.svg")
                     icon(name="undo")
