@@ -1,6 +1,6 @@
 [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-# Radix Desktop Wallet
+# Radix Desktop Wallet ⚠⚠[DEPRECATED]⚠⚠
 
 The Desktop Wallet runs on Electron, is written in [Vue.js](https://vuejs.org/) and [TypeScript](https://www.typescriptlang.org/), and is built with [webpack](https://webpack.js.org/) and [electron-builder](https://www.electron.build/).
 
