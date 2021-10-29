@@ -141,23 +141,18 @@ export default Vue.extend({
     */
   },
   methods: {
-    exportWallet() {
-      remote.dialog.showSaveDialog(
-        {
-          title: 'Export wallet',
-          defaultPath: 'keystore.json',
-        },
-        function(filePath) {
-          if (filePath === undefined) {
-            return
-          }
-          fs.copyFile(KEYSTORE_FILENAME, filePath, error => {
-            if (error) {
-              throw error
-            }
-          })
-        }
-      )
+    async exportWallet() {
+      const filePath = await remote.dialog.showSaveDialog({
+        title: "Export wallet",
+        defaultPath: "keystore.json",
+      });
+
+      if (filePath === undefined) {
+        return;
+      }
+      fs.copyFile(KEYSTORE_FILENAME, filePath.filePath, (error) => {
+        if (error) throw error;
+      });
     },
     addContact(address: string, alias = null) {
       this.$store.commit('addOrUpdateContact', { address, alias })

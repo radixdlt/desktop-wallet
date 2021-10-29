@@ -32,10 +32,5 @@ before_install:
   - yarn install --network-concurrency 1
 
 script:
-  # Run tests, don't fail if they fail...
-  # - yarn test:unit || true
-  # - yarn test:e2e || true
   # Static code analysis
   - yarn lint
-  # - yarn coverage
-  # - sonar-scanner
